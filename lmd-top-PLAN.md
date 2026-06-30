@@ -38,11 +38,11 @@ lmd-top/
 │   └── lmd-top.toml            # sources(prometheus/ns) + profiles(레이아웃) + 선언적 collector
 ├── catalog/
 │   └── models.yaml             # ModelCatalog (M8, 스키마=DESIGN §8c)
-├── templates/                  # 매니페스트 템플릿 (M8)
-│   ├── vllm-gpu.yaml.tmpl
-│   ├── vllm-rbln.yaml.tmpl
-│   ├── furiosa-embed.yaml.tmpl
-│   └── ollama-cpu.yaml.tmpl
+├── templates/                  # ModelService values/CR 템플릿 (M8, DESIGN §12)
+│   ├── modelservice-vllm-gpu.yaml.tmpl
+│   ├── modelservice-vllm-rbln.yaml.tmpl
+│   ├── modelservice-furiosa.yaml.tmpl
+│   └── modelservice-sglang.yaml.tmpl
 └── src/
     ├── main.rs                 # 진입점: arg/config 로드, tokio 런타임, 태스크 spawn, 터미널 setup/teardown
     ├── app.rs                  # App 상태머신: 현재 view, 선택 index, focus, filter, 모달, tick
@@ -193,10 +193,11 @@ k8s.deploy.<name>.{ready,desired}      k8s.pod.<name>.phase
 - **✅**: scorer 4종(prefix3/queue2/kv2/no-hit2)·picker·parser 표시; 트래픽 있으면 결정 분포 막대.
 
 ### M8 — Launcher ★★★★ (★사용자 런처 요구)
-- **목표**: 모델 선택→배치→배포/런북 위저드.
-- **세부**: `catalog.rs`(catalog/models.yaml) · `inventory.rs`(노드 allocatable: `nvidia.com/gpu`/`rebellions.ai/ATOM`/`furiosa.ai/rngd` − 사용량) · `solver.rs`(후보+ReadyState) · `launcher.rs`(3단 위저드, DESIGN §5b) · `actions/launch.rs`(템플릿 렌더→apply→InferencePool/HTTPRoute 패치→watch) · not-ready→준비 런북 출력.
-- **✅**: `n`→exaone 선택→배치 후보(A100×2 ✓ready / RBLN×4 ⚙needs-compile / CPU ✓ready)→ready 선택시 apply&watch, compile 선택시 런북.
-- **크레이트**: +tera 또는 minijinja(템플릿) +serde_yaml.
+- **목표**: 모델 선택→배치→배포/런북 위저드. **배포는 llm-d `ModelService`(helm chart+CR) 렌더**(DESIGN §12).
+- **세부**: `catalog.rs`(catalog/models.yaml, `model_uri` hf://·pvc://·oci://) · `inventory.rs`(노드 allocatable: `nvidia.com/gpu`/`rebellions.ai/ATOM`/`furiosa.ai/rngd` − 사용량) · `solver.rs`(후보+ReadyState) · `launcher.rs`(3단 위저드, DESIGN §5b) · `actions/launch.rs`(**ModelService values/CR 렌더→helm install/apply**→ModelService가 InferencePool/HTTPRoute/LWS 배선→watch) · not-ready→준비 런북.
+- **✅**: `n`→exaone 선택→배치 후보(A100 ✗gpu:0 / RBLN×4 ⚙needs-compile or ✓ready / Furiosa)→ready 선택시 ModelService 배포&watch, compile 선택시 런북.
+- **참고**: 현 클러스터 기존 모델은 raw Deployment(ModelService 아님) → Monitor는 양쪽 인지, Launcher는 신규를 ModelService로.
+- **크레이트**: +minijinja(values 렌더) +serde_yaml. helm은 `tokio::process` 셸링.
 
 ### M9 — 플러그인 일반화 ★★★★
 - **목표**: 확장성.

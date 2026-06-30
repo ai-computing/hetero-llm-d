@@ -394,8 +394,8 @@ CLI 위저드로 만든 것. 단, **솔직한 경계**가 있다 → 그 경계�
    - `✓ ready` (예: vLLM on A100 — 즉시 apply 가능)
    - `⬇ needs-download` (HF 가중치 미존재 → 다운로드 런북)
    - `⚙ needs-compile` (RBLN 컴파일 산출물 부재 → `scripts/04-build-vllm-rbln.sh` 런북)
-4. **Launcher**: 선택 배치 → 매니페스트 렌더(Deployment+Service, [STATUS.md](./STATUS.md) 표준 label,
-   InferencePool selector 패치, HTTPRoute path 추가) → `kubectl apply` → readiness watch → **런북**(curl 예시 + 라우팅 경로).
+4. **Launcher**: 선택 배치 → **ModelService helm values/CR 렌더**(§12: preset+model_uri+decode/prefill+route)
+   → `helm install`/`apply`(ModelService가 InferencePool/HTTPRoute/LWS 배선) → readiness watch → **런북**(curl + 라우팅 경로).
 5. **Guideline 생성**: not-ready 배치는 apply 대신 **준비 단계 런북**을 출력(이게 사용자가 말한 "가이드라인").
 
 ### 솔직한 경계 (= 가이드라인이 필요한 이유)
@@ -414,55 +414,56 @@ Ready 되면 Routing 뷰에 새 path 등장 → curl 런북 제시. **띄우기�
 큐레이션 YAML(`catalog/models.yaml`). 각 엔트리는 모델 1종 × 배포 가능한 엔진/가속기 옵션을 선언.
 PlacementSolver가 이걸 라이브 인프라 재고와 대조해 후보+준비상태를 만든다.
 
+> **정식 정렬(§12)**: 배포는 raw Deployment가 아니라 **llm-d `ModelService`**(helm chart + CR)로 렌더한다.
+> 카탈로그는 ModelService 값(`modelArtifacts.uri`, decode/prefill, preset)에 매핑된다.
+
 ```yaml
 # catalog/models.yaml
 apiVersion: lmd-top/v1
 models:
   - id: exaone-3.5-32b              # /v1, /models 에 노출될 model name
     display: "EXAONE-3.5-32B-Instruct-AWQ"
-    hf_repo: LGAI-EXAONE/EXAONE-3.5-32B-Instruct-AWQ
-    role: chat                       # chat | embedding | …  (STATUS 표준 label)
-    placements:                      # 가능한 배치들 (솔버가 재고와 매칭)
-      - engine: vllm                 # vllm | vllm-rbln | ollama | furiosa
-        accelerator: gpu-nvidia      # node label llm-d.ai/accelerator 값
-        resource: nvidia.com/gpu     # k8s 요청 리소스명
-        count: 1                     # 디바이스 수 (TP=1)
-        replicas: 2                  # DP=2
-        min_vram_gb: 40
-        quant: awq
-        requires_artifact: false     # HF 가중치만 있으면 ready
-        manifest: templates/vllm-gpu.yaml.tmpl
+    role: chat
+    placements:                      # 가능한 배치들 (솔버가 라이브 재고와 매칭)
+      - engine: vllm                 # vllm | sglang | vllm-rbln | furiosa | ollama
+        accelerator: nvidia          # 노드 라벨 accelerator.<vendor>=present
+        resource: nvidia.com/gpu     # k8s 요청 리소스명(실측)
+        count: 1                     # 디바이스 수/replica (TP=1)
+        decode_replicas: 2           # DP=2 (ModelService decode.replicas)
+        model_uri: hf://LGAI-EXAONE/EXAONE-3.5-32B-Instruct-AWQ   # hf:// | pvc:// | oci://
+        modelservice_preset: vllm-gpu   # llm-d-modelservice preset
         route_path: /v1
       - engine: vllm-rbln
-        accelerator: npu-rebellions
-        resource: rebellions.ai/ata  # (실제 리소스명 확인 필요 — Open Q)
+        accelerator: rebellions
+        resource: rebellions.ai/ATOM # ← 실측 리소스명
         count: 4                     # TP=4
-        replicas: 1
-        requires_artifact: true      # ★ 사전 컴파일 산출물 필요
-        artifact_path: /home/user/rbln-EXAONE-...-tp4   # 없으면 needs-compile
+        decode_replicas: 1
+        model_uri: pvc://rbln-artifacts/EXAONE-...-tp4   # 사전 컴파일 산출물(PVC). 없으면 needs-compile
         compile_runbook: scripts/04-build-vllm-rbln.sh
-        manifest: templates/vllm-rbln.yaml.tmpl
+        modelservice_preset: vllm-rbln
         route_path: /koni
   - id: qwen3-embedding-8b
     role: embedding
     placements:
-      - engine: furiosa
-        accelerator: npu-furiosa
-        resource: furiosa.ai/npu
+      - engine: furiosa            # Furiosa-LLM × llm-d 공식 통합(§12) 경로
+        accelerator: furiosa
+        resource: furiosa.ai/rngd  # ← 실측 리소스명
         count: 2
-        requires_artifact: true
-        manifest: templates/furiosa-embed.yaml.tmpl
+        model_uri: pvc://furiosa-artifacts/qwen3-embed
+        modelservice_preset: furiosa
         route_path: /v1/embeddings
 ```
 
 **PlacementSolver 판정 규칙**
-1. `accelerator` 라벨 가진 노드의 **가용 수량 ≥ count×replicas** ? → 후보
-2. `requires_artifact` && `artifact_path` 부재 → `⚙ needs-compile`(compile_runbook 출력)
-3. HF 가중치 캐시 부재(대형) → `⬇ needs-download`
-4. 위 통과 → `✓ ready` (apply 가능). 점수 = 여유 VRAM·디바이스 적합도로 정렬.
+1. `accelerator` 라벨 노드의 **가용 수량(allocatable−used) ≥ count×replicas** ? → 후보
+2. `model_uri` 가 `pvc://`인데 PVC 부재 → `⚙ needs-compile`(`compile_runbook` 출력)
+3. `model_uri` 가 `hf://`인데 캐시 대형 미존재 → `⬇ needs-download`(ModelService가 emptyDir로 받음)
+4. 위 통과 → `✓ ready`. 점수 = 여유 가속기·디바이스 적합도로 정렬.
+   ※ 현 클러스터는 `nvidia.com/gpu:0`(A100 device-plugin off) → GPU 배치는 정직히 "불가" 표기.
 
-**manifest 템플릿**: `templates/*.tmpl` 에 `{{count}}`/`{{replicas}}`/`{{hf_repo}}`/`{{route_path}}` 등 치환.
-렌더 결과 = Deployment+Service(STATUS 표준 label) → apply → InferencePool selector 패치 + HTTPRoute path 추가.
+**렌더링**: 선택 배치 → **ModelService helm values(또는 CR) 생성**(preset+model_uri+decode/prefill+replicas+route)
+→ `helm install`/`kubectl apply` → ModelService가 InferencePool/HTTPRoute/LeaderWorkerSet까지 배선
+→ readiness watch → curl 런북. (raw Deployment 수동 배선 대비 P/D·멀티노드·라우팅이 공짜.)
 
 ---
 
@@ -532,9 +533,37 @@ models:
 
 → 온보딩 = `다운로드 → lmd-top setup → lmd-top`. 끝.
 
+## 12. llm-d 공식 repo 정렬 (2026, github.com/llm-d/llm-d 반영)
+
+공식 repo를 점검해 설계를 정렬했다. 결론: **차별점(터미널 ops TUI 부재)은 유효**하고
+— llm-d는 helm chart·kubectl·**Prism**(웹 벤치 플랫폼 prism.llm-d.ai)만 제공, 라이브 ops TUI 없음 —
+다만 **모델 배포 방식과 컴포넌트 모델을 공식에 맞춰 갱신**해야 한다.
+
+### 반영 사항
+| 공식 개념 | lmd-top 영향 |
+|---|---|
+| **ModelService** (helm chart `llm-d-incubation/llm-d-modelservice` + CR) — 모델 배포 정식 메커니즘. `modelArtifacts.uri`(`hf://`·`pvc://`·`oci://`)+size, **decode/prefill** 섹션(P/D 분리 내장), presets, GAIE InferencePool 배선, **LeaderWorkerSet**(멀티노드) | ★**M8 Launcher 재설계**: raw Deployment 템플릿 → **ModelService 렌더**(§8b/§8c). 카탈로그도 `modelArtifacts.uri` 스키마로. |
+| **InferencePool Variants** — 같은 base model을 role(prefill/decode)·cost·성능으로 하위그룹화 | EPP/Routing/Models 뷰가 **variant 인지**(P/D pool 구분). M7/M10. |
+| **Model Server: vLLM + SGLang** | engine enum에 `sglang` 추가. |
+| **Predicted Latency 라우팅**(XGBoost scorer) | EPP Inspector scorer 목록에 포함(있으면 표시). |
+| **Workload Variant Autoscaler(WVA)** + HPA/KEDA | 오토스케일 관측 대상에 WVA 추가(M10). |
+| **Batch Inference**(OpenAI Batch API, async+flow control) | 신규 관측면(로드맵 후보). |
+| **Furiosa-LLM × llm-d 통합 가이드**(developer.furiosa.ai) | ★우리 스택 직결 — Furiosa 모델을 ModelService로 배포하는 공식 경로 존재. Launcher Furiosa preset 근거. |
+| **Prism**(prism.llm-d.ai) 벤치 플랫폼 | 보완재(웹 벤치). lmd-top=라이브 ops TUI로 역할 분리. deep-link 후보. |
+
+### 이 클러스터와의 갭 (중요)
+현 클러스터의 모델들(`vllm-exaone`/`vllm-rbln-koni`/`ds4`)은 **ModelService가 아니라 손수 만든 raw Deployment +
+수동 패치 InferencePool**이다([STATUS.md](./STATUS.md)). 따라서:
+- **Monitor(M0–M7)**: 기존 raw Deployment를 그대로 읽음(현 클러스터 호환). ✅ 변경 없음.
+- **Launcher(M8)**: 신규 배포는 **ModelService 방식**(권장)으로 생성 → 점진적으로 정식 패턴에 수렴.
+- lmd-top은 두 방식을 모두 인지(raw Deploy + ModelService CR)해야 함 → `kubectl` collector가 양쪽 탐지.
+
 ## 참고 (Sources)
 - llm-d EPP / Inference Scheduler: https://llm-d.ai/docs/architecture/Components/inference-scheduler
 - GIE EPP 구성 YAML: https://gateway-api-inference-extension.sigs.k8s.io/guides/epp-configuration/config-text/
 - GIE 메트릭: https://gateway-api-inference-extension.sigs.k8s.io/guides/metrics-and-observability/
 - Datadog: 계층 상관 진단: https://www.datadoghq.com/blog/llm-routing-kubernetes-inference-extension/
 - all-smi: https://github.com/inureyes/all-smi · llmtop: https://github.com/arinbjornk/llmtop · k9s: https://github.com/derailed/k9s
+- llm-d 공식: https://github.com/llm-d/llm-d · 아키텍처: https://llm-d.ai/docs/architecture
+- ModelService: https://github.com/llm-d-incubation/llm-d-modelservice · https://llm-d.ai/docs/architecture/Components/modelservice
+- Furiosa-LLM × llm-d: https://developer.furiosa.ai/ · Prism 벤치: https://prism.llm-d.ai
