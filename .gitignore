@@ -7,8 +7,8 @@ kubeconfig*
 .env
 secrets.*
 
-# lmd-top (Rust) — 추후 구현 시
-lmd-top/target/
+# lmd-top — 독립 git 레포로 분리 관리 (이 레포에서 추적 안 함)
+/lmd-top/
 **/target/
 *.rs.bk
 
