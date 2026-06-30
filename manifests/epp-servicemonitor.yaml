@@ -1,0 +1,79 @@
+# EPP(endpoint-picker) 메트릭을 Prometheus가 긁도록 — authed(https) 엔드포인트용
+# 적용: kubectl apply -f manifests/epp-servicemonitor.yaml
+# 되돌리기: kubectl delete -f manifests/epp-servicemonitor.yaml
+# 근거: GIE metrics-and-observability (inference-gateway-metrics-reader RBAC) + secure-serving https:9090
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: inference-gateway-metrics-reader
+rules:
+- nonResourceURLs: ["/metrics"]
+  verbs: ["get"]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: inference-gateway-sa-metrics-reader
+  namespace: llm-serving
+---
+# EPP가 스크래퍼 토큰을 검증(TokenReview/SAR)하려면 자기 SA에 위임 권한 필요.
+# 없으면 /metrics 가 HTTP 500 ("cannot create tokenreviews") 반환.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: llmd-router-epp-auth-delegator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:auth-delegator
+subjects:
+- kind: ServiceAccount
+  name: llmd-router-epp        # EPP 자신의 SA (로그의 system:serviceaccount:llm-serving:llmd-router-epp)
+  namespace: llm-serving
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: inference-gateway-sa-metrics-reader-binding
+subjects:
+- kind: ServiceAccount
+  name: inference-gateway-sa-metrics-reader
+  namespace: llm-serving
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: inference-gateway-metrics-reader
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: inference-gateway-sa-metrics-reader-secret
+  namespace: llm-serving
+  annotations:
+    kubernetes.io/service-account.name: inference-gateway-sa-metrics-reader
+type: kubernetes.io/service-account-token
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: llmd-router-epp
+  namespace: llm-serving
+  labels:
+    release: kube-prometheus-stack   # serviceMonitorSelector={} 이므로 라벨 무관하지만 관례상 부착
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: llmd-router-epp
+  namespaceSelector:
+    matchNames: ["llm-serving"]
+  endpoints:
+  - port: http-metrics        # svc llmd-router-epp 의 9090 포트명
+    scheme: http              # 실측: EPP :9090 은 평문 HTTP (secure-serving 미적용)
+    interval: 15s
+    path: /metrics
+    authorization:            # metrics-endpoint-auth=true 대비 토큰 동봉 (불요시 무해)
+      type: Bearer
+      credentials:
+        name: inference-gateway-sa-metrics-reader-secret
+        key: token
