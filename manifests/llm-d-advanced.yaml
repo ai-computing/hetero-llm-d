@@ -1,0 +1,49 @@
+---
+# ─────────────────────────────────────────────────────────
+# SLO-aware routing: low-latency vs high-throughput 목표
+# 요청 헤더 `x-gateway-inference-objective: <name>` 으로 적용
+# ─────────────────────────────────────────────────────────
+apiVersion: inference.networking.x-k8s.io/v1alpha2
+kind: InferenceObjective
+metadata:
+  name: low-latency
+  namespace: llm-serving
+spec:
+  priority: 100   # 더 높은 priority — 큐 앞쪽 자리
+  poolRef:
+    name: llmd-router
+---
+apiVersion: inference.networking.x-k8s.io/v1alpha2
+kind: InferenceObjective
+metadata:
+  name: high-throughput
+  namespace: llm-serving
+spec:
+  priority: 10
+  poolRef:
+    name: llmd-router
+---
+# ─────────────────────────────────────────────────────────
+# KEDA ScaledObject: vLLM의 "num_requests_waiting" Prom metric 기준
+# 평균 5개 초과 시 +1 replica (NPU 풀 한정이라 max=1로 시작, NPU 추가시 확대)
+# ─────────────────────────────────────────────────────────
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: vllm-rbln-llama31-8b
+  namespace: llm-serving
+spec:
+  scaleTargetRef:
+    name: vllm-rbln-llama31-8b
+  minReplicaCount: 1
+  maxReplicaCount: 1     # 현재 NPU 4장 = 1 replica TP=4. NPU 추가 시 maxReplicaCount 확대.
+  pollingInterval: 15
+  cooldownPeriod: 60
+  triggers:
+    - type: prometheus
+      metadata:
+        serverAddress: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
+        metricName: vllm_num_requests_waiting
+        threshold: '5'
+        query: |
+          avg(vllm:num_requests_waiting{namespace="llm-serving"})

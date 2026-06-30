@@ -1,0 +1,21 @@
+# secrets / credentials (절대 커밋 금지)
+*.key
+*.pem
+*-creds*.yaml
+kubeconfig*
+*.kubeconfig
+.env
+secrets.*
+
+# lmd-top (Rust) — 추후 구현 시
+lmd-top/target/
+**/target/
+*.rs.bk
+
+# editor / OS
+.DS_Store
+*.swp
+*~
+
+# Claude Code 로컬 설정 (공유 불필요)
+.claude/

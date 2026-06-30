@@ -1,0 +1,106 @@
+---
+# Tenant A: Rebellions + Furiosa 각 2장씩
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tenant-a
+  labels:
+    llm-d.ai/tenant: a
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: tenant-a-npu
+  namespace: tenant-a
+spec:
+  hard:
+    requests.rebellions.ai/ATOM: "2"
+    limits.rebellions.ai/ATOM: "2"
+    requests.furiosa.ai/rngd: "2"
+    limits.furiosa.ai/rngd: "2"
+    requests.cpu: "32"
+    limits.cpu: "64"
+    requests.memory: 128Gi
+    limits.memory: 256Gi
+    pods: "20"
+---
+# RBAC: tenant-a 내부에서 자유롭게 작업, 다른 namespace 불가
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: tenant-developer
+  namespace: tenant-a
+rules:
+  - apiGroups: ["", "apps", "batch", "networking.k8s.io", "gateway.networking.k8s.io", "inference.networking.k8s.io"]
+    resources: ["*"]
+    verbs: ["get","list","watch","create","update","patch","delete"]
+  - apiGroups: [""]
+    resources: ["pods/log","pods/exec","pods/portforward"]
+    verbs: ["get","list","create"]
+---
+# 예시: 사용자 'alice' (Rancher에서 동기화되는 ID) 가 tenant-a developer
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: alice-developer
+  namespace: tenant-a
+subjects:
+  - kind: User
+    name: alice
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: tenant-developer
+  apiGroup: rbac.authorization.k8s.io
+---
+# Tenant B: Rebellions 2장 + Furiosa 2장
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tenant-b
+  labels:
+    llm-d.ai/tenant: b
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: tenant-b-npu
+  namespace: tenant-b
+spec:
+  hard:
+    requests.rebellions.ai/ATOM: "2"
+    limits.rebellions.ai/ATOM: "2"
+    requests.furiosa.ai/rngd: "2"
+    limits.furiosa.ai/rngd: "2"
+    requests.cpu: "32"
+    limits.cpu: "64"
+    requests.memory: 128Gi
+    limits.memory: 256Gi
+    pods: "20"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: tenant-developer
+  namespace: tenant-b
+rules:
+  - apiGroups: ["", "apps", "batch", "networking.k8s.io", "gateway.networking.k8s.io", "inference.networking.k8s.io"]
+    resources: ["*"]
+    verbs: ["get","list","watch","create","update","patch","delete"]
+  - apiGroups: [""]
+    resources: ["pods/log","pods/exec","pods/portforward"]
+    verbs: ["get","list","create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: bob-developer
+  namespace: tenant-b
+subjects:
+  - kind: User
+    name: bob
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: tenant-developer
+  apiGroup: rbac.authorization.k8s.io
