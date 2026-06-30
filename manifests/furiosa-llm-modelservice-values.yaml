@@ -1,0 +1,37 @@
+modelArtifacts:
+  name: "furiosa-ai/Llama-3.1-8B-Instruct"
+  uri: "hf://furiosa-ai/Llama-3.1-8B-Instruct"
+  size: 30Gi
+  labels:
+    llm-d.ai/inferenceServing: "true"
+    llm-d.ai/model: llama-3.1-8b-instruct-furiosa
+
+accelerator:
+  type: furiosa
+  resources:
+    furiosa: "furiosa.ai/rngd"
+
+dra:
+  enabled: false
+
+decode:
+  create: true
+  replicas: 1
+  parallelism:
+    tensor: 4
+    data: 1
+    pipeline: 1
+  nodeSelector:
+    kubernetes.io/hostname: etri-esc8000-e11
+  containers:
+    - name: "furiosa-llm"
+      image: "furiosaai/furiosa-llm:latest"
+      modelCommand: furiosaLLMServe
+      mountModelVolume: true
+      resources:
+        limits:
+          furiosa.ai/rngd: 4
+        requests:
+          furiosa.ai/rngd: 4
+          cpu: "8"
+          memory: 32Gi

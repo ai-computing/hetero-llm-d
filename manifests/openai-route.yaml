@@ -1,0 +1,92 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+      {"apiVersion":"gateway.networking.k8s.io/v1","kind":"HTTPRoute","metadata":{"annotations":{},"name":"openai-route","namespace":"llm-serving"},"spec":{"parentRefs":[{"group":"gateway.networking.k8s.io","kind":"Gateway","name":"llm-d-gateway"}],"rules":[{"backendRefs":[{"group":"","kind":"Service","name":"ds4-deepseek-v4-flash","port":8000,"weight":1}],"filters":[{"type":"URLRewrite","urlRewrite":{"path":{"replacePrefixMatch":"/v1","type":"ReplacePrefixMatch"}}}],"matches":[{"path":{"type":"PathPrefix","value":"/ds4"}}]},{"backendRefs":[{"group":"","kind":"Service","name":"vllm-rbln-koni","port":8000,"weight":1}],"filters":[{"type":"URLRewrite","urlRewrite":{"path":{"replacePrefixMatch":"/v1","type":"ReplacePrefixMatch"}}}],"matches":[{"path":{"type":"PathPrefix","value":"/koni"}}]},{"backendRefs":[{"group":"","kind":"Service","name":"ollama-cpu","port":11434,"weight":1}],"filters":[{"type":"URLRewrite","urlRewrite":{"path":{"replacePrefixMatch":"/v1","type":"ReplacePrefixMatch"}}}],"matches":[{"path":{"type":"PathPrefix","value":"/cpu"}}]},{"backendRefs":[{"group":"","kind":"Service","name":"ds4-deepseek-v4-flash","port":8000,"weight":1}],"matches":[{"path":{"type":"PathPrefix","value":"/v1"}}]}]}}
+  generation: 6
+  name: openai-route
+  namespace: llm-serving
+spec:
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: llm-d-gateway
+  rules:
+  - backendRefs:
+    - group: ""
+      kind: Service
+      name: ds4-deepseek-v4-flash
+      port: 8000
+      weight: 1
+    filters:
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          replacePrefixMatch: /v1
+          type: ReplacePrefixMatch
+    matches:
+    - path:
+        type: PathPrefix
+        value: /ds4
+  - backendRefs:
+    - group: ""
+      kind: Service
+      name: vllm-rbln-koni
+      port: 8000
+      weight: 1
+    filters:
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          replacePrefixMatch: /v1
+          type: ReplacePrefixMatch
+    matches:
+    - path:
+        type: PathPrefix
+        value: /koni
+  - backendRefs:
+    - group: ""
+      kind: Service
+      name: ollama-cpu
+      port: 11434
+      weight: 1
+    filters:
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          replacePrefixMatch: /v1
+          type: ReplacePrefixMatch
+    matches:
+    - path:
+        type: PathPrefix
+        value: /cpu
+  - backendRefs:
+    - group: ""
+      kind: Service
+      name: ds4-deepseek-v4-flash
+      port: 8000
+      weight: 1
+    matches:
+    - path:
+        type: PathPrefix
+        value: /v1
+status:
+  parents:
+  - conditions:
+    - lastTransitionTime: "2026-06-01T02:16:55Z"
+      message: Route is accepted
+      observedGeneration: 6
+      reason: Accepted
+      status: "True"
+      type: Accepted
+    - lastTransitionTime: "2026-06-01T02:16:55Z"
+      message: Resolved all the Object references for the Route
+      observedGeneration: 6
+      reason: ResolvedRefs
+      status: "True"
+      type: ResolvedRefs
+    controllerName: gateway.envoyproxy.io/gatewayclass-controller
+    parentRef:
+      group: gateway.networking.k8s.io
+      kind: Gateway
+      name: llm-d-gateway

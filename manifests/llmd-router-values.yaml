@@ -1,0 +1,5 @@
+inferencePool:
+  modelServers:
+    matchLabels:
+      app: vllm-rbln-qwen3-4b
+  targetPortNumber: 8000

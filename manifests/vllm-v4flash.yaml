@@ -1,0 +1,120 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-v4flash
+  namespace: llm-serving
+  labels:
+    app: vllm-v4flash
+    llm-d.ai/accelerator: gpu-nvidia
+    llm-d.ai/role: chat
+    llm-d.ai/engine: vllm
+spec:
+  replicas: 1
+  strategy: { type: Recreate }
+  selector:
+    matchLabels: { app: vllm-v4flash }
+  template:
+    metadata:
+      labels:
+        app: vllm-v4flash
+        llm-d.ai/accelerator: gpu-nvidia
+        llm-d.ai/role: chat
+        llm-d.ai/engine: vllm
+    spec:
+      runtimeClassName: nvidia
+      nodeSelector:
+        kubernetes.io/hostname: etri-001
+      initContainers:
+      # 1) 모델 다운로드 (~44GB, hf_transfer)
+      - name: download-model
+        image: python:3.11-slim
+        command: ["bash","-c"]
+        args:
+        - |
+          set -eux
+          if [[ -f /models/v4flash/config.json ]] && [[ -n "$(ls /models/v4flash/*.safetensors 2>/dev/null)" ]]; then
+            echo "model already present"; ls -lh /models/v4flash/ | head -10; exit 0
+          fi
+          pip install --quiet 'huggingface_hub[hf_transfer]==0.36.0'
+          export HF_HUB_ENABLE_HF_TRANSFER=1
+          mkdir -p /models/v4flash
+          hf download LordNeel/DeepSeek-V4-Flash-Acti-MTP-W4A16-FP8 --local-dir /models/v4flash
+          ls -lh /models/v4flash/ | head -20
+        env:
+        - { name: HF_TOKEN, valueFrom: { secretKeyRef: { name: hf-token, key: HF_TOKEN } } }
+        - { name: HF_HUB_ENABLE_HF_TRANSFER, value: "1" }
+        volumeMounts:
+        - { name: models, mountPath: /models }
+      containers:
+      - name: vllm
+        image: docker.io/vllm/vllm-openai:nightly
+        # vllm-openai image의 default ENTRYPOINT는 ["python3","-m","vllm.entrypoints.openai.api_server"]
+        # A100 sm_80 호환성을 위해 BREAKABLE_CUDAGRAPH off + enforce-eager (안전)
+        # MTP는 우선 비활성 (sm_80에서 hang 가능성). 단순 동작 검증 후 단계적 활성.
+        args:
+        - --model=/models/v4flash
+        - --served-model-name=deepseek-v4-flash-vllm
+        - --tensor-parallel-size=2
+        - --max-model-len=16384
+        - --gpu-memory-utilization=0.92
+        - --kv-cache-dtype=fp8
+        - --trust-remote-code
+        - --enforce-eager
+        - --host=0.0.0.0
+        - --port=8000
+        env:
+        - { name: HF_TOKEN, valueFrom: { secretKeyRef: { name: hf-token, key: HF_TOKEN } } }
+        - { name: PYTHONUNBUFFERED, value: "1" }
+        - { name: VLLM_LOGGING_LEVEL, value: "INFO" }
+        - { name: VLLM_USE_BREAKABLE_CUDAGRAPH, value: "0" }
+        - { name: VLLM_WORKER_MULTIPROC_METHOD, value: "spawn" }
+        ports:
+        - { containerPort: 8000, name: http }
+        resources:
+          limits:
+            nvidia.com/gpu: 2
+          requests:
+            nvidia.com/gpu: 2
+            cpu: "8"
+            memory: 64Gi
+        readinessProbe:
+          httpGet: { path: /health, port: 8000 }
+          initialDelaySeconds: 180
+          periodSeconds: 15
+          failureThreshold: 80
+        volumeMounts:
+        - { name: models, mountPath: /models, readOnly: true }
+        - { name: shm, mountPath: /dev/shm }
+      volumes:
+      - name: models
+        hostPath: { path: /home/gspark/vllm-v4flash-models, type: DirectoryOrCreate }
+      - name: shm
+        emptyDir:
+          medium: Memory
+          sizeLimit: 32Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vllm-v4flash
+  namespace: llm-serving
+  labels: { app: vllm-v4flash }
+spec:
+  type: NodePort
+  selector: { app: vllm-v4flash }
+  ports:
+  - { name: http, port: 8000, targetPort: 8000, nodePort: 30805 }
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: vllm-v4flash
+  namespace: monitoring
+  labels: { release: kube-prometheus-stack }
+spec:
+  namespaceSelector: { matchNames: [llm-serving] }
+  selector:
+    matchLabels: { app: vllm-v4flash }
+  endpoints:
+  - { port: http, path: /metrics, interval: 15s }

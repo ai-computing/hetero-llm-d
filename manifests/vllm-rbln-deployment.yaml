@@ -1,0 +1,126 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: llm-serving
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-rbln-koni                  # KISTI-KONI/KONI-Llama3.1-8B-Instruct (한국어 fine-tune)
+  namespace: llm-serving
+  labels: { app: vllm-rbln-koni }
+spec:
+  replicas: 1
+  strategy: { type: Recreate }         # 단일 NPU 풀(4장) 점유 — 롤링 X
+  selector:
+    matchLabels: { app: vllm-rbln-koni }
+  template:
+    metadata:
+      labels: { app: vllm-rbln-koni }
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: etri-001  # host venv/모델 hostPath 의존
+      containers:
+        - name: server
+          image: ubuntu:22.04        # host와 동일 OS/GLIBC ABI 매칭
+          command: ["bash", "-c"]
+          args:
+            - |
+              set -eux
+              export DEBIAN_FRONTEND=noninteractive
+              apt-get update -qq
+              apt-get install -y -qq --no-install-recommends \
+                python3.10 python3.10-dev python3-pip libdrm2 libnuma1 libgomp1 ca-certificates \
+                g++ libc6-dev >/dev/null
+              ln -sf /usr/bin/python3.10 /usr/local/bin/python3
+              exec python3 -m vllm.entrypoints.openai.api_server \
+                --model=/models/koni \
+                --tokenizer=KISTI-KONI/KONI-Llama3.1-8B-Instruct-20241024 \
+                --served-model-name=koni-llama3.1-8b-rbln \
+                --enforce-eager \
+                --enable-auto-tool-choice \
+                --tool-call-parser llama3_json \
+                --enable-prefix-caching \
+                --prefix-caching-hash-algo xxhash \
+                --enable-chunked-prefill \
+                --max-num-seqs 16 \
+                --max-num-batched-tokens 16384 \
+                --block-size 16 \
+                --swap-space 4 \
+                --host=0.0.0.0 --port=8000
+          env:
+            - { name: HF_HOME, value: /cache }
+            - { name: PYTHONUNBUFFERED, value: "1" }
+            - { name: PYTHONPATH, value: "/host-pkgs:/host-pkgs-system" }
+            - { name: LD_LIBRARY_PATH, value: "/host-rbln-lib" }
+            - { name: PATH, value: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/host-rbln-bin" }
+          ports:
+            - { containerPort: 8000, name: http }
+          resources:
+            limits:
+              rebellions.ai/ATOM: 4   # TP=4 — NPU 4장 분산
+            requests:
+              rebellions.ai/ATOM: 4
+              cpu: "8"
+              memory: 32Gi
+          readinessProbe:
+            httpGet: { path: /health, port: 8000 }
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            failureThreshold: 60        # 모델 로드까지 충분히 대기
+          volumeMounts:
+            - { name: host-pkgs,        mountPath: /host-pkgs,        readOnly: true }
+            - { name: host-pkgs-system, mountPath: /host-pkgs-system, readOnly: true }
+            - { name: host-libs,        mountPath: /host-libs,        readOnly: true }
+            - { name: host-rbln-lib,    mountPath: /host-rbln-lib,    readOnly: true }
+            - { name: host-rbln-bin,    mountPath: /host-rbln-bin,    readOnly: true }
+            - { name: model,            mountPath: /models/koni, readOnly: true }
+            - { name: cache,            mountPath: /cache }
+      volumes:
+        - name: host-pkgs                # pip로 깐 vllm/vllm_rbln/optimum/rebel
+          hostPath: { path: /usr/local/lib/python3.10/dist-packages, type: Directory }
+        - name: host-pkgs-system         # apt로 깐 cryptography 등 의존성
+          hostPath: { path: /usr/lib/python3/dist-packages, type: Directory }
+        - name: host-libs
+          hostPath: { path: /usr/lib/x86_64-linux-gnu, type: Directory }
+        - name: host-rbln-lib           # librbln-ccl/ml/thunk .so 위치
+          hostPath: { path: /usr/lib, type: Directory }
+        - name: host-rbln-bin           # rbln-smi/rbln_daemon/rbln-stat 등
+          hostPath: { path: /usr/bin, type: Directory }
+        - name: model           # KONI-Llama3.1-8B-Instruct RBLN compiled output (TP=4)
+          hostPath: { path: /home/gspark/rbln-KONI-Llama3.1-8B-Instruct-tp4-bs1-s8192, type: Directory }
+        - name: cache
+          hostPath: { path: /home/gspark/.cache/huggingface, type: DirectoryOrCreate }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vllm-rbln-koni
+  namespace: llm-serving
+  labels: { app: vllm-rbln-koni }
+spec:
+  type: NodePort
+  selector: { app: vllm-rbln-koni }
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
+      nodePort: 30800
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: vllm-rbln-koni
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack
+spec:
+  namespaceSelector:
+    matchNames: [llm-serving]
+  selector:
+    matchLabels: { app: vllm-rbln-koni }
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s

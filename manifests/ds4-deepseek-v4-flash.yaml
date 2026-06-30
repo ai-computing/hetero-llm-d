@@ -1,0 +1,135 @@
+---
+# DwarfStar (ds4) — antirez의 DeepSeek V4 Flash 전용 inference engine
+# A100 (sm_80) 도전: make cuda-generic + CUDA_ARCH=80
+# 모델: antirez/deepseek-v4-gguf 의 양자화 변형 (q4_K_M 기본, 약 90GB)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ds4-deepseek-v4-flash
+  namespace: llm-serving
+  labels: { app: ds4-deepseek-v4-flash }
+spec:
+  replicas: 1
+  strategy: { type: Recreate }
+  selector: { matchLabels: { app: ds4-deepseek-v4-flash } }
+  template:
+    metadata: { labels: { app: ds4-deepseek-v4-flash } }
+    spec:
+      runtimeClassName: nvidia
+      nodeSelector:
+        kubernetes.io/hostname: etri-001
+      initContainers:
+        # ── 1) ds4 binary 빌드 (CUDA devel image, sm_80) ──
+        - name: build-ds4
+          image: nvidia/cuda:12.6.0-devel-ubuntu22.04
+          command: ["bash", "-c"]
+          args:
+            - |
+              set -eux
+              export DEBIAN_FRONTEND=noninteractive
+              apt-get update -qq
+              apt-get install -y -qq build-essential git make wget ca-certificates
+              cd /work
+              [[ -d ds4 ]] || git clone --depth 1 https://github.com/antirez/ds4 ds4
+              cd ds4
+              CUDA_ARCH=80 make cuda-generic -j$(nproc)
+              cp -v ds4 ds4-server /shared/
+              ls -la /shared/
+          volumeMounts:
+            - { name: build-cache, mountPath: /work }
+            - { name: shared,      mountPath: /shared }
+        # ── 2) GGUF model download (antirez ds4 hybrid Q4K/IQ2XXS + MTP) ──
+        # 97GB hybrid imatrix-fixed (메인) + 3GB MTP module 둘 다 다운로드.
+        # A100 80GB × 2 = 160GB에서 KV/ctx 여유 확보 위해 164GB Q4KExperts는 회피.
+        - name: download-model
+          image: python:3.11-slim
+          command: ["bash", "-c"]
+          args:
+            - |
+              set -eux
+              mkdir -p /models
+              if [[ -f /models/main.gguf ]] && [[ -f /models/mtp.gguf ]]; then
+                echo "models already present"; ls -lh /models/; exit 0
+              fi
+              pip install --quiet --no-cache-dir 'huggingface_hub[hf_transfer]==0.36.0'
+              export HF_HUB_ENABLE_HF_TRANSFER=1
+              MAIN='DeepSeek-V4-Flash-Layers37-42Q4KExperts-OtherExpertLayersIQ2XXSGateUp-Q2KDown-AProjQ8-SExpQ8-OutQ8-chat-v2-imatrix-fixed.gguf'
+              MTP='DeepSeek-V4-Flash-MTP-Q4K-Q8_0-F32.gguf'
+              echo "[+] downloading main ($MAIN, 97GB)"
+              hf download antirez/deepseek-v4-gguf "$MAIN" --local-dir /models
+              mv "/models/$MAIN" /models/main.gguf
+              echo "[+] downloading MTP module ($MTP, 3GB)"
+              hf download antirez/deepseek-v4-gguf "$MTP" --local-dir /models
+              mv "/models/$MTP" /models/mtp.gguf
+              ls -lh /models/
+          env:
+            - { name: HF_TOKEN, valueFrom: { secretKeyRef: { name: hf-token, key: HF_TOKEN } } }
+            - { name: HF_HUB_ENABLE_HF_TRANSFER, value: "1" }
+          volumeMounts:
+            - { name: models, mountPath: /models }
+      containers:
+        # ── 3) ds4-server (OpenAI 호환 HTTP API) ──
+        - name: ds4-server
+          image: nvidia/cuda:12.6.0-runtime-ubuntu22.04
+          command: ["bash", "-c"]
+          args:
+            - |
+              set -eux
+              ls -lh /models/
+              # MTP module은 ds4가 자동 detect (mtp.gguf 같은 디렉토리).
+              # 최적화: ctx 32k→64k, KV disk 8GB→16GB, cold tokens ↑, continued interval ↓.
+              # NOTE: MTP (--mtp /models/mtp.gguf)는 A100 sm_80에서 매 요청 "cuda prefill
+              # state reset failed". ds4 MTP는 sm_90+ (Hopper) 위주로 추정. 영구 비활성.
+              # mtp.gguf 파일은 hostPath에 보존 (향후 ds4 upstream fix 시 재활성 가능).
+              exec /shared/ds4-server \
+                -m /models/main.gguf \
+                --warm-weights \
+                --host 0.0.0.0 \
+                --ctx 65536 \
+                -n 2048 \
+                --kv-disk-dir /tmp/ds4-kv \
+                --kv-disk-space-mb 16384 \
+                --kv-cache-cold-max-tokens 60000 \
+                --kv-cache-continued-interval-tokens 5000
+          ports:
+            - { containerPort: 8000, name: http }
+          resources:
+            limits:
+              nvidia.com/gpu: 2
+            requests:
+              nvidia.com/gpu: 2
+              cpu: "8"
+              memory: 64Gi
+          readinessProbe:
+            httpGet: { path: /v1/models, port: 8000 }
+            initialDelaySeconds: 120
+            periodSeconds: 15
+            failureThreshold: 60
+          volumeMounts:
+            - { name: shared, mountPath: /shared, readOnly: true }
+            - { name: models, mountPath: /models, readOnly: true }
+            - { name: kv-cache, mountPath: /tmp/ds4-kv }
+      volumes:
+        - name: build-cache   # ds4 source + build artifacts
+          emptyDir: { sizeLimit: 5Gi }
+        - name: shared         # binary share (init → main)
+          emptyDir: { sizeLimit: 1Gi }
+        - name: models         # GGUF weights (~94GB) — hostPath로 영구화 (재시작 시 재다운로드 회피)
+          hostPath: { path: /home/gspark/ds4-models, type: DirectoryOrCreate }
+        - name: kv-cache       # ds4 disk KV cache (재시작 시 reset OK)
+          emptyDir: { sizeLimit: 32Gi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ds4-deepseek-v4-flash
+  namespace: llm-serving
+  labels: { app: ds4-deepseek-v4-flash }
+spec:
+  type: NodePort
+  selector: { app: ds4-deepseek-v4-flash }
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
+      nodePort: 30804
