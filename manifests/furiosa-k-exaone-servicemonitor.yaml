@@ -1,0 +1,18 @@
+# Scrape furiosa-llm /metrics (furiosa_llm_*) from the K-EXAONE model server into Prometheus.
+# Enables lmd-top Perf visibility + is the metric source for EPP KV/queue-aware scoring.
+# Prometheus (kube-prometheus-stack) uses empty serviceMonitorSelector -> picks this up automatically.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: furiosa-k-exaone
+  namespace: llm-serving
+  labels:
+    llm-d.ai/model: k-exaone-236b-furiosa
+spec:
+  selector:
+    matchLabels:
+      llm-d.ai/model: k-exaone-236b-furiosa   # matches Service k-exaone-236b
+  endpoints:
+    - port: http            # Service port name (8000)
+      path: /metrics
+      interval: 15s
