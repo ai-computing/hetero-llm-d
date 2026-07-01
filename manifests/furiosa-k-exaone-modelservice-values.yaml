@@ -1,0 +1,51 @@
+# K-EXAONE-236B-A23B-NVFP4A16 on 4x Furiosa RNGD (etri-esc8000-e11).
+# MoE 236B (23B active), NVFP4 weights. ~150GB download. Public (no HF gating).
+# Requires a furiosaai/furiosa-llm image that supports K-EXAONE + NVFP4A16 on driver 2026.3.x.
+modelArtifacts:
+  name: "furiosa-ai/K-EXAONE-236B-A23B-NVFP4A16"
+  uri: "hf://furiosa-ai/K-EXAONE-236B-A23B-NVFP4A16"
+  size: 170Gi                       # ~150GB weights + headroom
+  # authSecretName not needed (public), but harmless to set:
+  authSecretName: hf-token
+  labels:
+    llm-d.ai/inferenceServing: "true"
+    llm-d.ai/model: k-exaone-236b-furiosa
+
+accelerator:
+  type: furiosa
+  resources:
+    furiosa: "furiosa.ai/rngd"
+
+dra:
+  enabled: false
+
+routing:
+  proxy:
+    enabled: false                  # single decode, no PD disaggregation
+
+decode:
+  create: true
+  replicas: 1
+  parallelism:
+    tensor: 4                        # 4 RNGD
+    data: 1
+    pipeline: 1
+  nodeSelector:
+    kubernetes.io/hostname: etri-esc8000-e11
+  containers:
+    - name: "furiosa-llm"
+      image: "furiosaai/furiosa-llm:latest"   # consider pinning to a K-EXAONE-supporting tag
+      modelCommand: furiosaLLMServe
+      args:
+        - "--reasoning-parser"
+        - "deepseek_v3"
+        - "--default-chat-template-kwargs"
+        - '{"enable_thinking": true}'
+      mountModelVolume: true
+      resources:
+        limits:
+          furiosa.ai/rngd: 4
+        requests:
+          furiosa.ai/rngd: 4
+          cpu: "16"
+          memory: 200Gi              # 236B model load + KV cache; node has ~1.1TB
