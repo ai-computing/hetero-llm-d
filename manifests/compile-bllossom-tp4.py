@@ -13,8 +13,9 @@ from optimum.rbln import RBLNAutoModelForCausalLM
 from transformers import AutoTokenizer
 
 MODEL_ID = "MLP-KTLim/llama-3-Korean-Bllossom-8B"
-OUTPUT   = os.path.expanduser("~/rbln-Bllossom-Llama-3-Korean-8B-tp4-bs1-s8192")
-
+STORE = os.environ.get("MODEL_STORE", os.path.expanduser("~"))  # 공유 모델 스토어 마운트 경로
+os.environ.setdefault("HF_HOME", os.path.join(STORE, "hub"))     # HF 다운로드도 스토어 hub 캐시로
+OUTPUT = os.environ.get("OUTPUT", os.path.join(STORE, "compiled", MODEL_ID.replace("/", "--"), "rbln", "rbln-ca22-tp4-s8192"))
 os.makedirs(OUTPUT, exist_ok=True)
 print(f"[+] compiling {MODEL_ID} for RBLN-CA22 (TP=4, batch=1, max_seq=8192)")
 model = RBLNAutoModelForCausalLM.from_pretrained(

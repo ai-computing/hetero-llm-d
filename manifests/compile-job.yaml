@@ -1,0 +1,47 @@
+# ── NPU 컴파일 Job (템플릿) ─────────────────────────────────────────────────────
+# 모델을 RBLN(또는 Furiosa)용으로 컴파일해 **공유 스토어**(model-store PVC)에 저장.
+# 산출물 경로가 디스커버리 스캔 레이아웃(compiled/{repo}/rbln/...)을 따르므로 lmd-top Deploy 에 자동 노출.
+#
+# 채워야 할 것(TODO):
+#   - image: RBLN 툴체인(optimum-rbln)이 든 이미지(예: vllm-rbln 계열). Furiosa 면 furiosa-llm 이미지.
+#   - nodeSelector: RBLN 드라이버가 있고 **model-store SMB 마운트가 가능한** 노드
+#     (현재 cpu-1/cpu-3 만 SMB 확인됨 — RBLN 노드가 마운트 불가면, 로컬 컴파일 후 별도 복사 단계 필요).
+#   - COMPILE_SCRIPT: 아래 ConfigMap 에 넣을 스크립트(manifests/compile-*.py 중 하나).
+#
+# 실행:  kubectl -n llm-serving apply -f manifests/compile-job.yaml
+#        (한 모델 컴파일 후 스토어에 저장 → 10분 내 model-inventory 갱신 → lmd-top Deploy 반영)
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: compile-script, namespace: llm-serving }
+data:
+  compile.py: |
+    # manifests/compile-koni-tp4.py 등의 내용을 그대로 붙여넣기(이미 MODEL_STORE/OUTPUT env 대응).
+    # 여기선 자리표시자.
+    import os
+    print("replace this with a manifests/compile-*.py body; it honors MODEL_STORE/OUTPUT/HF_HOME")
+---
+apiVersion: batch/v1
+kind: Job
+metadata: { name: compile-model, namespace: llm-serving }
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      nodeSelector:
+        kubernetes.io/hostname: npu-node-1   # TODO: RBLN 드라이버 + SMB 마운트 가능한 노드
+      # runtimeClassName: rbln             # (필요 시 RBLN 런타임클래스)
+      volumes:
+        - { name: store, persistentVolumeClaim: { claimName: model-store } }
+        - { name: script, configMap: { name: compile-script } }
+      containers:
+        - name: compile
+          image: TODO-rbln-toolchain-image   # TODO: optimum-rbln 이 든 이미지
+          # resources: { limits: { rebellions.ai/ATOM: 4 } }   # TODO: RBLN 디바이스(TP=4)
+          env:
+            - { name: MODEL_STORE, value: /mnt/store }   # OUTPUT/HF_HOME 이 스토어로
+            # - { name: HF_TOKEN, valueFrom: { secretKeyRef: { name: hf-token, key: token } } }  # gated 모델용
+          volumeMounts:
+            - { name: store, mountPath: /mnt/store }
+            - { name: script, mountPath: /scripts, readOnly: true }
+          command: ["python3", "/scripts/compile.py"]
