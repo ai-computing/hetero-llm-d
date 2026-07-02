@@ -1,0 +1,77 @@
+# ── 모델 스토어 디스커버리 ─────────────────────────────────────────────────────
+# model-store PVC 를 RO 로 마운트해 주기적으로 스캔 → 인벤토리를 ConfigMap(model-inventory)으로 발행.
+# lmd-top 이 이 ConfigMap 을 읽어 Deploy 뷰에 "배포 안 됐어도 존재하는 모델 + 컴파일 타깃 + 위치"를 표시.
+# (PVC 를 파드 하나만 마운트하면 되므로 노드별 DaemonSet 불필요.)
+#
+# 적용:  kubectl apply -f manifests/model-store-discovery.yaml
+# 확인:  kubectl -n llm-serving get cm model-inventory -o jsonpath='{.data.inventory}'
+apiVersion: v1
+kind: ServiceAccount
+metadata: { name: model-discovery, namespace: llm-serving }
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata: { name: model-discovery, namespace: llm-serving }
+rules:
+  - apiGroups: [""]
+    resources: [configmaps]
+    verbs: [get, create, update, patch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata: { name: model-discovery, namespace: llm-serving }
+roleRef: { apiGroup: rbac.authorization.k8s.io, kind: Role, name: model-discovery }
+subjects:
+  - { kind: ServiceAccount, name: model-discovery, namespace: llm-serving }
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata: { name: model-discovery, namespace: llm-serving }
+spec:
+  schedule: "*/10 * * * *"          # 10분마다
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          serviceAccountName: model-discovery
+          restartPolicy: Never
+          # SMB 마운트가 확인된 노드에 고정(rag 의 nas 파드가 도는 노드). 환경에 맞게 조정.
+          nodeSelector:
+            kubernetes.io/hostname: cpu-1
+          volumes:
+            - name: store
+              persistentVolumeClaim: { claimName: model-store, readOnly: true }
+          containers:
+            - name: scan
+              image: bitnami/kubectl:latest    # bash + kubectl + find/du
+              volumeMounts:
+                - { name: store, mountPath: /mnt/store, readOnly: true }
+              command: ["/bin/bash", "-c"]
+              args:
+                - |
+                  set -eu
+                  ROOT=/mnt/store; OUT=/tmp/inventory
+                  # 포맷: repo | revision | format | compiled_for | size | path
+                  echo "# repo | revision | format | compiled_for | size | path" > "$OUT"
+                  # HF 캐시(원본 가중치)
+                  for d in "$ROOT"/hub/models--*/snapshots/*/ ; do
+                    [ -d "$d" ] || continue
+                    repo=$(basename "$(dirname "$(dirname "$d")")"); repo=${repo#models--}; repo=$(echo "$repo" | sed 's/--/\//')
+                    rev=$(basename "$d"); sz=$(du -sh "$d" 2>/dev/null | cut -f1)
+                    echo "$repo | $rev | hf | - | ${sz:-?} | ${d#$ROOT/}" >> "$OUT"
+                  done
+                  # NPU 컴파일 산출물(하드웨어·옵션별)
+                  for d in "$ROOT"/compiled/*/rbln/*/ "$ROOT"/compiled/*/furiosa/*/ ; do
+                    [ -d "$d" ] || continue
+                    fmt=$(basename "$(dirname "$d")")
+                    repo=$(basename "$(dirname "$(dirname "$d")")" | sed 's/--/\//')
+                    tgt=$(basename "$d"); sz=$(du -sh "$d" 2>/dev/null | cut -f1)
+                    echo "$repo | - | $fmt | $tgt | ${sz:-?} | ${d#$ROOT/}" >> "$OUT"
+                  done
+                  echo "[scan] $(( $(wc -l < "$OUT") - 1 )) entries"
+                  kubectl create configmap model-inventory -n llm-serving \
+                    --from-file=inventory="$OUT" --dry-run=client -o yaml | kubectl apply -f -
