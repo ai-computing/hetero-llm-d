@@ -109,6 +109,16 @@ spec:
                     bw=$(built_with "${d%/}" "$fmt")
                     echo "$repo | - | $fmt | $tgt | ${sz:-?} | ${d#$ROOT/} | $bw" >> "$OUT"
                   done
-                  echo "[scan] $(( $(wc -l < "$OUT") - 1 )) entries"
+                  # 스토어 용량 — 이 파드만이 실제 마운트를 갖고 있으므로 여기서 재는 게 유일한 방법.
+                  # (PVC 의 status.capacity 는 요청 용량이고, SMB 백엔드의 실제 여유와 다르다.)
+                  # 형식: "<total_bytes> <used_bytes> <avail_bytes>" — 단위 해석은 읽는 쪽에서.
+                  CAP=/tmp/capacity
+                  if df -P -k "$ROOT" >/tmp/df.out 2>/dev/null; then
+                    awk 'NR==2 { printf "%.0f %.0f %.0f\n", $2*1024, $3*1024, $4*1024 }' /tmp/df.out > "$CAP"
+                  else
+                    : > "$CAP"
+                  fi
+                  echo "[scan] $(( $(wc -l < "$OUT") - 1 )) entries · capacity $(cat "$CAP")"
                   kubectl create configmap model-inventory -n llm-serving \
-                    --from-file=inventory="$OUT" --dry-run=client -o yaml | kubectl apply -f -
+                    --from-file=inventory="$OUT" --from-file=capacity="$CAP" \
+                    --dry-run=client -o yaml | kubectl apply -f -
