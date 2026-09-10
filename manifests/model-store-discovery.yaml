@@ -1,6 +1,7 @@
 # ── 모델 스토어 디스커버리 ─────────────────────────────────────────────────────
 # model-store PVC 를 RO 로 마운트해 주기적으로 스캔 → 인벤토리를 ConfigMap(model-inventory)으로 발행.
-# lmd-top 이 이 ConfigMap 을 읽어 Deploy 뷰에 "배포 안 됐어도 존재하는 모델 + 컴파일 타깃 + 위치"를 표시.
+# lmd-top 이 이 ConfigMap 을 읽어 Deploy 뷰에 "배포 안 됐어도 존재하는 모델 + 컴파일 타깃 +
+# 위치 + 그것을 만든 툴체인"을 표시.
 # (PVC 를 파드 하나만 마운트하면 되므로 노드별 DaemonSet 불필요.)
 #
 # 적용:  kubectl apply -f manifests/model-store-discovery.yaml
@@ -55,14 +56,49 @@ spec:
                 - |
                   set -eu
                   ROOT=/mnt/store; OUT=/tmp/inventory
-                  # 포맷: repo | revision | format | compiled_for | size | path
-                  echo "# repo | revision | format | compiled_for | size | path" > "$OUT"
-                  # HF 캐시(원본 가중치)
+
+                  # 산출물이 스스로 기록한 "무엇으로 빌드됐는지"를 읽는다.
+                  #
+                  # 이것이 왜 중요한가: 옵션이 완전히 같은 두 빌드가 서로 다르게 동작할 수
+                  # 있고, 그 차이를 설명하는 유일한 사실이 컴파일러 버전이다. 실제로
+                  # rebel-compiler 0.10.2 로 만든 산출물은 동작하고 0.10.3 은 같은 모델·같은
+                  # 옵션으로 실패했는데, 그 답은 동작하는 산출물 안에만 적혀 있었다.
+                  # (lmd-top/docs/RBLN-COMPILE-INCIDENT.md)
+                  #
+                  # 이 이미지에는 unzip·python3·strings 가 없으므로 tr+awk 로 읽는다.
+                  built_with() {
+                    d=$1; fmt=$2
+                    case "$fmt" in
+                      rbln)
+                        # optimum-rbln 의 save_pretrained 가 남기는 평문 JSON.
+                        v=$(grep -o '"optimum_rbln_version"[[:space:]]*:[[:space:]]*"[^"]*"' \
+                              "$d/rbln_config.json" 2>/dev/null \
+                            | head -1 | sed 's/.*"\([^"]*\)"$/\1/')
+                        [ -n "${v:-}" ] && echo "optimum-rbln=$v" || echo "-"
+                        ;;
+                      furiosa)
+                        # model.fxb 는 zip 이고, 버전 매니페스트는 파일 끝쪽에 비압축으로
+                        # 들어있다. 앞부분에는 없으므로 tail 로 읽는다 — 109MB 산출물에서
+                        # 전체 읽기 5.9s 대 tail 0.14s.
+                        v=$(tail -c 262144 "$d/model.fxb" 2>/dev/null \
+                            | tr -c '[:print:]\n' '\n' \
+                            | awk '/"furiosa_compiler"/{f=1}
+                                   f && /"version"/{ if (match($0,/[0-9][0-9.]*/)) { print substr($0,RSTART,RLENGTH); exit } }')
+                        [ -n "${v:-}" ] && echo "furiosa-compiler=$v" || echo "-"
+                        ;;
+                      *) echo "-" ;;
+                    esac
+                  }
+
+                  # 포맷: repo | revision | format | compiled_for | size | path | built_with
+                  # (built_with 는 뒤에 추가된 열 — 구버전 lmd-top 은 6열까지만 읽고 무시한다.)
+                  echo "# repo | revision | format | compiled_for | size | path | built_with" > "$OUT"
+                  # HF 캐시(원본 가중치) — 컴파일러가 관여하지 않으므로 출처 없음.
                   for d in "$ROOT"/hub/models--*/snapshots/*/ ; do
                     [ -d "$d" ] || continue
                     repo=$(basename "$(dirname "$(dirname "$d")")"); repo=${repo#models--}; repo=$(echo "$repo" | sed 's/--/\//')
                     rev=$(basename "$d"); sz=$(du -sh "$d" 2>/dev/null | cut -f1)
-                    echo "$repo | $rev | hf | - | ${sz:-?} | ${d#$ROOT/}" >> "$OUT"
+                    echo "$repo | $rev | hf | - | ${sz:-?} | ${d#$ROOT/} | -" >> "$OUT"
                   done
                   # NPU 컴파일 산출물(하드웨어·옵션별)
                   for d in "$ROOT"/compiled/*/rbln/*/ "$ROOT"/compiled/*/furiosa/*/ ; do
@@ -70,7 +106,8 @@ spec:
                     fmt=$(basename "$(dirname "$d")")
                     repo=$(basename "$(dirname "$(dirname "$d")")" | sed 's/--/\//')
                     tgt=$(basename "$d"); sz=$(du -sh "$d" 2>/dev/null | cut -f1)
-                    echo "$repo | - | $fmt | $tgt | ${sz:-?} | ${d#$ROOT/}" >> "$OUT"
+                    bw=$(built_with "${d%/}" "$fmt")
+                    echo "$repo | - | $fmt | $tgt | ${sz:-?} | ${d#$ROOT/} | $bw" >> "$OUT"
                   done
                   echo "[scan] $(( $(wc -l < "$OUT") - 1 )) entries"
                   kubectl create configmap model-inventory -n llm-serving \
