@@ -6,7 +6,7 @@ metadata:
 ---
 apiVersion: v1
 data:
-  default-plugins.yaml: "apiVersion: inference.networking.x-k8s.io/v1alpha1\nkind:\
+  default-plugins.yaml: "apiVersion: llm-d.ai/v1alpha1\nkind:\
     \ EndpointPickerConfig\nplugins:\n- type: queue-scorer\n- type: kv-cache-utilization-scorer\n\
     - type: prefix-cache-scorer\n- type: no-hit-lru-scorer\n- type: metrics-data-source\n\
     \  parameters:\n    scheme: http\n    path: /metrics\n    insecureSkipVerify:\

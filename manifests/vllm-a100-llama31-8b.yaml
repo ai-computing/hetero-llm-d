@@ -1,0 +1,86 @@
+# A100 80GB (npu-node-2) — Llama-3.1-8B-Instruct, vLLM.
+# 이종 가속기 연구의 공통 모델: 같은 모델이 ATOM(~/rbln-llama8b-pd)·RNGD(rngd_pd)에도 있다.
+# e11 은 사용자 결정으로 cordon 상태라 scheduler 대신 nodeName 으로 직접 배치한다.
+# 라벨 app=vllm-a100-llama31-8b 는 기존 InferencePool `vllm-a100-pool` 의 selector 와 같다.
+# LoRA: npu-lora 가 학습한 어댑터(/mnt/store/adapters/...)를 재시작 없이 올린다 —
+#   npu-lora serve --endpoint http://<pod>:8000 --name <run> --path /mnt/store/adapters/<model>/<run>
+#   이후 요청의 "model": "<run>" 이 그 어댑터로 응답한다.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-a100-llama31-8b
+  namespace: llm-serving
+  labels: {app: vllm-a100-llama31-8b, accelerator: a100}
+spec:
+  replicas: 1
+  strategy: {type: Recreate}
+  selector:
+    matchLabels: {app: vllm-a100-llama31-8b}
+  template:
+    metadata:
+      labels: {app: vllm-a100-llama31-8b, accelerator: a100}
+    spec:
+      nodeName: npu-node-2
+      runtimeClassName: nvidia
+      containers:
+        - name: vllm
+          image: docker.io/vllm/vllm-openai:v0.11.0
+          args:
+            - --model=meta-llama/Llama-3.1-8B-Instruct
+            - --served-model-name=meta-llama/Llama-3.1-8B-Instruct
+            - --tensor-parallel-size=1
+            - --max-model-len=8192
+            - --gpu-memory-utilization=0.90
+            - --enable-prefix-caching
+            - --enable-lora
+            - --max-lora-rank=64
+            - --max-loras=4
+            - --host=0.0.0.0
+            - --port=8000
+          env:
+            - {name: HF_HOME, value: /hf}
+            - {name: HF_HUB_OFFLINE, value: "1"}
+            - {name: VLLM_ALLOW_RUNTIME_LORA_UPDATING, value: "True"}
+          ports: [{name: http, containerPort: 8000}]
+          resources:
+            limits: {nvidia.com/gpu: 1}
+            requests: {cpu: "4", memory: 32Gi}
+          readinessProbe:
+            httpGet: {path: /health, port: http}
+            periodSeconds: 10
+            failureThreshold: 60
+          volumeMounts:
+            - {name: hf, mountPath: /hf, readOnly: true}
+            - {name: shm, mountPath: /dev/shm}
+            - {name: store, mountPath: /mnt/store, readOnly: true}
+      volumes:
+        - name: hf
+          hostPath: {path: /home/user/.cache/huggingface, type: Directory}
+        - name: shm
+          emptyDir: {medium: Memory, sizeLimit: 8Gi}
+        - name: store
+          persistentVolumeClaim: {claimName: model-store, readOnly: true}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vllm-a100-llama31-8b
+  namespace: llm-serving
+  labels: {app: vllm-a100-llama31-8b}
+spec:
+  selector: {app: vllm-a100-llama31-8b}
+  ports: [{name: http, port: 8000, targetPort: http}]
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: vllm-a100-llama31-8b
+  namespace: monitoring
+  labels: {release: kube-prometheus-stack}
+spec:
+  namespaceSelector:
+    matchNames: [llm-serving]
+  selector:
+    matchLabels: {app: vllm-a100-llama31-8b}
+  endpoints:
+    - {port: http, path: /metrics, interval: 15s}

@@ -54,8 +54,12 @@ spec:
               command: ["/bin/bash", "-c"]
               args:
                 - |
-                  set -eu
+                  set -euo pipefail
                   ROOT=/mnt/store; OUT=/tmp/inventory
+                  if [ ! -d "$ROOT" ] || [ ! -r "$ROOT" ] || [ ! -x "$ROOT" ]; then
+                    echo "store root is unavailable" >&2
+                    exit 1
+                  fi
 
                   # 산출물이 스스로 기록한 "무엇으로 빌드됐는지"를 읽는다.
                   #
@@ -73,7 +77,7 @@ spec:
                         # optimum-rbln 의 save_pretrained 가 남기는 평문 JSON.
                         v=$(grep -o '"optimum_rbln_version"[[:space:]]*:[[:space:]]*"[^"]*"' \
                               "$d/rbln_config.json" 2>/dev/null \
-                            | head -1 | sed 's/.*"\([^"]*\)"$/\1/')
+                            | head -1 | sed 's/.*"\([^"]*\)"$/\1/') || v=""
                         [ -n "${v:-}" ] && echo "optimum-rbln=$v" || echo "-"
                         ;;
                       furiosa)
@@ -83,7 +87,7 @@ spec:
                         v=$(tail -c 262144 "$d/model.fxb" 2>/dev/null \
                             | tr -c '[:print:]\n' '\n' \
                             | awk '/"furiosa_compiler"/{f=1}
-                                   f && /"version"/{ if (match($0,/[0-9][0-9.]*/)) { print substr($0,RSTART,RLENGTH); exit } }')
+                                   f && /"version"/{ if (match($0,/[0-9][0-9.]*/)) { print substr($0,RSTART,RLENGTH); exit } }') || v=""
                         [ -n "${v:-}" ] && echo "furiosa-compiler=$v" || echo "-"
                         ;;
                       *) echo "-" ;;
@@ -121,4 +125,6 @@ spec:
                   echo "[scan] $(( $(wc -l < "$OUT") - 1 )) entries · capacity $(cat "$CAP")"
                   kubectl create configmap model-inventory -n llm-serving \
                     --from-file=inventory="$OUT" --from-file=capacity="$CAP" \
-                    --dry-run=client -o yaml | kubectl apply -f -
+                    --from-literal=scanned_at="$(date +%s)" \
+                    --dry-run=client -o yaml > /tmp/model-inventory.yaml
+                  kubectl apply -f /tmp/model-inventory.yaml
