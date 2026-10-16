@@ -1,0 +1,183 @@
+{
+  "run_status": "slides_recorded",
+  "deck_name": "ETRI_NPU_TopDown_v10",
+  "selected_backend": "built-in image tool",
+  "sample_generation_method": {
+    "backend_used": "built-in image tool",
+    "tool_name": "image_gen__imagegen",
+    "mode": "generate",
+    "model": "built-in default",
+    "size": "16:9",
+    "quality": "built-in default",
+    "prompt_source": "approved sample slide 1: ETRI whole-stack conceptual map",
+    "approved_sample_path": "/home/gspark/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
+    "input_context_preparation": "view_image all local inputs then referenced_image_paths in image_gen__imagegen",
+    "handoff_rule": "Use same built-in image backend; return blocker if unavailable. No local rendering or overlays."
+  },
+  "max_concurrent_slides": 3,
+  "slides": [
+    {
+      "slide_id": "slide_01",
+      "number": 1,
+      "title": "이종 자원 관리, 우리는 어디를 개발했나",
+      "job": "prompts/slide_01.json",
+      "out": "origin_image/slide_01.png",
+      "input_images": [
+        {
+          "path": "/home/gspark/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v10/origin_image/slide_01.png",
+          "role": "Approved style only: blue/white Korean technical presentation. Vary layout, do not repeat full stack."
+        }
+      ],
+      "requires_context_images": true,
+      "status": "accepted",
+      "dispatch": null,
+      "result": {
+        "final_image": "origin_image/slide_01.png",
+        "accepted_sample": true
+      },
+      "blocker": null
+    },
+    {
+      "slide_id": "slide_02",
+      "number": 2,
+      "title": "장비뿐 아니라 실행 조건도 선택해야 합니다",
+      "job": "prompts/slide_02.json",
+      "out": "origin_image/slide_02.png",
+      "input_images": [
+        {
+          "path": "/home/gspark/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v10/origin_image/slide_01.png",
+          "role": "Approved style only: blue/white Korean technical presentation. Vary layout, do not repeat full stack."
+        }
+      ],
+      "requires_context_images": true,
+      "status": "accepted",
+      "dispatch": null,
+      "result": {
+        "final_image": "origin_image/slide_02.png",
+        "accepted_sample": true
+      },
+      "blocker": null
+    },
+    {
+      "slide_id": "slide_03",
+      "number": 3,
+      "title": "모델이 NPU에서 실행되는 과정을 분석했습니다",
+      "job": "prompts/slide_03.json",
+      "out": "origin_image/slide_03.png",
+      "input_images": [
+        {
+          "path": "/home/gspark/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v10/origin_image/slide_01.png",
+          "role": "Approved style only: blue/white Korean technical presentation. Vary layout, do not repeat full stack."
+        }
+      ],
+      "requires_context_images": true,
+      "status": "recorded",
+      "dispatch": {
+        "agent_id": "/root/slide03",
+        "agent_nickname": null,
+        "prompt": "prompts/slide_03.json",
+        "prompt_sha256": "5f1ded2e433445b4652ac05efde427bb446a03ebc9c3122d91168fed7c638284",
+        "dispatched_at": "2026-09-08T08:18:32Z"
+      },
+      "result": {
+        "agent_id": "/root/slide03",
+        "backend_used": "built-in image tool",
+        "selected_source": "/home/gspark/.codex/generated_images/01a0800d-9ac7-7673-b3bb-fe86a1b4c300/exec-c9b5c78e-24f0-4275-9f49-8a3cc32fc0d9.png",
+        "selected_source_sha256": "c026363bf1c84c262cb7507c2a5ff8ee9855caffb1a4077bf95bb47e14cba6a5",
+        "final_image": "origin_image/slide_03.png",
+        "final_image_sha256": "c026363bf1c84c262cb7507c2a5ff8ee9855caffb1a4077bf95bb47e14cba6a5",
+        "expected_backend": "built-in image tool",
+        "expected_backend_labels": [
+          "built-in image tool",
+          "image_gen__imagegen"
+        ],
+        "sample_generation_method_matched": true,
+        "qa_note": "Revised plain-language diagram checked: readable, consistent style, no truncation.",
+        "recorded_at": "2026-09-08T08:19:48Z"
+      },
+      "blocker": null
+    },
+    {
+      "slide_id": "slide_04",
+      "number": 4,
+      "title": "실행의 일부를 바꿔볼 수 있는 기반을 만들었습니다",
+      "job": "prompts/slide_04.json",
+      "out": "origin_image/slide_04.png",
+      "input_images": [
+        {
+          "path": "/home/gspark/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v10/origin_image/slide_01.png",
+          "role": "Approved style only: blue/white Korean technical presentation. Vary layout, do not repeat full stack."
+        }
+      ],
+      "requires_context_images": true,
+      "status": "recorded",
+      "dispatch": {
+        "agent_id": "/root/slide04",
+        "agent_nickname": null,
+        "prompt": "prompts/slide_04.json",
+        "prompt_sha256": "bb78a6dd198d178e5395b6bdc3259ceaad0507b0cff4a6860855dc73293147cf",
+        "dispatched_at": "2026-09-08T08:18:32Z"
+      },
+      "result": {
+        "agent_id": "/root/slide04",
+        "backend_used": "built-in image tool",
+        "selected_source": "/home/gspark/.codex/generated_images/01a0800d-c5e9-7de1-9a80-ae928c17588e/exec-34aba766-5046-4bbe-8e77-44472ddaac60.png",
+        "selected_source_sha256": "510737f087e524540dc7a1900a4acb4fc99ac47a279362e33c52ddf3f6d6d9a3",
+        "final_image": "origin_image/slide_04.png",
+        "final_image_sha256": "510737f087e524540dc7a1900a4acb4fc99ac47a279362e33c52ddf3f6d6d9a3",
+        "expected_backend": "built-in image tool",
+        "expected_backend_labels": [
+          "built-in image tool",
+          "image_gen__imagegen"
+        ],
+        "sample_generation_method_matched": true,
+        "qa_note": "Revised plain-language diagram checked: readable, consistent style, no truncation.",
+        "recorded_at": "2026-09-08T08:19:48Z"
+      },
+      "blocker": null
+    },
+    {
+      "slide_id": "slide_05",
+      "number": 5,
+      "title": "실제 KV를 넘겨 NPU 사이에서 실행을 나눴습니다",
+      "job": "prompts/slide_05.json",
+      "out": "origin_image/slide_05.png",
+      "input_images": [
+        {
+          "path": "/home/gspark/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v10/origin_image/slide_01.png",
+          "role": "Approved style only: blue/white Korean technical presentation. Vary layout, do not repeat full stack."
+        }
+      ],
+      "requires_context_images": true,
+      "status": "accepted",
+      "dispatch": null,
+      "result": {
+        "final_image": "origin_image/slide_05.png",
+        "accepted_sample": true
+      },
+      "blocker": null
+    },
+    {
+      "slide_id": "slide_07",
+      "number": 7,
+      "title": "다음은 조건·단계·장비를 함께 고르는 정책입니다",
+      "job": "prompts/slide_07.json",
+      "out": "origin_image/slide_07.png",
+      "input_images": [
+        {
+          "path": "/home/gspark/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v10/origin_image/slide_01.png",
+          "role": "Approved style only: blue/white Korean technical presentation. Vary layout, do not repeat full stack."
+        }
+      ],
+      "requires_context_images": true,
+      "status": "accepted",
+      "dispatch": null,
+      "result": {
+        "final_image": "origin_image/slide_07.png",
+        "accepted_sample": true
+      },
+      "blocker": null
+    }
+  ],
+  "updated_at": "2026-09-08T08:19:48Z"
+}

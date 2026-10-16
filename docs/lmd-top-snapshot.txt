@@ -1,0 +1,73 @@
+== lmd-top snapshot (prom=192.0.2.8:30090, ns=llm-serving) ==
+gateway: 192.0.2.12 Programmed
+
+[nodes] 8
+  cpu-1                    load1  0.14  mem 10/401G
+  cpu-2                    load1  0.21  mem 13/401G
+  cpu-3                    load1   NaN  mem 0/0G
+  dgx-spark0               load1  0.11  mem 9/131G
+  etri-001                 load1  0.24  mem 21/1623G
+  etri-esc8000-e11         load1   NaN  mem 0/0G
+  gspark-poweredge-r7525   load1  3.51  mem 18/401G
+  gx10-4744                load1 21.10  mem 88/129G
+
+[accelerators] 14
+  GB10  gpu0   dgx-spark0       util   0.0%  mem 9/131G  47°C 4W  
+  GB10  gpu0   gx10-4744        util  96.0%  mem 88/129G  47°C 4W  
+  RBLN  rbln0  etri-001         util   0.0%  mem 0/17G  41°C 19W  
+  RBLN  rbln1  etri-001         util   0.0%  mem 0/17G  38°C 19W  
+  RBLN  rbln2  etri-001         util   0.0%  mem 0/17G  38°C 19W  
+  RBLN  rbln3  etri-001         util   0.0%  mem 0/17G  40°C 18W  
+  RNGD  npu0   etri-001         util   0.0%  mem 0/51G  41°C 38W  
+  RNGD  npu1   etri-001         util   0.0%  mem 0/51G  41°C 39W  
+  RNGD  npu2   etri-001         util   0.0%  mem 0/51G  38°C 41W  
+  RNGD  npu3   etri-001         util   0.0%  mem 0/51G  41°C 40W  
+  RNGD  npu0   etri-esc8000-e11 util   0.0%  mem 0/51G  37°C 38W  
+  RNGD  npu1   etri-esc8000-e11 util   0.0%  mem 0/51G  37°C 39W  
+  RNGD  npu2   etri-esc8000-e11 util   0.0%  mem 0/51G  36°C 40W  
+  RNGD  npu3   etri-esc8000-e11 util   0.0%  mem 0/51G  36°C 39W  
+
+[inference pools] 5
+  llmd-router      ready 0  queue NaN  kv NaN  sat NaN
+  gemma4-rbln-pool ready NaN  queue NaN  kv NaN  sat NaN
+  k-exaone-236b-pool ready NaN  queue NaN  kv NaN  sat NaN
+  serve-furiosa-ai-qwen3-4b-fp8-pool ready NaN  queue NaN  kv NaN  sat NaN
+  vllm-a100-pool   ready NaN  queue NaN  kv NaN  sat NaN
+
+[EPP] profile=default picker=max-score-picker (default)
+  scorers: queue-scorer·w2, kv-cache-utilization-scorer·w2, prefix-cache-scorer·w3, no-hit-lru-scorer·w2
+
+[models] 12
+  ds4-deepseek-v4-flash    0/0  run=- wait=- tps=-  path=-  ○ Scaled-0
+  ds4-inject-proxy         2/2  run=- wait=- tps=-  path=/gpu/deepseek,/v1  ● Running
+  ds4-v4flash-gb10         0/0  run=- wait=- tps=-  path=-  ○ Scaled-0
+  ds4-v4flash-gb10-n2      0/0  run=- wait=- tps=-  path=-  ○ Scaled-0
+  gemma4-rbln              0/0  run=- wait=- tps=-  path=-  ○ Scaled-0
+  k-exaone-236b-llm-d-modelservice-decode 0/0  run=- wait=- tps=-  path=-  ○ Scaled-0
+  ollama-cpu               0/0  run=- wait=- tps=-  path=/cpu/ollama  ○ Scaled-0
+  serve-furiosa-ai-qwen3-4b-fp8 0/0  run=- wait=- tps=-  path=-  ○ Scaled-0
+  vllm-exaone              0/0  run=- wait=- tps=-  path=-  ○ Scaled-0
+  vllm-qwen05b-gb10        0/0  run=- wait=- tps=-  path=/gpu/qwen  ○ Scaled-0
+  vllm-rbln-koni           0/0  run=- wait=- tps=-  path=/atom/koni  ○ Scaled-0
+  vllm-v4flash             0/0  run=- wait=- tps=-  path=-  ○ Scaled-0
+
+[routes] 8 (epp_in_path=true)
+  /atom/gemma → InferencePool/gemma4-rbln-pool
+  /gpu/deepseek → Service/ds4-inject-proxy
+  /atom/koni → Service/vllm-rbln-koni
+  /cpu/ollama → Service/ollama-cpu
+  /v1        → Service/ds4-inject-proxy
+  /gpu/qwen  → Service/vllm-qwen05b-gb10
+  /rngd/exaone → InferencePool/k-exaone-236b-pool
+  /rngd/qwen3-4b-fp8 → InferencePool/serve-furiosa-ai-qwen3-4b-fp8-pool
+[SLO] low-latency(p100), gemma4-rbln(p10), high-throughput(p10)
+
+[pods] 8
+  ds4-inject-proxy-bf8fd88b8-5g98g         Running  1/1 cpu-1 restarts=0
+  ds4-inject-proxy-bf8fd88b8-8lcvz         Running  1/1 cpu-2 restarts=0
+  gemma4-rbln-epp-7c4979c659-44fv9         Running  1/1 cpu-1 restarts=0
+  k-exaone-236b-epp-7486bd69cb-87phj       Running  1/1 cpu-2 restarts=0
+  llmd-router-epp-54967c7746-4cqp8         Running  1/1 cpu-1 restarts=0
+  model-discovery-29732150-mxqjl           Succeeded 0/1 cpu-1 restarts=0
+  rbln-introspect                          Succeeded 0/1 etri-001 restarts=0
+  serve-furiosa-ai-qwen3-4b-fp8-epp-5859f9bf87-6g6bx Running  1/1 cpu-1 restarts=0

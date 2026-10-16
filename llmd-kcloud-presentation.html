@@ -1,0 +1,907 @@
+<!doctype html><html><head><!-- frame-runtime --><script>window.__FRAME_PREAMBLE={"capabilities":{"mcp":"mcp.BQqQVVN_.js"},"transforms":"_transforms.DYk1Ltlh.js"}</script><script>(function(){"use strict";const z="modulepreload",x=function(e){return"/"+e},W={},C=function(n,t,u){let o=Promise.resolve();function i(f){const a=new Event("vite:preloadError",{cancelable:!0});if(a.payload=f,window.dispatchEvent(a),!a.defaultPrevented)throw f}return o.then(f=>{for(const a of f||[])a.status==="rejected"&&i(a.reason);return n().catch(i)})};function A(e){if(e==null||typeof e!="object")return!1;const n=e.__frame_init;return n!=null&&typeof n=="object"}function O(e){if(window===top||e.type==="auxclick"&&e.button!==1)return;const n=e.composedPath?e.composedPath():[e.target];let t=null;for(let f=0;f<n.length;f++){const a=n[f];if(a&&a.matches&&a.matches("a[href],area[href]")){t=a;break}}if(!t&&e.target&&e.target.closest&&(t=e.target.closest("a[href],area[href]")),!t)return;const u=t.getAttribute("href");if(!u)return;let o,i;try{o=new URL(u,document.baseURI),i=new URL(document.baseURI).origin}catch{return}(o.protocol==="http:"||o.protocol==="https:")&&o.origin!==i&&(e.preventDefault(),parent.postMessage({__frame_nav:!0,url:o.href},"*"))}const M={};function v(e){if(window===top)return;const n=Date.now();n-(M[e]||0)<500||(M[e]=n,parent.postMessage({__frame_engaged:!0,kind:e},"*"))}function T(){addEventListener("click",O,!0),addEventListener("auxclick",O,!0)}function N(){addEventListener("scroll",()=>v("scroll"),{capture:!0,passive:!0}),addEventListener("pointermove",()=>v("pointer"),{capture:!0,passive:!0}),addEventListener("click",()=>v("click"),{capture:!0,passive:!0})}function $(e,n,t){const u=[...n.values()].filter(o=>o.targets.some(i=>i.startsWith(e+".")));return{wrap(o,i){const f=`${e}.${o}`,a=u.filter(s=>s.targets.includes(f));return a.length===0?(...s)=>{try{return i(...s)}catch(d){return Promise.reject(d)}}:(...s)=>{let d=s;for(const c of a){const l=c.module.parameters;if(l)try{d=l(d)}catch{return Promise.reject({code:"transform_error",id:c.id,scope:e,message:"parameters transform failed"})}}let g;try{g=i(...d)}catch(c){g=Promise.reject(c)}return g.then(c=>{for(let l=a.length-1;l>=0;l--){const p=a[l],m=p.module.returns;if(m)try{c=m(c)}catch{return t({id:p.id,scope:e,leg:"returns"}),c}}return c},c=>{for(let l=a.length-1;l>=0;l--){const p=a[l],m=p.module.throws;if(m)try{c=m(c)}catch{return t({id:p.id,scope:e,leg:"throws"}),Promise.reject(c)}}return Promise.reject(c)})}}}}function q(e,n,t,u=()=>{}){const o=new Set(e.changes??[]),i=new Map;for(const f of o){const a=n[f];a&&i.set(f,a)}return{contract:e.contract,changes:o,flags:new Set(e.flags??[]),capabilities:e.capabilities??{},transforms:i,shellOrigin:t.shellOrigin,mount:t.mount,pipe:f=>$(f,i,u)}}(function(){const e=Object.defineProperty,n=globalThis,t=["RTCPeerConnection","webkitRTCPeerConnection","RTCDataChannel","RTCIceCandidate","RTCSessionDescription","RTCRtpSender","RTCRtpReceiver"];let u=0;for(let o=0;o<t.length;o++){const i=t[o];try{e(n,i,{value:void 0,writable:!1,configurable:!1})}catch{try{delete n[i]}catch{}try{e(n,i,{value:void 0,writable:!1,configurable:!0})}catch{}}typeof n[i]=="function"&&u++}if(u&&window!==top)try{parent.postMessage({__frame_rtc_lockdown_failed:u},"*")}catch{}})();const I=1e4,U=Object.freeze([...window.__FRAME_PREAMBLE?.origins??["https://claude.ai","https://preview.claude.ai"]]);function D(e){for(const n of U)if(n.endsWith(":*"))try{const t=new URL(e);if(`${t.protocol}//${t.hostname}:*`===n)return!0}catch{}else if(e===n)return!0;return!1}const _=Object.freeze({...window.__FRAME_PREAMBLE?.capabilities??{}}),y=window.__FRAME_PREAMBLE?.transforms,S=/^[\w.-]+\.js$/,B=/^[a-z][a-z0-9_-]{0,63}$/;let L=null,b=null;function E(e,n,t){try{Object.defineProperty(e,n,{value:t,writable:!1,configurable:!1,enumerable:!0})}catch{try{Object.defineProperty(e,n,{value:t,writable:!1,configurable:!0,enumerable:!0})}catch{}}}const h=new Map;function F(e,n){const t=h.get(e);if(!t)return;Object.assign(t.impl,n),t.impl.__settled=()=>Promise.reject({code:"capability_removed",message:`${e}: method not in this runtime`});const u=t.queue;t.queue=[];for(const o of u){const i=n[o.method];i?i(...o.args).then(o.resolve,o.reject):o.reject({code:"capability_removed",message:`${e}.${o.method} is not in this runtime`})}}function P(e,n){const t=h.get(e);if(!t)return;t.impl.__settled=()=>Promise.reject(n);const u=t.queue;t.queue=[];for(const o of u)o.reject(n)}const R=Object.getOwnPropertyDescriptor(window,"claude");if(window!==top&&!(R&&R.writable===!1)){T(),N();const e=R?.value??{};E(window,"claude",e);const n=s=>{const d={impl:Object.create(null),queue:[]};h.set(s,d);const g=new Proxy(d.impl,{get:(c,l)=>{if(typeof l=="string"&&!(l==="then"||l==="toJSON"||l==="valueOf"))return l==="toString"?Object.prototype.toString:(...p)=>{const m=c[l]??c.__settled;return m?m(...p):new Promise((j,r)=>{d.queue.push({method:l,args:p,resolve:j,reject:r})})}},set:()=>!1});E(e,s,g)};for(const s of Object.keys(_)){if(e[s]!==void 0){E(e,s,e[s]);continue}n(s)}let t=null,u=null,o=0;const i=s=>{s.source!==parent||!D(s.origin)||A(s.data)&&(t=s.data.__frame_init,b=s.origin,removeEventListener("message",i),clearTimeout(o),u?.())};addEventListener("message",i),parent.postMessage({__frame_connect:!0},"*");const f=new Promise(s=>{u=s,o=setTimeout(()=>{removeEventListener("message",i),s()},I)}),a=document.readyState==="loading"?new Promise(s=>document.addEventListener("DOMContentLoaded",()=>s(),{once:!0})):Promise.resolve();f.then(async()=>{if(!t||!b){for(const r of h.keys())P(r,{code:"not_granted",message:"frame initialization did not arrive - capability unavailable"});return}const s=r=>C(()=>import("/_runtime/"+r),void 0),d=Object.keys(t.capabilities??{});for(const r of d)Object.hasOwn(_,r)||B.test(r)&&e[r]===void 0&&(n(r),P(r,{code:"capability_disabled",message:"capability not in this runtime generation"}));const g=d.filter(r=>Object.hasOwn(_,r)).map(r=>[r,_[r]]).filter(r=>typeof r[1]=="string"&&S.test(r[1])),[c,...l]=await Promise.allSettled([y&&S.test(y)?s(y):Promise.resolve({}),...g.map(([,r])=>s(r))]),p=b;L=q(t,c.status==="fulfilled"&&c.value?.TRANSFORMS||{},{shellOrigin:p,mount:F},r=>parent.postMessage({__frame_cap_telemetry:r},p));const m=r=>parent.postMessage({__frame_cap_telemetry:{kind:"cap-load-error",cap:r}},p),j=L;l.forEach((r,w)=>{const k=g[w][0];if(r.status!=="fulfilled"){m(k);return}try{r.value?.install?.(j)}catch{m(k)}});for(const[r,w]of h)w.queue.length===0&&Object.keys(w.impl).length>0||P(r,{code:d.includes(r)?"capability_disabled":"not_granted",message:"capability not available in this session"});await a,parent.postMessage({__frame_ready:!0},b)})}})();</script><!-- /frame-runtime --><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<title>llm-d × K-Cloud 자원관리 발표</title>
+<style>
+  :root {
+    --ground: #0d1317;
+    --ground-2: #0b1015;
+    --surface: #141d24;
+    --surface-2: #1a2731;
+    --line: rgba(126,148,158,0.16);
+    --line-strong: rgba(126,148,158,0.30);
+    --text: #d7dee3;
+    --text-dim: #8c989f;
+    --text-faint: #5f6e78;
+    --accent: #35d6bf;
+    --accent-deep: #1f9f8f;
+    --accent-dim: rgba(53,214,191,0.13);
+    --gpu: #8fc93a;
+    --rbln: #ff6f59;
+    --furiosa: #5b9dff;
+    --cpu: #9aa7ae;
+    --ok: #4bc39a;
+    --warn: #e6a94b;
+    --no: #e0655a;
+    --sans: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+    --mono: "SF Mono", "JetBrains Mono", "Cascadia Code", ui-monospace, "D2Coding", Menlo, Consolas, monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    background: var(--ground-2);
+    color: var(--text);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow: hidden;
+  }
+  body { display: flex; align-items: center; justify-content: center; }
+
+  .backdrop {
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(120% 80% at 78% -10%, rgba(53,214,191,0.10), transparent 60%),
+      radial-gradient(90% 70% at 10% 110%, rgba(91,157,255,0.07), transparent 55%),
+      var(--ground-2);
+    z-index: 0;
+  }
+
+  .stage {
+    position: relative; z-index: 1;
+    width: min(100vw, 177.78vh);
+    height: min(56.25vw, 100vh);
+    background: var(--ground);
+    container-type: size;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px var(--line), 0 30px 80px rgba(0,0,0,0.55);
+  }
+
+  .slide {
+    position: absolute; inset: 0;
+    padding: 5.4cqh 6.5cqh 7cqh;
+    display: flex; flex-direction: column;
+    opacity: 0; visibility: hidden;
+    transition: opacity .45s ease;
+    pointer-events: none;
+  }
+  .slide.active { opacity: 1; visibility: visible; pointer-events: auto; }
+  .slide.active .rise { animation: rise .55s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(1.4cqh); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .slide { transition: none; }
+    .slide.active .rise { animation: none; }
+  }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: 1.8cqh;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--accent); display: flex; align-items: center; gap: 1.4cqh;
+  }
+  .eyebrow .num { color: var(--text-faint); }
+  .eyebrow::before { content: ""; width: 3.4cqh; height: 1px; background: var(--accent); opacity: .7; }
+
+  h1.title { font-size: 5cqh; font-weight: 650; line-height: 1.06; letter-spacing: -0.01em; text-wrap: balance; margin-top: 2.2cqh; }
+  .subtitle { color: var(--text-dim); font-size: 2.5cqh; line-height: 1.5; max-width: 74cqh; margin-top: 1.5cqh; }
+  .slide-head { flex: 0 0 auto; margin-bottom: 2.8cqh; }
+  .slide-head h1.title { font-size: 4.2cqh; margin-top: 1.4cqh; }
+  .body-zone { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 2cqh; }
+
+  p, li { font-size: 2.4cqh; line-height: 1.5; color: var(--text); }
+  strong { color: #fff; font-weight: 650; }
+  .accent-t { color: var(--accent); }
+  .dim { color: var(--text-dim); }
+
+  .legend { display: flex; gap: 1.6cqh; flex-wrap: wrap; }
+  .chip {
+    font-family: var(--mono); font-size: 1.75cqh; letter-spacing: .04em;
+    display: inline-flex; align-items: center; gap: .8cqh;
+    padding: .7cqh 1.3cqh; border: 1px solid var(--line-strong); border-radius: 2px;
+    color: var(--text-dim); background: var(--surface);
+  }
+  .dot { width: 1.3cqh; height: 1.3cqh; border-radius: 50%; flex: 0 0 auto; display:inline-block; vertical-align: middle; }
+  .dot.gpu { background: var(--gpu); } .dot.rbln { background: var(--rbln); }
+  .dot.furiosa { background: var(--furiosa); } .dot.cpu { background: var(--cpu); }
+
+  .tbl-wrap { overflow: auto; border: 1px solid var(--line); border-radius: 4px; }
+  table { border-collapse: collapse; width: 100%; font-size: 2cqh; }
+  th, td { text-align: left; padding: 1.1cqh 1.5cqh; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  thead th {
+    font-family: var(--mono); font-size: 1.65cqh; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--text-dim); background: var(--surface); position: sticky; top: 0; border-bottom: 1px solid var(--line-strong);
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:nth-child(even) td { background: rgba(255,255,255,0.014); }
+  .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  td.c, th.c { text-align: center; }
+  .num-col { font-variant-numeric: tabular-nums; color: var(--accent); }
+
+  .st { font-family: var(--mono); font-weight: 700; font-size: 2.2cqh; }
+  .st.ok { color: var(--ok); } .st.warn { color: var(--warn); } .st.no { color: var(--no); }
+
+  .grid { display: grid; gap: 1.8cqh; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 5px;
+    padding: 2.1cqh 2.3cqh; display: flex; flex-direction: column; gap: 1cqh; min-height: 0;
+  }
+  .card h3 { font-size: 2.5cqh; font-weight: 640; letter-spacing: -.005em; }
+  .card p { font-size: 2cqh; color: var(--text-dim); line-height: 1.45; }
+  .card .k { font-family: var(--mono); font-size: 1.65cqh; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+  .card.edge-gpu { border-left: 2px solid var(--gpu); }
+  .card.edge-rbln { border-left: 2px solid var(--rbln); }
+  .card.edge-furiosa { border-left: 2px solid var(--furiosa); }
+  .card.edge-accent { border-left: 2px solid var(--accent); }
+
+  .kv-line { display: flex; gap: 1cqh; font-size: 2cqh; align-items:baseline; }
+  .kv-line .lbl { font-family: var(--mono); color: var(--text-faint); font-size: 1.65cqh; letter-spacing: .08em; text-transform: uppercase; min-width: 11cqh; flex: 0 0 auto; }
+
+  .foot {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 4.2cqh;
+    display: flex; align-items: center; gap: 2cqh; padding: 0 6.5cqh;
+    font-family: var(--mono); font-size: 1.5cqh; letter-spacing: .08em; color: var(--text-faint); z-index: 5;
+  }
+  .foot .title-mini { text-transform: uppercase; }
+  .foot .spacer { flex: 1 1 auto; }
+  .rail { position: absolute; left: 6.5cqh; right: 6.5cqh; bottom: 4.2cqh; display: flex; gap: .4cqh; height: .7cqh; }
+  .seg { flex: 1 1 0; background: var(--line); border-radius: 2px; cursor: pointer; transition: background .3s; }
+  .seg.passed { background: var(--accent-deep); } .seg.here { background: var(--accent); }
+  .seg:hover { background: var(--text-dim); }
+  .counter { color: var(--text-dim); } .counter b { color: var(--accent); font-weight: 700; }
+
+  .nav-btn { position: absolute; top: 0; bottom: 6cqh; width: 11%; z-index: 4; border: none; background: transparent; cursor: pointer; }
+  .nav-btn.prev { left: 0; } .nav-btn.next { right: 0; }
+  .nav-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: -4px; }
+
+  .title-slide { justify-content: center; }
+  .title-slide h1.title { font-size: 6.2cqh; margin-top: 2.8cqh; max-width: 90cqh; }
+  .title-meta { margin-top: 4cqh; display: flex; gap: 2.2cqh; align-items: center; font-family: var(--mono); font-size: 1.8cqh; color: var(--text-dim); letter-spacing: .05em; }
+  .title-meta .v { width: 1px; height: 2.2cqh; background: var(--line-strong); }
+
+  .agenda { display: flex; flex-direction: column; flex: 1 1 auto; }
+  .agenda-item { display: flex; align-items: baseline; gap: 2.6cqh; padding: 2.1cqh 0; border-bottom: 1px solid var(--line); }
+  .agenda-item:last-child { border-bottom: none; }
+  .agenda-item .qn { font-family: var(--mono); font-size: 2.9cqh; color: var(--accent); font-weight: 700; min-width: 8cqh; }
+  .agenda-item .qt { font-size: 3cqh; font-weight: 600; }
+  .agenda-item .qp { margin-left: auto; font-family: var(--mono); font-size: 1.65cqh; letter-spacing: .1em; text-transform: uppercase; color: var(--text-faint); }
+
+  .lede { font-size: 2.85cqh; line-height: 1.55; color: var(--text); max-width: 96cqh; }
+  .lede strong { color: var(--accent); }
+  .thesis { background: linear-gradient(100deg, var(--accent-dim), transparent 80%); border-left: 2px solid var(--accent); padding: 2cqh 2.5cqh; border-radius: 4px; font-size: 2.6cqh; line-height: 1.5; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2cqh; flex: 1 1 auto; min-height: 0; }
+  .col-head { font-family: var(--mono); font-size: 1.7cqh; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 1cqh; }
+
+  ul.clean { list-style: none; display: flex; flex-direction: column; gap: .9cqh; }
+  ul.clean li { position: relative; padding-left: 2.5cqh; font-size: 2.1cqh; color: var(--text); line-height: 1.42; }
+  ul.clean li::before { content: "▸"; position: absolute; left: 0; color: var(--accent); font-size: 1.85cqh; top: .1cqh; }
+
+  .tag-pill { font-family: var(--mono); font-size: 1.55cqh; padding: .35cqh 1cqh; border-radius: 2px; letter-spacing: .05em; }
+  .pill-ok { background: rgba(75,195,154,0.14); color: var(--ok); }
+
+  .hint { position: fixed; bottom: 1.4vh; left: 50%; transform: translateX(-50%); font-family: var(--mono); font-size: 11px; letter-spacing: .12em; color: #47555e; z-index: 20; text-transform: uppercase; }
+
+  /* ---------- LAYER CAKE ---------- */
+  .arch { display: grid; grid-template-columns: 1fr 22cqh; gap: 2cqh; flex: 1 1 auto; min-height: 0; }
+  .layers { display: flex; flex-direction: column; gap: .55cqh; }
+  .layer {
+    display: flex; align-items: center; gap: 1.8cqh;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
+    padding: 1.15cqh 1.6cqh; flex: 1 1 0;
+  }
+  .layer.hl { border-color: var(--accent); background: linear-gradient(90deg, var(--accent-dim), var(--surface) 60%); }
+  .layer .lmeta { flex: 0 0 22cqh; display: flex; flex-direction: column; gap: .2cqh; }
+  .layer .lnum { font-family: var(--mono); font-size: 1.5cqh; letter-spacing: .1em; color: var(--text-faint); }
+  .layer .lname { font-size: 2.15cqh; font-weight: 640; }
+  .layer .lname.acc { color: var(--accent); }
+  .layer .lbody { flex: 1 1 auto; display: flex; align-items: center; gap: 1cqh; flex-wrap: wrap; }
+  .cbox { font-family: var(--mono); font-size: 1.65cqh; padding: .55cqh 1.1cqh; border: 1px solid var(--line-strong); border-radius: 3px; color: var(--text-dim); white-space: nowrap; }
+  .cbox.solid { background: var(--surface-2); color: var(--text); }
+  .cbox.gpu { border-color: var(--gpu); color: var(--gpu); }
+  .cbox.rbln { border-color: var(--rbln); color: var(--rbln); }
+  .cbox.furiosa { border-color: var(--furiosa); color: var(--furiosa); }
+  .cbox.cpu { border-color: var(--cpu); color: var(--cpu); }
+  .layer .lnote { font-size: 1.7cqh; color: var(--text-faint); margin-left: auto; padding-left: 1cqh; }
+  .arrow-mini { text-align: center; color: var(--text-faint); font-size: 1.5cqh; line-height: .4; height: .5cqh; }
+  .cr-panel {
+    border: 1px dashed var(--line-strong); border-radius: 5px; background: rgba(53,214,191,0.04);
+    padding: 1.8cqh 1.6cqh; display: flex; flex-direction: column; gap: 1.2cqh;
+  }
+  .cr-panel .cp-h { font-family: var(--mono); font-size: 1.5cqh; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+  .cr-item { display: flex; flex-direction: column; gap: .3cqh; }
+  .cr-item .cn { font-family: var(--mono); font-size: 1.85cqh; color: var(--text); }
+  .cr-item .cd { font-size: 1.65cqh; color: var(--text-faint); line-height: 1.35; }
+  .cr-item .badge { font-family: var(--mono); font-size: 1.35cqh; padding: .1cqh .7cqh; border-radius: 2px; margin-left: .6cqh; }
+  .badge.ga { background: rgba(75,195,154,0.16); color: var(--ok); }
+  .badge.alpha { background: rgba(230,169,75,0.16); color: var(--warn); }
+
+  /* ---------- FLOW TIMELINE ---------- */
+  .timeline { display: flex; flex-direction: column; flex: 1 1 auto; }
+  .tstep { display: flex; gap: 2.2cqh; align-items: baseline; padding: 1.32cqh 0; border-bottom: 1px solid var(--line); }
+  .tstep:last-child { border-bottom: none; }
+  .tstep .tn { font-family: var(--mono); font-size: 2.2cqh; font-weight: 700; color: var(--accent); min-width: 4.5cqh; }
+  .tstep .tt { font-size: 2.3cqh; color: var(--text); }
+  .tstep .tt b { color: #fff; }
+  .tstep .tk { font-family: var(--mono); font-size: 1.7cqh; color: var(--text-faint); margin-left: auto; padding-left: 1.5cqh; white-space: nowrap; }
+
+  /* ---------- primer split ---------- */
+  .split2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.8cqh; }
+  .phase-card { border: 1px solid var(--line); border-radius: 5px; padding: 2cqh 2.2cqh; display:flex; flex-direction:column; gap:1cqh; }
+  .phase-card.prefill { border-top: 2px solid var(--furiosa); }
+  .phase-card.decode { border-top: 2px solid var(--rbln); }
+  .phase-card .ph { font-size: 2.6cqh; font-weight: 650; }
+  .phase-card .pmeta { font-family: var(--mono); font-size: 1.7cqh; letter-spacing: .05em; }
+  .phase-card .pmeta.f { color: var(--furiosa); } .phase-card .pmeta.d { color: var(--rbln); }
+  .phase-card p { font-size: 2cqh; color: var(--text-dim); line-height: 1.42; }
+
+  /* research 3-step */
+  .research-topic { display: grid; grid-template-columns: 1.1fr 1fr 1fr; border: 1px solid var(--line); border-radius: 5px; overflow: hidden; }
+  .research-topic > div { padding: 1.6cqh 1.9cqh; border-right: 1px solid var(--line); display:flex; flex-direction:column; gap:.6cqh; }
+  .research-topic > div:last-child { border-right: none; }
+  .research-topic .rt-lbl { font-family: var(--mono); font-size: 1.45cqh; letter-spacing: .12em; text-transform: uppercase; color: var(--text-faint); }
+  .research-topic .rt-title { font-size: 2.3cqh; font-weight: 640; color: #fff; }
+  .research-topic .rt-num { font-family: var(--mono); color: var(--accent); }
+  .research-topic p { font-size: 1.85cqh; color: var(--text-dim); line-height: 1.4; }
+  .research-wrap { display:flex; flex-direction:column; gap: 1.6cqh; }
+
+  .node { background: var(--surface); border: 1px solid var(--line-strong); border-radius: 5px; padding: 1.6cqh 1.8cqh; display: flex; flex-direction: column; justify-content: center; gap: .6cqh; }
+  .node .tag { font-family: var(--mono); font-size: 1.55cqh; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+  .node .name { font-size: 2.3cqh; font-weight: 640; }
+  .node .desc { font-size: 1.8cqh; color: var(--text-dim); line-height: 1.4; }
+</style>
+
+<div class="backdrop"></div>
+
+<div class="stage" id="stage">
+
+  <!-- 1 · TITLE -->
+  <section class="slide title-slide active">
+    <div class="rise">
+      <div class="eyebrow">ETRI <span class="num">·</span> K-CLOUD RESOURCE MANAGEMENT</div>
+      <h1 class="title">이종 가속기 LLM 서빙 플랫폼<br><span class="accent-t">llm-d</span> 구축 현황과 K-Cloud 자원관리 연구 방향</h1>
+      <p class="subtitle">GPU · NPU · CPU를 하나의 게이트웨이 뒤에서 통합 서빙하는 실증 클러스터, 그리고 이종 자원관리로 무엇을 연구·개발할 수 있는가</p>
+      <div class="legend" style="margin-top:3.2cqh">
+        <span class="chip"><span class="dot gpu"></span>NVIDIA A100 · GPU</span>
+        <span class="chip"><span class="dot rbln"></span>Rebellions RBLN · NPU</span>
+        <span class="chip"><span class="dot furiosa"></span>Furiosa RNGD · NPU</span>
+        <span class="chip"><span class="dot cpu"></span>CPU</span>
+      </div>
+      <div class="title-meta">
+        <span>gspark@etri.re.kr</span><span class="v"></span>
+        <span>llm-d · Kubernetes 1.31</span><span class="v"></span>
+        <span>2026-07-01</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · AGENDA -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">AGENDA <span class="num">/ 오늘의 4가지 질문</span></div>
+      <h1 class="title">llm-d를 처음 보는 관점에서, 순서대로</h1>
+    </div>
+    <div class="agenda rise">
+      <div class="agenda-item"><span class="qn">Q1</span><span class="qt">llm-d란 무엇이고, 어떻게 생겼나?</span><span class="qp">Part 1</span></div>
+      <div class="agenda-item"><span class="qn">Q2</span><span class="qt">우리는 지금 어떻게 구축했나?</span><span class="qp">Part 2</span></div>
+      <div class="agenda-item"><span class="qn">Q3</span><span class="qt">llm-d 관점에서 GPU와 NPU는 무엇이 다른가?</span><span class="qp">Part 3</span></div>
+      <div class="agenda-item"><span class="qn">Q4</span><span class="qt">K-Cloud 자원관리로 무엇을 연구·개발할 것인가?</span><span class="qp">Part 4</span></div>
+    </div>
+  </section>
+
+  <!-- 3 · 왜 llm-d (문제의식) -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">PART 1 <span class="num">· 왜 llm-d인가</span></div>
+      <h1 class="title">LLM 서빙은 일반 웹 트래픽처럼 분산하면 망가진다</h1>
+    </div>
+    <div class="body-zone rise">
+      <p class="lede">LLM 요청은 <strong>느리고, 비용이 요청마다 제각각이고, GPU 메모리(KV 캐시)에 상태가 남는다.</strong> 그래서 라운드로빈·least-connection 같은 표준 로드밸런싱은 가속기 포화도·큐 적체·어느 pod가 이 대화를 캐시하고 있는지를 전혀 모른 채 아무 데나 보낸다 → GPU 낭비 + 지연 폭증.</p>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th style="width:24%">관심사</th><th style="width:38%">단일 GPU 박스 / 표준 LB</th><th>llm-d 위에서</th></tr></thead>
+          <tbody>
+            <tr><td>요청 라우팅</td><td class="dim">라운드로빈 — GPU 상태 무시</td><td><strong>KV 캐시·큐·부하 인지</strong> 라우팅</td></tr>
+            <tr><td>모델 추가</td><td class="dim">docker run 하나 더</td><td>CR 한 줄 → 게이트웨이가 자동 편입</td></tr>
+            <tr><td>가속기 다양화</td><td class="dim">같은 vendor만</td><td>NVIDIA + Rebellions + Furiosa + CPU <strong>동시</strong></td></tr>
+            <tr><td>스케일</td><td class="dim">수동 replica</td><td>부하 메트릭 기반 오토스케일</td></tr>
+            <tr><td>외부 노출</td><td class="dim">nginx 직접</td><td>Gateway 단일 IP <span class="mono num-col">192.0.2.12</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · llm-d란 (정의+배경) -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">PART 1 <span class="num">· 정의</span></div>
+      <h1 class="title">llm-d = vLLM 위에 얹는, Kubernetes-native 분산 추론 오케스트레이션</h1>
+    </div>
+    <div class="body-zone rise">
+      <div class="thesis">모델을 <strong>실제로 돌리는 것은 vLLM</strong>(추론 엔진). llm-d는 그 <strong>위에서</strong> "요청을 어느 pod로 보낼지 · 어떻게 스케일할지 · prefill/decode를 어떻게 나눌지"를 관장하는 <strong>오케스트레이션·라우팅 계층</strong>이다. 슬로건은 "any model, any accelerator, any cloud".</p></div>
+      <div class="grid" style="grid-template-columns:repeat(3,1fr); flex:1 1 auto">
+        <div class="card edge-accent"><span class="k">배경</span><h3>2025.05 공개</h3><p>Red Hat 주도 + CoreWeave · Google · IBM · NVIDIA 창립 기여. <strong>2026.03 CNCF Sandbox</strong> 편입.</p></div>
+        <div class="card edge-accent"><span class="k">기반</span><h3>vLLM + K8s + GIE</h3><p>추론 엔진 vLLM, 오케스트레이션 K8s, 라우팅은 <strong>Gateway API Inference Extension</strong>의 대표 구현체.</p></div>
+        <div class="card edge-accent"><span class="k">핵심 가치</span><h3>추론 인지 라우팅</h3><p>GPU 개수가 아니라 <strong>KV 캐시·큐·부하</strong>를 보고 최적 pod를 고른다 — 이게 표준 LB와의 차이.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · 사전 개념 (primer) -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">PART 1 <span class="num">· 먼저 알아야 할 3개념</span></div>
+      <h1 class="title">추론은 두 단계로 나뉜다 — 이게 모든 설계의 근거</h1>
+    </div>
+    <div class="body-zone rise">
+      <div class="split2">
+        <div class="phase-card prefill">
+          <div class="ph">① Prefill <span class="pmeta f">· 프롬프트 읽기</span></div>
+          <p>입력 프롬프트 전체를 한 번에 처리해 <strong>KV 캐시를 생성</strong>. 연산량이 많은 <strong>compute-bound</strong>. 여기서 걸리는 시간이 곧 <span class="mono">TTFT</span>(첫 토큰까지).</p>
+        </div>
+        <div class="phase-card decode">
+          <div class="ph">② Decode <span class="pmeta d">· 토큰 생성</span></div>
+          <p>토큰을 <strong>하나씩 순차 생성</strong>하며 KV 캐시를 재사용. 메모리 대역폭에 묶인 <strong>memory-bound</strong>. 토큰 간 간격(<span class="mono">ITL</span>)이 스트리밍 체감 속도.</p>
+        </div>
+      </div>
+      <div class="card edge-accent">
+        <span class="k">③ KV Cache</span>
+        <p style="color:var(--text)">이미 처리한 토큰의 key/value를 저장해 <strong>decode가 다시 계산하지 않게</strong> 하는 GPU 메모리. 같은 프롬프트 앞부분(prefix)을 공유하면 재사용 가능 → llm-d가 "이 캐시를 가진 pod로 보내자"고 라우팅하는 이유.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · 계층 아키텍처 (LAYER CAKE) -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">PART 1 <span class="num">· 계층 아키텍처 · 위 → 아래로 요청이 흐른다</span></div>
+      <h1 class="title">llm-d는 이렇게 생겼다</h1>
+    </div>
+    <div class="body-zone rise">
+      <div class="arch">
+        <div class="layers">
+          <div class="layer">
+            <div class="lmeta"><span class="lnum">CLIENT</span><span class="lname">클라이언트</span></div>
+            <div class="lbody"><span class="cbox solid">OpenAI 호환 요청</span><span class="cbox">/v1/chat/completions</span><span class="cbox">+ SSE 스트리밍</span></div>
+          </div>
+          <div class="arrow-mini">▼</div>
+          <div class="layer hl">
+            <div class="lmeta"><span class="lnum">LAYER 1</span><span class="lname acc">Inference Gateway</span></div>
+            <div class="lbody"><span class="cbox solid">Envoy 기반</span><span class="cbox">HTTPRoute</span><span class="cbox">ext_proc gRPC</span><span class="lnote">단일 진입점 · 경로 매칭</span></div>
+          </div>
+          <div class="arrow-mini">▼</div>
+          <div class="layer hl">
+            <div class="lmeta"><span class="lnum">LAYER 2</span><span class="lname acc">Endpoint Picker (EPP)</span></div>
+            <div class="lbody"><span class="cbox">discovery</span><span class="cbox">filter</span><span class="cbox">score</span><span class="cbox">pick</span><span class="lnote">라우팅의 "두뇌"</span></div>
+          </div>
+          <div class="arrow-mini">▼</div>
+          <div class="layer">
+            <div class="lmeta"><span class="lnum">LAYER 3</span><span class="lname">Model Serving</span></div>
+            <div class="lbody"><span class="cbox solid">vLLM</span><span class="cbox furiosa">prefill</span><span class="cbox rbln">decode</span><span class="cbox">KV 전송 · NIXL</span></div>
+          </div>
+          <div class="arrow-mini">▼</div>
+          <div class="layer">
+            <div class="lmeta"><span class="lnum">LAYER 4</span><span class="lname">Accelerators</span></div>
+            <div class="lbody"><span class="cbox gpu">NVIDIA GPU</span><span class="cbox rbln">Rebellions NPU</span><span class="cbox furiosa">Furiosa NPU</span><span class="cbox cpu">CPU</span></div>
+          </div>
+        </div>
+        <div class="cr-panel">
+          <span class="cp-h">제어 평면 · CR</span>
+          <p style="font-size:1.7cqh; color:var(--text-dim); line-height:1.4">위 계층들을 <strong>선언적으로 정의</strong>하는 Kubernetes 커스텀 리소스</p>
+          <div class="cr-item"><span class="cn">InferencePool<span class="badge ga">GA v1</span></span><span class="cd">모델 서버 pod 묶음 (가속기·모델별)</span></div>
+          <div class="cr-item"><span class="cn">InferenceObjective<span class="badge alpha">alpha</span></span><span class="cd">요청 우선순위(priority) — 부하 시 누가 이기나. 옛 InferenceModel</span></div>
+          <div class="cr-item"><span class="cn">HTTPRoute</span><span class="cd">경로 → Pool 연결</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · 요청 흐름 -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">PART 1 <span class="num">· 요청 흐름</span></div>
+      <h1 class="title">요청 하나가 흐르는 경로 — 7단계</h1>
+    </div>
+    <div class="body-zone rise">
+      <div class="timeline">
+        <div class="tstep"><span class="tn">1</span><span class="tt"><b>클라이언트 → 게이트웨이.</b> OpenAI 호환 요청이 단일 IP로 들어온다</span><span class="tk">/v1/chat/completions</span></div>
+        <div class="tstep"><span class="tn">2</span><span class="tt"><b>경로 매칭.</b> Envoy 게이트웨이가 HTTPRoute로 대상 InferencePool을 고른다</span><span class="tk">HTTPRoute → Pool</span></div>
+        <div class="tstep"><span class="tn">3</span><span class="tt"><b>모델명 추출.</b> 요청 본문의 <span class="mono">model</span> 필드로 어느 모델 풀인지 식별</span><span class="tk">Body-Based Router</span></div>
+        <div class="tstep"><span class="tn">4</span><span class="tt"><b>게이트웨이 → EPP.</b> ext_proc gRPC로 "어느 pod?"를 EPP에 위임</span><span class="tk">ext_proc</span></div>
+        <div class="tstep"><span class="tn">5</span><span class="tt"><b>EPP가 pod 선택.</b> prefix-cache · 큐 · KV 사용률 scorer로 최적 pod 채점·선택</span><span class="tk">filter → score → pick</span></div>
+        <div class="tstep"><span class="tn">6</span><span class="tt"><b>직접 라우팅.</b> 게이트웨이가 선택된 vLLM pod로 요청을 그대로 전달</span><span class="tk">x-gateway-destination-endpoint</span></div>
+        <div class="tstep"><span class="tn">7</span><span class="tt"><b>vLLM 실행 → 응답.</b> prefill → decode로 생성, 토큰이 스트리밍으로 되돌아온다</span><span class="tk">SSE stream</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 · 컴포넌트 역할 (analogy) -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">PART 1 <span class="num">· 컴포넌트 역할</span></div>
+      <h1 class="title">각 컴포넌트가 하는 일 — 한 줄 비유로</h1>
+    </div>
+    <div class="body-zone rise">
+      <div class="tbl-wrap">
+        <table style="font-size:1.95cqh">
+          <thead><tr><th style="width:23%">컴포넌트</th><th style="width:47%">하는 일</th><th>비유</th></tr></thead>
+          <tbody>
+            <tr><td class="mono" style="color:var(--accent)">Inference Gateway</td><td>단일 진입점. OpenAI 요청을 받아 경로를 매칭하고 pod 선택은 EPP에 위임 (Envoy 기반)</td><td class="dim">식당 <strong style="color:var(--text)">입구 안내데스크</strong></td></tr>
+            <tr><td class="mono" style="color:var(--accent)">Endpoint Picker</td><td>요청마다 최적 vLLM pod를 채점·선택 (prefix-cache · 부하 · KV · LoRA scorer)</td><td class="dim">이미 준비된 창구로 보내는 <strong style="color:var(--text)">똑똑한 배차원</strong></td></tr>
+            <tr><td class="mono">KV-Cache Manager</td><td>어느 pod가 어떤 KV 블록을 가졌는지 전역 인덱스 유지 (vLLM KV 이벤트 구독)</td><td class="dim">누가 이 대화를 기억하는지 <strong style="color:var(--text)">실시간 좌석표</strong></td></tr>
+            <tr><td class="mono">InferencePool</td><td>같은 가속기·모델을 서빙하는 pod 묶음을 정의하는 CR</td><td class="dim">모델용 <strong style="color:var(--text)">Service</strong> (서버 함대)</td></tr>
+            <tr><td class="mono">InferenceObjective</td><td>요청 우선순위(priority)를 부여 — 부하 시 어떤 요청이 이기나</td><td class="dim">요청에 붙는 <strong style="color:var(--text)">우선탑승권</strong></td></tr>
+            <tr><td class="mono">vLLM</td><td>실제 모델을 가속기에서 실행 — prefill·decode·배칭·병렬화</td><td class="dim">실제 일을 하는 <strong style="color:var(--text)">엔진</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 · 핵심 기능 3가지 -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">PART 1 <span class="num">· llm-d가 특별한 이유</span></div>
+      <h1 class="title">세 가지 핵심 최적화</h1>
+    </div>
+    <div class="body-zone rise">
+      <div class="grid" style="grid-template-columns:repeat(3,1fr); flex:1 1 auto">
+        <div class="card edge-accent">
+          <span class="k">① KV-cache-aware 라우팅</span>
+          <h3>캐시를 가진 pod로</h3>
+          <p>프롬프트 prefix의 KV 캐시를 이미 가진 pod로 보내 재계산 회피.</p>
+          <p style="color:var(--ok)">벤치마크: TTFT P90 <span class="mono">~31s → 0.54s (~57×)</span></p>
+        </div>
+        <div class="card edge-accent">
+          <span class="k">② Prefill / Decode 분리</span>
+          <h3>단계별 독립 스케일</h3>
+          <p>compute-bound prefill과 memory-bound decode를 별도 인스턴스로 분리해 각각 최적 HW·병렬화.</p>
+          <p class="dim">KV는 NIXL(RDMA)로 prefill→decode 전송. 처리량이 아니라 <strong>지연(tail) 제어</strong>가 목적.</p>
+        </div>
+        <div class="card edge-accent">
+          <span class="k">③ Workload 오토스케일</span>
+          <h3>변형별 최적 replica</h3>
+          <p>같은 모델의 다른 HW·설정("variant")을 Prometheus 신호로 최적 replica 산정.</p>
+          <p class="dim">HPA/KEDA를 대체하지 않고 <strong>목표치를 던져</strong> 구동 — 저렴한 variant 우선 확장.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 · 아키텍처 전경도 (우리 클러스터) -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">PART 2 <span class="num">· 우리 클러스터 전경</span></div>
+      <h1 class="title">단일 진입점 → 4개 가속기 백엔드로 분기</h1>
+    </div>
+    <div class="body-zone rise">
+      <div class="node" style="flex:0 0 auto; align-items:center; text-align:center; border-color:var(--accent); background:var(--accent-dim)">
+        <span class="tag">SINGLE ENTRYPOINT · envoy-gateway + EPP</span>
+        <span class="name mono num-col" style="font-size:2.9cqh">192.0.2.12</span>
+      </div>
+      <div class="grid" style="grid-template-columns:repeat(4,1fr); flex:1 1 auto">
+        <div class="card edge-gpu"><span class="k" style="color:var(--gpu)">GPU · NVIDIA</span><h3>A100 80GB × 2</h3><p><strong>EXAONE-3.5-32B-AWQ</strong><br>vLLM · TP=1 × 2 replica (DP)<br><span class="num-col mono">~62 t/s</span> · 한국어 검증</p></div>
+        <div class="card edge-rbln"><span class="k" style="color:var(--rbln)">NPU · Rebellions</span><h3>RBLN-CA22 × 4</h3><p><strong>KONI-Llama3.1-8B</strong><br>vllm-rbln · 컴파일 TP=4<br><span class="num-col mono">~14 t/s</span> · 전력효율</p></div>
+        <div class="card edge-furiosa"><span class="k" style="color:var(--furiosa)">NPU · Furiosa</span><h3>RNGD × 2</h3><p><strong>Qwen3-Embedding-8B</strong><br>furiosa-llm · dim 4096<br>RAG embedding 가속</p></div>
+        <div class="card" style="border-left:2px solid var(--cpu)"><span class="k" style="color:var(--cpu)">CPU POOL</span><h3>cpu-1 / 2 / 3</h3><p><strong>ollama</strong><br>모델 hot-swap 자유<br>배치 · 비용 민감</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 · HW 토폴로지 -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">PART 2 <span class="num">· 하드웨어 토폴로지</span></div>
+      <h1 class="title">이종 가속기가 한 워커 노드에 집중</h1>
+    </div>
+    <div class="body-zone rise">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>노드</th><th class="mono">IP</th><th>역할</th><th class="c">GPU</th><th class="c">RBLN</th><th class="c">RNGD</th><th>CPU / Mem</th></tr></thead>
+          <tbody>
+            <tr><td>gspark-r7525</td><td class="mono">.105</td><td>control-plane</td><td class="c">–</td><td class="c">–</td><td class="c">–</td><td class="mono">128 / 391Gi</td></tr>
+            <tr><td><strong>etri-001</strong> <span class="tag-pill pill-ok">주력</span></td><td class="mono">.183</td><td>worker · 이종 가속기</td><td class="c num-col mono">2</td><td class="c num-col mono">4</td><td class="c num-col mono">2</td><td class="mono">96 / 1.55Ti</td></tr>
+            <tr><td>etri-esc8000-e11</td><td class="mono">.126</td><td>worker · <span class="dim">cordoned</span></td><td class="c">–</td><td class="c">–</td><td class="c num-col mono">4</td><td class="mono">48 / 1.1Ti</td></tr>
+            <tr><td>cpu-1 / 2 / 3</td><td class="mono">.178–.186</td><td>worker · CPU 전용</td><td class="c">–</td><td class="c">–</td><td class="c">–</td><td class="mono">128 / 391Gi ×3</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="dim" style="font-size:2.1cqh"><strong>etri-001</strong> 한 노드가 A100 · RBLN · Furiosa를 동시에 품는다 → 같은 클러스터에서 <span class="accent-t">가속기 직접 비교와 이종 스케줄링 실증</span>이 가능.</p>
+    </div>
+  </section>
+
+  <!-- 12 · 모델 서버 -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">PART 2 <span class="num">· 활성 모델 서버</span></div>
+      <h1 class="title">가속기별로 성격이 다른 4종 서버</h1>
+    </div>
+    <div class="body-zone rise">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Pod</th><th>모델</th><th>가속기</th><th class="c">처리량</th><th>비고</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">vllm-exaone ×2</td><td><strong>EXAONE-3.5-32B-AWQ</strong></td><td><span class="dot gpu"></span> A100 × 2 (DP)</td><td class="c num-col mono">~62 t/s</td><td class="dim">TP=1×2, 한국어 검증</td></tr>
+            <tr><td class="mono">vllm-rbln-koni</td><td><strong>KONI-Llama3.1-8B</strong></td><td><span class="dot rbln"></span> RBLN-CA22 × 4</td><td class="c num-col mono">~14 t/s</td><td class="dim">컴파일 TP=4, prefix-cache</td></tr>
+            <tr><td class="mono">furiosa-embed</td><td><strong>Qwen3-Embedding-8B</strong> (dim 4096)</td><td><span class="dot furiosa"></span> RNGD × 2</td><td class="c mono dim">embed</td><td class="dim">RAG embedding</td></tr>
+            <tr><td class="mono">ollama-cpu</td><td>(ollama pull, 자유)</td><td><span class="dot cpu"></span> CPU pool</td><td class="c mono dim">가변</td><td class="dim">hot-swap, off-peak</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="dim" style="font-size:2cqh">표준 label: <span class="mono" style="color:var(--text)">llm-d.ai/accelerator</span> = gpu-nvidia / npu-rebellions / npu-furiosa / cpu · <span class="mono" style="color:var(--text)">llm-d.ai/role</span> = chat / embedding / vector-db</p>
+    </div>
+  </section>
+
+  <!-- 13 · SW 스택 -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">PART 2 <span class="num">· 소프트웨어 스택 (helm 21 릴리스)</span></div>
+      <h1 class="title">플랫폼을 이루는 4개 계층</h1>
+    </div>
+    <div class="body-zone rise">
+      <div class="grid" style="grid-template-columns:repeat(4,1fr); flex:1 1 auto">
+        <div class="card"><span class="k">플랫폼</span><ul class="clean"><li>Kubernetes <span class="mono">1.31</span></li><li>Cilium <span class="mono">1.16</span></li><li>Rancher <span class="mono">2.14</span></li><li>cert-manager</li></ul></div>
+        <div class="card"><span class="k">게이트웨이</span><ul class="clean"><li>envoy-gateway <span class="mono">1.3</span></li><li>llmd-router (GIE)</li><li>EPP + scorer 4종</li><li>InferencePool / Objective</li></ul></div>
+        <div class="card"><span class="k">가속기</span><ul class="clean"><li>nvidia-device-plugin</li><li>rbln-npu-operator</li><li>furiosa-device-plugin</li><li>KEDA <span class="mono">2.19</span></li></ul></div>
+        <div class="card"><span class="k">관측 · 저장</span><ul class="clean"><li>kube-prometheus-stack</li><li>Grafana · Hubble</li><li>DCGM · furiosa-exporter</li><li>csi-driver-smb / nfs</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14 · 운영 기능 현황 -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">PART 2 <span class="num">· 운영 기능 현황</span></div>
+      <h1 class="title">이미 동작 중인 것과, 대기 중인 것</h1>
+    </div>
+    <div class="body-zone rise">
+      <div class="two-col">
+        <div>
+          <div class="col-head" style="color:var(--ok)">✓ 동작 중</div>
+          <ul class="clean">
+            <li>OpenAI 호환 API (chat · embeddings · SSE)</li>
+            <li>Multi-accelerator 동시 운영 (GPU/RBLN/Furiosa/CPU)</li>
+            <li>Path-based 라우팅 + KV-aware EPP scorer</li>
+            <li>vLLM prefix caching + <span class="mono">no-hit-lru-scorer</span></li>
+            <li>KEDA autoscaling · SLO priority (100 / 10)</li>
+            <li>Multi-tenant Quota + Rancher RBAC (tenant-a/b)</li>
+            <li>풀-스택 메트릭 (GPU·NPU·CPU·모델서버)</li>
+            <li>RAG (Qdrant + Furiosa-Embedding + NAS RO)</li>
+          </ul>
+        </div>
+        <div>
+          <div class="col-head" style="color:var(--warn)">⧗ 대기 · 후보</div>
+          <ul class="clean">
+            <li>KV-cache disaggregation (Redis / NIXL)</li>
+            <li>prefill / decode disaggregation</li>
+            <li>A100용 InferencePool 등록 (GPU도 EPP 라우팅)</li>
+            <li>Token rate limiting</li>
+            <li>토큰 사용량 추적 · 부서별 빌링</li>
+            <li>사내 SSO (Rancher OIDC/SAML)</li>
+          </ul>
+          <div class="card" style="margin-top:1.4cqh"><p>대기 항목 대부분이 <span class="accent-t">Part 4 연구주제</span>와 직접 연결된다.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15 · 컴파일 vs 런타임 -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">PART 3 <span class="num">· GPU vs NPU · 차이의 근원</span></div>
+      <h1 class="title">모든 차이는 한 문장에서 나온다</h1>
+    </div>
+    <div class="body-zone rise">
+      <div class="thesis"><strong>GPU는 런타임 JIT, NPU는 사전 컴파일된 정적 그래프.</strong> 기능 차이는 거의 전부 "요청/기동 시점에 바꿀 수 있는가 vs 컴파일 시점에 박히는가"의 문제다.</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th style="width:50%">GPU(vLLM)에서 런타임에 자유로운 것</th><th>NPU에서 컴파일 시 박히는 것</th></tr></thead>
+          <tbody>
+            <tr><td>max_model_len (요청마다)</td><td class="mono">rbln_max_seq_len / artifact max_context_len</td></tr>
+            <tr><td>tensor parallel size</td><td class="mono">rbln_tensor_parallel_size</td></tr>
+            <tr><td>batch size 자유</td><td class="mono">rbln_batch_size (또는 bucketing)</td></tr>
+            <tr><td>LoRA adapter swap</td><td>base만 — LoRA는 fuse 후 재컴파일</td></tr>
+            <tr><td>draft model attach (speculative)</td><td>별도 컴파일 + 외부 pipeline</td></tr>
+            <tr><td>양자화 종류 변경</td><td>컴파일 시점 결정</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 16 · 기능 매트릭스 -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">PART 3 <span class="num">· 기능 매트릭스 (실측)</span></div>
+      <h1 class="title">가속기별 기능 지원 — 실측 기반</h1>
+    </div>
+    <div class="body-zone rise">
+      <div class="tbl-wrap">
+        <table style="font-size:1.88cqh">
+          <thead><tr>
+            <th style="width:34%">기능</th>
+            <th class="c"><span class="dot gpu"></span> A100</th><th class="c"><span class="dot rbln"></span> RBLN</th>
+            <th class="c"><span class="dot furiosa"></span> Furiosa</th><th class="c"><span class="dot cpu"></span> CPU</th><th>비고</th>
+          </tr></thead>
+          <tbody>
+            <tr><td>OpenAI chat · streaming · JSON · logprobs</td><td class="c"><span class="st ok">✓</span></td><td class="c"><span class="st ok">✓</span></td><td class="c"><span class="st ok">✓</span></td><td class="c"><span class="st ok">✓</span></td><td class="dim">표준 서빙 전부 통과</td></tr>
+            <tr><td>Prefix caching · chunked prefill</td><td class="c"><span class="st ok">✓</span></td><td class="c"><span class="st ok">✓</span></td><td class="c"><span class="st ok">✓</span></td><td class="c"><span class="st warn">△</span></td><td class="dim">NPU도 KV 재사용</td></tr>
+            <tr><td>Tensor parallel</td><td class="c"><span class="st ok">✓</span></td><td class="c"><span class="st ok">✓</span></td><td class="c"><span class="st ok">✓</span></td><td class="c">–</td><td class="dim">TP=2 / 4 / 4</td></tr>
+            <tr><td>Tool / function calling</td><td class="c"><span class="st ok">✓</span></td><td class="c"><span class="st ok">✓</span></td><td class="c"><span class="st no">✕</span></td><td class="c"><span class="st warn">△</span></td><td class="dim">RBLN은 옵션 추가로 실측 통과</td></tr>
+            <tr><td>Long context</td><td class="c"><span class="st ok">✓</span></td><td class="c"><span class="st no">✕</span></td><td class="c"><span class="st ok">✓</span></td><td class="c"><span class="st warn">△</span></td><td class="dim">Furiosa 131k · RBLN 컴파일 고정</td></tr>
+            <tr><td>Multi-LoRA (동적 swap)</td><td class="c"><span class="st ok">✓</span></td><td class="c"><span class="st no">✕</span></td><td class="c"><span class="st no">✕</span></td><td class="c"><span class="st no">✕</span></td><td class="dim">NPU는 fuse 후 재컴파일</td></tr>
+            <tr><td>Speculative decoding</td><td class="c"><span class="st ok">✓</span></td><td class="c"><span class="st no">✕</span></td><td class="c"><span class="st no">✕</span></td><td class="c"><span class="st no">✕</span></td><td class="dim">그래프 고정 제약</td></tr>
+            <tr><td>런타임 quantization (AWQ/GPTQ/FP8)</td><td class="c"><span class="st ok">✓</span></td><td class="c"><span class="st no">✕</span></td><td class="c"><span class="st no">✕</span></td><td class="c"><span class="st warn">△</span></td><td class="dim">NPU는 컴파일 시 결정</td></tr>
+            <tr><td>Disaggregated prefill/decode</td><td class="c"><span class="st ok">✓</span></td><td class="c"><span class="st no">✕</span></td><td class="c"><span class="st ok">✓</span></td><td class="c"><span class="st no">✕</span></td><td class="dim">Furiosa NIXL sidecar 내장</td></tr>
+            <tr><td>KEDA autoscaling · InferencePool</td><td class="c"><span class="st ok">✓</span></td><td class="c"><span class="st ok">✓</span></td><td class="c"><span class="st ok">✓</span></td><td class="c"><span class="st warn">△</span></td><td class="dim">NPU 카드 수만큼 max</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="legend"><span class="chip"><span class="st ok">✓</span> 즉시 동작</span><span class="chip"><span class="st warn">△</span> 추가 작업/부분</span><span class="chip"><span class="st no">✕</span> 구조상 직접 불가</span></div>
+    </div>
+  </section>
+
+  <!-- 17 · GPU 우위 -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">PART 3 <span class="num">· GPU 우위</span></div>
+      <h1 class="title">GPU만 되는 것 — 그리고 NPU 우회책</h1>
+    </div>
+    <div class="body-zone rise">
+      <div class="grid" style="grid-template-columns:1fr 1fr; flex:1 1 auto">
+        <div class="card edge-gpu"><h3>Multi-LoRA (동적 swap)</h3><p>가중치가 정적 컴파일 → 런타임 어댑터 swap 불가.</p><p style="color:var(--accent)">우회 → LoRA를 base에 fuse 후 재컴파일, 어댑터당 별도 Pool (메모리 N배)</p></div>
+        <div class="card edge-gpu"><h3>Speculative decoding</h3><p>draft·target 두 그래프를 한 loop에서 교차 실행 필요 → 고정 그래프와 충돌.</p><p style="color:var(--accent)">우회 → 별도 draft 컴파일 + custom pipeline (SDK 기여 수준)</p></div>
+        <div class="card edge-gpu"><h3>런타임 Quantization</h3><p>AWQ/GPTQ/FP8 dequant 커널을 GPU에서 동적 실행.</p><p style="color:var(--accent)">우회 → RBLN <span class="mono">rbln_w4a16</span> 컴파일 / Furiosa INT4 artifact 교체</p></div>
+        <div class="card edge-gpu"><h3>임의 모델 즉시 서빙</h3><p>새 아키텍처를 런타임 로드.</p><p style="color:var(--accent)">우회 → SDK 컴파일러 지원 매트릭스 안이어야 하고, 컴파일 단계(≈1시간) 필요</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 18 · NPU 강점 -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">PART 3 <span class="num">· NPU 우위</span></div>
+      <h1 class="title">NPU가 강한 것 — 표준 서빙은 거의 다 커버</h1>
+    </div>
+    <div class="body-zone rise">
+      <div class="grid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="card edge-rbln"><span class="k" style="color:var(--rbln)">Rebellions</span><h3>압도적 전력효율</h3><p><strong>~30W/장 × 4 ≈ 120W</strong>로 8B 서빙. perf/watt 우위 + KONI 한국어 fine-tune.</p></div>
+        <div class="card edge-furiosa"><span class="k" style="color:var(--furiosa)">Furiosa</span><h3>Long context 131k</h3><p>HBM 64GB/장. <span class="mono">max 131,072</span> 즉시. RAG · 장문 요약에 유리.</p></div>
+        <div class="card edge-accent"><span class="k">공통</span><h3>표준 서빙 풀커버</h3><p>chat · streaming · JSON · prefix caching · TP · 메트릭 → KEDA · EPP 라우팅 · SLO 전부 실측 통과.</p></div>
+      </div>
+      <div class="thesis" style="font-size:2.45cqh">한 줄 결론 — NPU는 <strong>표준 LLM 서빙을 거의 다 커버</strong>하고, GPU가 확실히 우위인 건 <strong>LoRA · speculative · 런타임 quantization · (Furiosa 한정) tool calling</strong> 뿐. 그 차이는 전부 "컴파일 vs 런타임"이다.</div>
+    </div>
+  </section>
+
+  <!-- 19 · 의사결정 매트릭스 -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">PART 3 <span class="num">· 실무 의사결정</span></div>
+      <h1 class="title">언제 GPU · 언제 NPU · 언제 CPU</h1>
+    </div>
+    <div class="body-zone rise">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th style="width:52%">상황</th><th>선택</th></tr></thead>
+          <tbody>
+            <tr><td>모델이 자주 바뀜 (R&amp;D 단계)</td><td><span class="dot gpu"></span> <strong>A100</strong> — 런타임 자유로움</td></tr>
+            <tr><td>모델 fix됨 + 대량 트래픽</td><td><span class="dot rbln"></span> <strong>RBLN / Furiosa</strong> — perf/watt 우위</td></tr>
+            <tr><td>한 모델 + 다중 fine-tune 어댑터</td><td><span class="dot gpu"></span> <strong>A100 + LoRA</strong></td></tr>
+            <tr><td>긴 컨텍스트 + 낮은 동시성</td><td><span class="dot furiosa"></span> <strong>Furiosa</strong> — HBM 64GB 활용</td></tr>
+            <tr><td>한국어 + 비용 + 전력</td><td><span class="dot rbln"></span> <strong>RBLN</strong> — KONI/EXAONE 컴파일</td></tr>
+            <tr><td>야간 배치 / 비용 최우선</td><td><span class="dot cpu"></span> <strong>CPU (ollama)</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 20 · K-cloud 문제정의 -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">PART 4 <span class="num">· K-Cloud 자원관리</span></div>
+      <h1 class="title">문제 정의 — 이종 가속기를 어떻게 관리할 것인가</h1>
+    </div>
+    <div class="body-zone rise">
+      <p class="lede">국산 NPU(Rebellions · Furiosa)를 포함한 <strong>이종 가속기 풀</strong>을 한 클러스터에서 <strong>효율적 · 공정하게 · SLO를 지키며</strong> 관리하는 것이 K-Cloud 자원관리의 핵심 난제다. 이 클러스터는 그 난제를 <strong>실제 하드웨어 위에서 실증</strong>할 수 있는 드문 환경이다.</p>
+      <div class="grid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="card"><span class="k">난제 1</span><p style="color:var(--text)">가속기마다 기능·성능·전력·제약이 달라 <strong>동질적 스케줄링이 불가능</strong></p></div>
+        <div class="card"><span class="k">난제 2</span><p style="color:var(--text)">NPU의 <strong>컴파일 지연</strong>이 배치·오토스케일의 실시간성을 깨뜨림</p></div>
+        <div class="card"><span class="k">난제 3</span><p style="color:var(--text)">vendor마다 메트릭·인터페이스가 달라 <strong>통합 관측·정책이 어려움</strong></p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 21 · 연구 1,2 -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">PART 4 <span class="num">· 연구주제 ①②</span></div>
+      <h1 class="title">이종 배치 · 비용/전력 인지 라우팅</h1>
+    </div>
+    <div class="body-zone rise research-wrap">
+      <div class="research-topic">
+        <div><span class="rt-lbl">주제 <span class="rt-num">①</span></span><span class="rt-title">이종 가속기 통합 스케줄링/배치</span></div>
+        <div><span class="rt-lbl">연구 난제</span><p>모델 특성(크기·context·기능)과 가속기 제약을 함께 고려한 <strong>모델↔가속기 최적 매칭</strong> — 기존 스케줄러는 GPU 개수만 봄</p></div>
+        <div><span class="rt-lbl">실증 경로</span><p>label·device-plugin 자원을 입력으로 한 커스텀 scheduler/placement plugin, etri-001 이종 노드에서 검증</p></div>
+      </div>
+      <div class="research-topic">
+        <div><span class="rt-lbl">주제 <span class="rt-num">②</span></span><span class="rt-title">비용·전력 인지 라우팅</span></div>
+        <div><span class="rt-lbl">연구 난제</span><p>지연·품질뿐 아니라 <strong>perf/watt · 단가</strong>를 목적함수에 넣은 라우팅 — RBLN 120W vs A100의 전력 격차를 반영</p></div>
+        <div><span class="rt-lbl">실증 경로</span><p>EPP scorer 확장(전력/비용 scorer) + node-exporter 전력 메트릭, InferenceObjective와 결합</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 22 · 연구 3,4 -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">PART 4 <span class="num">· 연구주제 ③④</span></div>
+      <h1 class="title">컴파일-런타임 gap · 이종 disaggregation</h1>
+    </div>
+    <div class="body-zone rise research-wrap">
+      <div class="research-topic">
+        <div><span class="rt-lbl">주제 <span class="rt-num">③</span></span><span class="rt-title">NPU 컴파일-런타임 gap 관리</span></div>
+        <div><span class="rt-lbl">연구 난제</span><p>모델 변경 = 재컴파일(≈1시간)이 <strong>오토스케일·배치의 실시간성</strong>을 저해 — artifact 버전·캐시·워밍업 전략 부재</p></div>
+        <div><span class="rt-lbl">실증 경로</span><p>사전컴파일 CI 파이프라인 + artifact 레지스트리/캐싱, 예측적 pre-warm으로 cold-start 단축</p></div>
+      </div>
+      <div class="research-topic">
+        <div><span class="rt-lbl">주제 <span class="rt-num">④</span></span><span class="rt-title">이종 disaggregated P/D</span></div>
+        <div><span class="rt-lbl">연구 난제</span><p><strong>A100 prefill(컴퓨트) → NPU decode(메모리)</strong>가 이상적이나 cross-vendor KV 전송·그래프 일치가 미해결</p></div>
+        <div><span class="rt-lbl">실증 경로</span><p>Furiosa NIXL sidecar 활용, 동일 vendor 내 P/D 분리부터 → cross-vendor KV 호환성 검증으로 확장</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 23 · 연구 5,6 -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">PART 4 <span class="num">· 연구주제 ⑤⑥</span></div>
+      <h1 class="title">SLO 오토스케일·공정분배 · 관측 기반 최적화</h1>
+    </div>
+    <div class="body-zone rise research-wrap">
+      <div class="research-topic">
+        <div><span class="rt-lbl">주제 <span class="rt-num">⑤</span></span><span class="rt-title">SLO-aware 오토스케일 + multi-tenant 공정분배</span></div>
+        <div><span class="rt-lbl">연구 난제</span><p>NPU 카드가 <strong>분할 불가(카드 단위)</strong>라 fair-share가 어려움 — SLO를 지키며 tenant 간 이종 자원 공정 배분</p></div>
+        <div><span class="rt-lbl">실증 경로</span><p>KEDA + Objective + ResourceQuota 결합, tenant-a/b에서 NPU 슬라이스 정책·선점 실험</p></div>
+      </div>
+      <div class="research-topic">
+        <div><span class="rt-lbl">주제 <span class="rt-num">⑥</span></span><span class="rt-title">관측 기반 자원 최적화 · 빌링</span></div>
+        <div><span class="rt-lbl">연구 난제</span><p>vendor별 메트릭을 통합해 <strong>토큰·전력 텔레메트리 → 스케줄 피드백 루프</strong>와 부서별 정산 근거로 전환</p></div>
+        <div><span class="rt-lbl">실증 경로</span><p>Prometheus 통합 메트릭 → 토큰/전력 빌링 대시보드 → 배치 결정에 되먹임(closed-loop)</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 24 · 로드맵 -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">PART 4 <span class="num">· 로드맵</span></div>
+      <h1 class="title">단기 → 중기 → 장기</h1>
+    </div>
+    <div class="body-zone rise">
+      <div class="grid" style="grid-template-columns:repeat(3,1fr); flex:1 1 auto">
+        <div class="card edge-accent">
+          <span class="k">단기 · 즉시 활성화</span>
+          <ul class="clean"><li>A100용 InferencePool 등록</li><li>EPP KV-cache indexing 활성</li><li>토큰 사용량 · 빌링 대시보드</li><li>RBLN tool calling 옵션 on</li></ul>
+          <p style="color:var(--text-faint); font-size:1.75cqh">주제 ②⑥의 기반</p>
+        </div>
+        <div class="card edge-accent">
+          <span class="k">중기 · 연구 PoC</span>
+          <ul class="clean"><li>비용·전력 scorer PoC</li><li>이종 통합 scheduler plugin</li><li>NPU artifact CI + pre-warm</li><li>Furiosa 내 P/D 분리</li></ul>
+          <p style="color:var(--text-faint); font-size:1.75cqh">주제 ①②③④</p>
+        </div>
+        <div class="card edge-accent">
+          <span class="k">장기 · 연구 기여</span>
+          <ul class="clean"><li>cross-vendor disagg (A100→NPU)</li><li>SLO fair-share 선점 정책</li><li>closed-loop 자원 최적화</li><li>vendor-neutral 추상화 표준화</li></ul>
+          <p style="color:var(--text-faint); font-size:1.75cqh">주제 ④⑤⑥ · SDK 기여</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 25 · 결론 -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">CONCLUSION</div>
+      <h1 class="title">vendor-neutral 게이트웨이 + 이종 자원관리 = K-Cloud 실증 기반</h1>
+    </div>
+    <div class="body-zone rise">
+      <div class="grid" style="grid-template-columns:repeat(3,1fr); flex:1 1 auto">
+        <div class="card edge-accent"><span class="k">Takeaway 1</span><p style="color:var(--text)">llm-d는 vLLM 위의 <strong>추론 인지 라우팅 계층</strong> — GPU·NPU·CPU를 한 IP 뒤에서 동시 서빙 중.</p></div>
+        <div class="card edge-accent"><span class="k">Takeaway 2</span><p style="color:var(--text)">GPU/NPU 차이는 전부 <strong>컴파일 vs 런타임</strong>. 표준 서빙은 NPU도 커버, 유연성만 GPU 우위.</p></div>
+        <div class="card edge-accent"><span class="k">Takeaway 3</span><p style="color:var(--text)">그 차이 자체가 <strong>자원관리 연구의 대상</strong> — 배치·라우팅·컴파일·disagg·공정분배·관측.</p></div>
+      </div>
+      <div class="thesis" style="font-size:2.5cqh">이 플랫폼은 <strong>vendor-neutral OpenAI 호환 LLM 게이트웨이</strong>다. 사용자는 한 IP만 알면 되고, 운영자는 InferencePool · InferenceObjective · ResourceQuota 세 객체로 정책을 표현한다 — K-Cloud 자원관리 연구를 실제 하드웨어 위에서 검증할 토대.</div>
+    </div>
+  </section>
+
+  <!-- 26 · Appendix -->
+  <section class="slide">
+    <div class="slide-head rise">
+      <div class="eyebrow">APPENDIX <span class="num">· 접속 · 데모</span></div>
+      <h1 class="title">엔드포인트 · 대시보드 · 데모</h1>
+    </div>
+    <div class="body-zone rise">
+      <div class="two-col">
+        <div>
+          <div class="col-head accent-t">관측 · 관리 UI</div>
+          <div class="card" style="gap:1.1cqh">
+            <div class="kv-line"><span class="lbl">Grafana</span><span class="mono" style="font-size:1.9cqh">:30300 · admin/admin</span></div>
+            <div class="kv-line"><span class="lbl">Rancher</span><span class="mono" style="font-size:1.9cqh">:30443</span></div>
+            <div class="kv-line"><span class="lbl">Prometheus</span><span class="mono" style="font-size:1.9cqh">:30090</span></div>
+            <div class="kv-line"><span class="lbl">Hubble</span><span class="mono" style="font-size:1.9cqh">:30081</span></div>
+          </div>
+          <div class="col-head accent-t" style="margin-top:1.6cqh">Grafana 대시보드</div>
+          <ul class="clean"><li><span class="mono">nvidia-dcgm</span> · A100 메트릭</li><li><span class="mono">furiosa-npu</span> · RNGD util/temp</li><li><span class="mono">llm-models</span> · t/s · KV · p95</li></ul>
+        </div>
+        <div>
+          <div class="col-head accent-t">데모 — 같은 IP, 모델만 교체</div>
+          <div class="card" style="background:var(--ground-2)">
+            <p class="mono" style="color:var(--text-dim); font-size:1.7cqh; line-height:1.7; white-space:pre-wrap">curl -X POST \
+ http://192.0.2.12/v1/chat/completions \
+ -H 'Content-Type: application/json' \
+ -d '{"model":<span style="color:var(--rbln)">"koni-llama3.1-8b-rbln"</span>,
+      "messages":[{"role":"user",
+      "content":"한국어 시 한 편"}]}'</p>
+          </div>
+          <p class="dim" style="font-size:2cqh; margin-top:.5cqh">model 필드만 <span style="color:var(--gpu)">exaone</span> / <span style="color:var(--rbln)">koni</span> 등으로 바꾸면 다른 가속기로 라우팅 — 같은 prompt를 여러 backend에 보내 응답·지연 비교 가능.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- chrome -->
+  <button class="nav-btn prev" id="prevBtn" aria-label="이전 슬라이드"></button>
+  <button class="nav-btn next" id="nextBtn" aria-label="다음 슬라이드"></button>
+
+  <div class="rail" id="rail"></div>
+  <div class="foot">
+    <span class="title-mini">llm-d × K-Cloud 자원관리</span>
+    <span class="spacer"></span>
+    <span class="counter"><b id="cur">01</b> / <span id="tot">26</span></span>
+  </div>
+</div>
+
+<div class="hint">← →  이동 · F 전체화면</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total = slides.length;
+  let idx = 0;
+  const rail = document.getElementById('rail');
+  const curEl = document.getElementById('cur');
+  document.getElementById('tot').textContent = String(total).padStart(2, '0');
+
+  const segs = slides.map((_, i) => {
+    const s = document.createElement('div');
+    s.className = 'seg';
+    s.addEventListener('click', () => go(i));
+    rail.appendChild(s);
+    return s;
+  });
+
+  function render() {
+    slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+    segs.forEach((s, i) => { s.classList.toggle('passed', i < idx); s.classList.toggle('here', i === idx); });
+    curEl.textContent = String(idx + 1).padStart(2, '0');
+  }
+  function go(n) { idx = Math.max(0, Math.min(total - 1, n)); render(); }
+  function next() { go(idx + 1); }
+  function prev() { go(idx - 1); }
+
+  document.getElementById('nextBtn').addEventListener('click', next);
+  document.getElementById('prevBtn').addEventListener('click', prev);
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+    else if (e.key === 'Home') { go(0); }
+    else if (e.key === 'End') { go(total - 1); }
+    else if (e.key === 'f' || e.key === 'F') {
+      const st = document.getElementById('stage');
+      if (!document.fullscreenElement) { (st.requestFullscreen || st.webkitRequestFullscreen).call(st); }
+      else { document.exitFullscreen(); }
+    }
+  });
+  render();
+</script>
+
+</body></html>

@@ -1,0 +1,24 @@
+{
+  "status": "blocked",
+  "history": [
+    {
+      "from": "created",
+      "to": "jobs_prepared",
+      "at": "2026-09-08T08:05:48Z",
+      "note": "prepared slide prompt jobs"
+    },
+    {
+      "from": "jobs_prepared",
+      "to": "slides_dispatched",
+      "at": "2026-09-08T08:12:00Z",
+      "note": "all slide jobs dispatched"
+    },
+    {
+      "from": "slides_dispatched",
+      "to": "blocked",
+      "at": "2026-09-08T08:13:51Z",
+      "note": "slide_06: Image generation and one repair redraw terminal glyphs and alter screenshot proportions; strict actual-screen preservation failed. Needs authorization to insert original screenshot directly instead of full-slide image generation."
+    }
+  ],
+  "updated_at": "2026-09-08T08:13:51Z"
+}

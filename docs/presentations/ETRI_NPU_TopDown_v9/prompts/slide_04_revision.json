@@ -1,0 +1,20 @@
+{
+  "slide": 4,
+  "title": "실행의 일부를 바꿔볼 수 있는 기반을 만들었습니다",
+  "prompt": "Create one full 16:9 Korean technical slide matching attached approved slide1 ETRI blue/white style, navy large title, ETRI upper right, no page numbers. Title: 실행의 일부를 바꿔볼 수 있는 기반을 만들었습니다. One large conceptual illustration: a gray outlined container labeled '기존 NPU 실행 엔진', inside a left-to-right three-block flow '기존 실행' → bright blue '직접 작성한 코드' → '기존 실행'. Above the blue block a small code-file icon with an arrow entering it labeled '우리가 개발한 연결 도구'. This shows local replacement within retained vendor engine, not engine rewrite. Below only two short plain-language statements: '엔진 전체를 바꾸지 않고 필요한 부분만 수정' and '수정한 코드가 실제 호출되는 경로 확인'. Bottom small connection to next slide: '실행 일부 변경 → 실행 단계를 다른 NPU로 분리'. Do not use L8Swapper, stage, binary, artifact, dispatch, input/output specs, Rust or any API names. No before-after duplicate flow, no 5-stage workflow, no benchmarks. Do not imply fully implemented attention or measured acceleration. Large icons, clear hierarchy, generous whitespace.",
+  "out": "slide_04.png",
+  "input_images": [
+    {
+      "path": "/home/gspark/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
+      "role": "approved style only"
+    }
+  ],
+  "expected_backend": "built-in image tool",
+  "sample_generation_method": {
+    "backend_used": "built-in image tool",
+    "tool_name": "image_gen__imagegen",
+    "mode": "generate",
+    "input_context_preparation": "view_image then referenced_image_paths",
+    "model": "built-in default"
+  }
+}
