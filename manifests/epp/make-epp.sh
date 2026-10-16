@@ -30,7 +30,9 @@ NAME="${POOL%-pool}-epp"           # e.g. koni-pool -> koni-epp
 DIR="$(cd "$(dirname "$0")" && pwd)"
 REF="$DIR/gemma4-rbln-epp.yaml"
 OUT="$DIR/${POOL}-epp.yaml"
-GW="${GW_ADDR:-192.0.2.12}"
+source "$DIR/../../scripts/lib/cluster-env.sh"
+[[ -n "${GW_ADDR:-}" ]] || { require_env LLMD_GATEWAY_HOST; GW_ADDR="$LLMD_GATEWAY_HOST"; }
+GW="$GW_ADDR"
 
 echo ">> rendering $OUT (name=$NAME pool=$POOL)"
 sed -e "s/gemma4-rbln-epp/${NAME}/g" -e "s/gemma4-rbln-pool/${POOL}/g" "$REF" > "$OUT"

@@ -1,5 +1,5 @@
-== lmd-top snapshot (prom=192.0.2.8:30090, ns=llm-serving) ==
-gateway: 192.0.2.12 Programmed
+== lmd-top snapshot (prom=198.51.100.105:30090, ns=llm-serving) ==
+gateway: 198.51.100.233 Programmed
 
 [nodes] 8
   cpu-1                    load1  0.14  mem 10/401G

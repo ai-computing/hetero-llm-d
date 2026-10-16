@@ -76,4 +76,4 @@ timeout: 10
 EOF
 
 log "DONE. now run the kubeadm join command from control-plane stage2 output:"
-echo "   sudo kubeadm join 192.0.2.8:6443 --token <...> --discovery-token-ca-cert-hash sha256:<...>"
+echo "   sudo kubeadm join <cp-node-ip>:6443 --token <...> --discovery-token-ca-cert-hash sha256:<...>"

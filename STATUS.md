@@ -50,7 +50,7 @@
 
 ## 한 줄 요약
 
-K8s 1.31 + Cilium 1.16 + llm-d **v0.7 EPP**로 **NVIDIA A100 × 2 / Rebellions RBLN-CA22 × 4 / CPU**에 LLM 3종 동시 서빙 + Furiosa RNGD × 2로 RAG embedding 가속. 사내 IP **192.0.2.12** 단일 entrypoint(envoy-gateway)에서 path 분기.
+K8s 1.31 + Cilium 1.16 + llm-d **v0.7 EPP**로 **NVIDIA A100 × 2 / Rebellions RBLN-CA22 × 4 / CPU**에 LLM 3종 동시 서빙 + Furiosa RNGD × 2로 RAG embedding 가속. 사내 IP **<gateway-host>** 단일 entrypoint(envoy-gateway)에서 path 분기.
 
 ## 노드 토폴로지
 
@@ -82,7 +82,7 @@ K8s 1.31 + Cilium 1.16 + llm-d **v0.7 EPP**로 **NVIDIA A100 × 2 / Rebellions R
 | `llm-d.ai/role` | chat / embedding / vector-db / retriever |
 | `llm-d.ai/engine` | vllm / vllm-rbln / ollama / furiosa-llm |
 
-## Grafana 대시보드 (admin/admin)
+## Grafana 대시보드
 
 | UID | 제목 | 메트릭 |
 |---|---|---|
@@ -92,16 +92,16 @@ K8s 1.31 + Cilium 1.16 + llm-d **v0.7 EPP**로 **NVIDIA A100 × 2 / Rebellions R
 
 ## 운영 entrypoint
 
-**공식 통합 IP**: `192.0.2.12` (envoy-gateway LB, Cilium L2 announcement로 광고, gateway `eg` class, `Programmed=True`)
+**공식 통합 IP**: `<gateway-host>` (envoy-gateway LB, Cilium L2 announcement로 광고, gateway `eg` class, `Programmed=True`)
 
 ```bash
 # A100 → DeepSeek V4 Flash
-curl -X POST http://192.0.2.12/v1/chat/completions \
+curl -X POST http://<gateway-host>/v1/chat/completions \
   -H 'Content-Type: application/json' \
   -d '{"model":"deepseek-v4-flash","messages":[{"role":"user","content":"안녕"}]}'
 
 # RBLN → KONI Llama 3.1 (한국어 강세)
-curl -X POST http://192.0.2.12/v1/chat/completions \
+curl -X POST http://<gateway-host>/v1/chat/completions \
   -H 'Content-Type: application/json' \
   -d '{"model":"koni-llama3.1-8b-rbln","messages":[{"role":"user","content":"한국어 시 한 편 써줘"}]}'
 ```
@@ -113,7 +113,7 @@ curl -X POST http://192.0.2.12/v1/chat/completions \
 | EPP (router) | `ghcr.io/llm-d/llm-d-router-endpoint-picker-dev:main` | **llm-d v0.7 신규 image** — `no-hit-lru-scorer` 활성 |
 | EPP plugin set | queue-scorer(w=2) + kv-cache-utilization-scorer(w=2) + prefix-cache-scorer(w=3) + **no-hit-lru-scorer(w=2)** | v0.7 신규 plugin 포함 |
 | InferencePool | `llmd-router` (selector dynamic) | model server 변경 시 selector 패치 |
-| Gateway | `llm-d-gateway` (eg class, ADDRESS `192.0.2.12`) | envoy-gateway 1.3.0 |
+| Gateway | `llm-d-gateway` (eg class, ADDRESS `<gateway-host>`) | envoy-gateway 1.3.0 |
 | HTTPRoute | `openai-route` | path 분기 |
 | InferenceObjective | `low-latency`(p=100), `high-throughput`(p=10) | SLO 우선순위 |
 
@@ -135,18 +135,18 @@ curl -X POST http://192.0.2.12/v1/chat/completions \
 | Vector DB | `qdrant` (kind:StatefulSet) | collection `docs-qwen3` (dim 4096) |
 | Embedding | `furiosa-embed` (Qwen3-Embedding-8B, Furiosa NPU × 2) | `/v1/embeddings` (OpenAI 호환) |
 | Retriever | `retriever-src` ConfigMap → FastAPI app | langchain 패턴, `repetition_penalty=1.15` default |
-| Document source | NAS SMB (192.0.2.13 시놀로지) | **PV ReadOnlyMany + volumeMount readOnly** — 무결성 보장 |
+| Document source | NAS SMB (<doc-nas-host> 시놀로지) | **PV ReadOnlyMany + volumeMount readOnly** — 무결성 보장 |
 | NAS folders | `aicomputing`, `kcloud_rm`, `lab` | SMB 인증은 `smb-creds` Secret (재생성 대기 — 사용자 입력 필요) |
 
 ## 관리/관측 UI
 
 | UI | URL | 인증 |
 |---|---|---|
-| **Rancher** | https://192.0.2.8:30443 | admin / 첫 로그인 비번 변경 |
-| Headlamp | http://192.0.2.8:30502 | `kubectl create token headlamp -n headlamp --duration=24h` (또는 `headlamp-admin` SA token) |
-| Hubble UI | http://192.0.2.8:30081 | 없음 |
-| Grafana | http://192.0.2.8:30300 | admin / admin |
-| Prometheus | http://192.0.2.8:30090 | 없음 |
+| **Rancher** | https://<cp-node-ip>:30443 | 관리자 계정 (문서에 기록하지 않음) |
+| Headlamp | http://<cp-node-ip>:30502 | `kubectl create token headlamp -n headlamp --duration=24h` (또는 `headlamp-admin` SA token) |
+| Hubble UI | http://<cp-node-ip>:30081 | 없음 |
+| Grafana | http://<cp-node-ip>:30300 | 관리자 계정 (문서에 기록하지 않음) |
+| Prometheus | http://<cp-node-ip>:30090 | 없음 |
 
 > **Headlamp RBAC**: `headlamp-events-reader` ClusterRole 추가 (events list/get/watch 권한)
 
@@ -230,7 +230,7 @@ curl -X POST http://192.0.2.12/v1/chat/completions \
 - ds4 pod 죽으면: `kubectl rollout restart deployment/ds4-deepseek-v4-flash -n llm-serving` (100GB 재다운로드 주의)
 - KONI pod 죽으면: `kubectl rollout restart deployment/vllm-rbln-koni -n llm-serving` (모델 로드 ~3분)
 - A100 driver/library mismatch 재발 (현재 e11): `sudo modprobe -r nvidia_uvm nvidia_drm nvidia_modeset nvidia && sudo modprobe nvidia` (참고: `scripts/05-nvidia-setup.sh`). `no runtime for "nvidia"` 에러는 containerd에 nvidia 런타임 미등록이다 → `nvidia-ctk runtime configure --runtime=containerd` 후 containerd 재시작
-- Gateway IP `192.0.2.12`: Cilium L2 announcement 통해 광고, 양도 시 `ciliumloadbalancerippool` 패치
+- Gateway IP `<gateway-host>`: Cilium L2 announcement 통해 광고, 양도 시 `ciliumloadbalancerippool` 패치
 - EPP rollback (v1.5.0 standard): `kubectl set image deployment/llmd-router-epp -n llm-serving epp=registry.k8s.io/gateway-api-inference-extension/epp:v1.5.0` (단 no-hit-lru-scorer plugin 제거 ConfigMap 패치 필요)
 
 ## Log
