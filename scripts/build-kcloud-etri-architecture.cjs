@@ -87,7 +87,7 @@ sl.addNotes(`첫 장은 전체 작업 지도를 설명합니다. 기존 Kubernet
 {
 const sl=page(2,'클러스터 환경','8개 노드에 GPU·NPU·CPU를 연결','Kubernetes v1.31 · Cilium   |   2026-09-08 읽기 전용 조회 기준');
 node(sl,'R7525 · 관리 노드','Control-plane · 관리 UI',.55,2.32,3.28,1.02,C.bg);
-node(sl,'단일 API 진입점','Envoy Gateway · 192.0.2.12',4.36,2.32,4.13,1.02,C.pale);
+node(sl,'단일 API 진입점','Envoy Gateway · 198.51.100.233',4.36,2.32,4.13,1.02,C.pale);
 node(sl,'Prometheus / NAS','관측 지표 / 공유 model-store',9.02,2.32,3.76,1.02,C.bg);
 // one horizontal worker connection bus; unobstructed below the top node row
 arrow(sl,6.425,3.34,6.425,3.73,C.teal,false,false);
@@ -111,7 +111,7 @@ groups.forEach(g=>{
 tag(sl,'등록 자원',.57,6.65,1.12);
 txt(sl,'GPU 2 · ATOM 4 · RNGD 6',1.87,6.63,4.18,.35,16,C.teal,true);
 txt(sl,'관리·라우팅 가동 / 모델 워커 replica 0',7.1,6.63,5.67,.35,13,C.muted,false,'right');
-sl.addNotes(`이 장은 물리/관리 환경입니다. 사용자 요청에 따라 2026-09-08 kubectl get nodes, deployments, gateway, httproute를 읽기 전용으로 조회했습니다. 등록 노드 8대: R7525 control-plane 1대, GB10 GPU 서버 2대, etri-001 1대, ESC8000 1대, CPU 3대입니다. Kubernetes allocatable 기준 GPU 2개(GB10 각1), ATOM 4개(etri-001), RNGD 6개(etri-001 2, ESC8000 4)입니다. ESC8000은 Ready,SchedulingDisabled, cpu-3은 NotReady이며 따라서 등록된 모든 자원이 지금 새 작업을 받을 수 있다는 뜻은 아닙니다. A100 물리 카드 보유 기록은 있지만 현재 etri-001의 nvidia.com/gpu는 0입니다.\nIP: control-plane 192.0.2.8; etri-001 .183; ESC8000 .126; CPU .178/.179/.186; GB10 192.0.2.5/.155. Gateway 192.0.2.12 Programmed=True. NAS 192.0.2.14 및 Prometheus 구성은 docs/ENVIRONMENT-GUIDE.md의 구성 기록이며 이번에 NAS 읽기/쓰기 검증은 하지 않았습니다.\n현재 EPP들, ds4-inject-proxy 2/2, hetero-pd-gateway 1/1은 가동하며 모델 워커 배포는 0/0입니다. Ready gateway만으로 모델 요청 성공을 주장하지 않습니다. 구성도를 단순화해 공통 네트워크 연결을 표현했으며 Gateway가 디바이스에 직접 요청한다는 의미는 아닙니다. 이전 문서의 RNGD 8장 수치보다 현재 조회값을 우선했습니다.`);
+sl.addNotes(`이 장은 물리/관리 환경입니다. 사용자 요청에 따라 2026-09-08 kubectl get nodes, deployments, gateway, httproute를 읽기 전용으로 조회했습니다. 등록 노드 8대: R7525 control-plane 1대, GB10 GPU 서버 2대, etri-001 1대, ESC8000 1대, CPU 3대입니다. Kubernetes allocatable 기준 GPU 2개(GB10 각1), ATOM 4개(etri-001), RNGD 6개(etri-001 2, ESC8000 4)입니다. ESC8000은 Ready,SchedulingDisabled, cpu-3은 NotReady이며 따라서 등록된 모든 자원이 지금 새 작업을 받을 수 있다는 뜻은 아닙니다. A100 물리 카드 보유 기록은 있지만 현재 etri-001의 nvidia.com/gpu는 0입니다.\nIP: control-plane 198.51.100.105; etri-001 .183; ESC8000 .126; CPU .178/.179/.186; GB10 198.51.100.66/.155. Gateway 198.51.100.233 Programmed=True. NAS 198.51.100.114 및 Prometheus 구성은 docs/ENVIRONMENT-GUIDE.md의 구성 기록이며 이번에 NAS 읽기/쓰기 검증은 하지 않았습니다.\n현재 EPP들, ds4-inject-proxy 2/2, hetero-pd-gateway 1/1은 가동하며 모델 워커 배포는 0/0입니다. Ready gateway만으로 모델 요청 성공을 주장하지 않습니다. 구성도를 단순화해 공통 네트워크 연결을 표현했으며 Gateway가 디바이스에 직접 요청한다는 의미는 아닙니다. 이전 문서의 RNGD 8장 수치보다 현재 조회값을 우선했습니다.`);
 }
 
 // 3. Request path beside the animated UI; dashed observation edges, native shapes.

@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 # Stage 2: kubeadm init + Cilium + Gateway API CRDs on R7525
-# Run with: sudo bash /tmp/llmd-cp-stage2.sh
+# Run from the repo: sudo bash scripts/02-cp-init-cluster.sh
+#   (or copied elsewhere: sudo LLMD_ENV_FILE=/path/to/cluster.local.env bash <copy>)
 # Assumes stage1 done. Idempotent for re-runs.
 set -euo pipefail
 
-APISERVER_IP="192.0.2.8"
-POD_CIDR="192.0.2.2/16"
-SVC_CIDR="192.0.2.15/12"
+source "$(dirname "$0")/lib/cluster-env.sh"
+require_env LLMD_CP_IP LLMD_POD_CIDR LLMD_SVC_CIDR
+APISERVER_IP="$LLMD_CP_IP"
+POD_CIDR="$LLMD_POD_CIDR"
+SVC_CIDR="$LLMD_SVC_CIDR"
 NODE_NAME="$(hostname -s | tr '[:upper:]' '[:lower:]')"
 USER_HOME="/home/gspark"
 CILIUM_VER="1.16.5"

@@ -16,7 +16,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 cd lmd-top && cargo run            # 개발
 cargo build --release              # 단일 정적 바이너리 → target/release/lmd-top
 
-# (3) 런타임 의존: kubectl(kubeconfig 접근) + Prometheus 도달 (http://192.0.2.8:30090)
+# (3) 런타임 의존: kubectl(kubeconfig 접근) + Prometheus 도달 (http://198.51.100.105:30090)
 ```
 - 데이터 접근만 필요(클러스터 admin kubeconfig). 가속기 노드 SSH 불필요(Prometheus 경유).
 - M0~M8은 `kubectl` 셸링으로 시작(빠름) → M9에서 `kube-rs` 네이티브로 승격 검토.
@@ -234,7 +234,7 @@ k8s.deploy.<name>.{ready,desired}      k8s.pod.<name>.phase
 
 ### M2 — k9s 크롬 + 탭 (Pods / Accel)
 ```
-┌ lmd-top · llm-d @k8s1.31 · 6 nodes ─────────── gw 192.0.2.12 ●Programmed ┐
+┌ lmd-top · llm-d @k8s1.31 · 6 nodes ─────────── gw 198.51.100.233 ●Programmed ┐
 │ A100 0/2(offline)  RBLN 4idle  RNGD 0/4  │ models 0/4 serving               │
 ├ 1:Accel  [5:Pods] ──────────────────────────────────────────── /filter ?help┤
 │ NAME                    READY  DESIRED  NODE   STATUS                         │
@@ -248,7 +248,7 @@ k8s.deploy.<name>.{ready,desired}      k8s.pod.<name>.phase
 
 ### Target — Overview(홈, M6) 완성형
 ```
-┌ lmd-top · llm-d @k8s1.31 · 6 nodes ─────────── gw 192.0.2.12 ●Programmed ┐
+┌ lmd-top · llm-d @k8s1.31 · 6 nodes ─────────── gw 198.51.100.233 ●Programmed ┐
 │ A100 0/2  RBLN 4idle  RNGD 0/4  │ pool koni:0 sat0.00 │ models 0/4  ⚡—W      │
 ├ [0:Overview] 1:Accel 2:Models 3:EPP 4:Route 5:Pods ──────────── /filter ?help┤
 │ ─ ACCELERATORS ─────────────────────────────────────────────────────────────│

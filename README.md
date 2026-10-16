@@ -9,7 +9,7 @@ GPU·NPU·CPU 노드들을 K8s + llm-d로 묶어 관리하기 위한 설치 자�
 
 ```
               ┌─────────────────────────────────────────┐
-              │  R7525  (192.0.2.8)                │
+              │  R7525  (198.51.100.105)                │
               │  gspark-poweredge-r7525                 │
               │  ─ 관리 노드 (worker 역할 X)            │
               │  ─ K8s control-plane (kubeadm)          │
@@ -22,7 +22,7 @@ GPU·NPU·CPU 노드들을 K8s + llm-d로 묶어 관리하기 위한 설치 자�
                 │                  │                  │
        ┌────────▼────────┐ ┌───────▼────────┐ ┌──────▼─────────┐
        │ etri-001        │ │ (future)       │ │ etri-ESC8000   │
-       │ 192.0.2.10  │ │ NVIDIA-only?   │ │ 192.0.2.9 │
+       │ 198.51.100.183  │ │ NVIDIA-only?   │ │ 198.51.100.126 │
        │ RBLN-CA22 x4    │ │                │ │ Furiosa RNGD x2│
        │ Furiosa RNGD x3 │ │                │ │ A100 80GB x2   │
        │                 │ │                │ │                │
@@ -30,8 +30,8 @@ GPU·NPU·CPU 노드들을 K8s + llm-d로 묶어 관리하기 위한 설치 자�
        └─────────────────┘ └────────────────┘ └────────────────┘
 ```
 
-- 사내망 `192.0.2.6/24`, 기본 GW `192.0.2.7`
-- 클러스터 내부 CIDR: pod `192.0.2.2/16`, service `192.0.2.15/12` (사내 라우팅과 충돌 없음을 확인)
+- 사내망 `<site-subnet>`, 기본 GW `<site-gw>`
+- 클러스터 내부 CIDR: pod `<pod-cidr>`, service `<svc-cidr>` (사내 라우팅과 충돌 없음을 확인)
 - 외부 egress OK (huggingface.co / github.com 200 응답)
 - Kubernetes 버전 `v1.31` (Gateway API Inference Extension 호환)
 
@@ -48,7 +48,7 @@ GPU·NPU·CPU 노드들을 K8s + llm-d로 묶어 관리하기 위한 설치 자�
 | **Rebellions NPU Operator** v0.3.3 | ✅ | `rebellions.ai/ATOM: 4` allocatable, host KMD 3.0.0 사용 |
 | **Furiosa device-plugin** 2026.1.0 | ✅ | `furiosa.ai/rngd: 4` (esc8000) / `2` (etri-001) |
 | **NVIDIA device-plugin + DCGM** | ✅ | `nvidia.com/gpu: 2` (A100 80GB × 2), RuntimeClass `nvidia` |
-| **envoy-gateway** + Cilium L2 announcement (IP `192.0.2.12`) | ✅ | `Programmed=True` |
+| **envoy-gateway** + Cilium L2 announcement (IP `<gateway-host>`) | ✅ | `Programmed=True` |
 | **llm-d EPP v0.7** (`no-hit-lru-scorer` 포함 4-scorer set) | ✅ | image swap `ghcr.io/llm-d/llm-d-router-endpoint-picker-dev:main`, envoy-sidecar 제거 |
 | **A100 ds4 (DeepSeek V4 Flash)** | ✅ | antirez `ds4` engine + 97GB hybrid imatrix-fixed GGUF, 한국어 정상 |
 | **RBLN KONI-Llama3.1-8B** (TP=4) | ✅ | 사용자 직접 컴파일 → vllm-rbln-koni 배포 |
@@ -63,21 +63,21 @@ GPU·NPU·CPU 노드들을 K8s + llm-d로 묶어 관리하기 위한 설치 자�
 
 | UI | URL | 인증 |
 |---|---|---|
-| Headlamp | http://192.0.2.8:30502 | Bearer token: `kubectl create token headlamp -n headlamp --duration=24h` |
-| Cilium Hubble UI | http://192.0.2.8:30081 | 없음 |
-| Grafana | http://192.0.2.8:30300 | admin / admin (운영 전 변경 필수) |
-| Prometheus | http://192.0.2.8:30090 | 없음 |
-| **Rancher** | https://192.0.2.8:30443 | admin / admin (첫 로그인 시 비번 변경 요구) |
-| **llm-d Gateway** | http://192.0.2.12/v1 | OpenAI 호환 통합 entrypoint (path 분기) |
-| ds4 (DeepSeek V4 Flash) 직결 | http://192.0.2.8:30804/v1 | model: `deepseek-v4-flash` |
-| vllm-rbln-koni 직결 | http://192.0.2.8:30800/v1 | model: `koni-llama3.1-8b-rbln` |
-| ollama-cpu 직결 | http://192.0.2.8:30803/v1 | CPU 풀 |
+| Headlamp | http://<cp-node-ip>:30502 | Bearer token: `kubectl create token headlamp -n headlamp --duration=24h` |
+| Cilium Hubble UI | http://<cp-node-ip>:30081 | 없음 |
+| Grafana | http://<cp-node-ip>:30300 | 설치 시 정한 관리자 계정 (문서에 기록하지 않음) |
+| Prometheus | http://<cp-node-ip>:30090 | 없음 |
+| **Rancher** | https://<cp-node-ip>:30443 | 관리자 계정 (첫 로그인 시 비번 변경, 문서에 기록하지 않음) |
+| **llm-d Gateway** | http://<gateway-host>/v1 | OpenAI 호환 통합 entrypoint (path 분기) |
+| ds4 (DeepSeek V4 Flash) 직결 | http://<cp-node-ip>:30804/v1 | model: `deepseek-v4-flash` |
+| vllm-rbln-koni 직결 | http://<cp-node-ip>:30800/v1 | model: `koni-llama3.1-8b-rbln` |
+| ollama-cpu 직결 | http://<cp-node-ip>:30803/v1 | CPU 풀 |
 
-(NodePort는 모든 노드에서 동일 포트 노출 — `192.0.2.10`, `192.0.2.9`도 동작)
+(NodePort는 모든 노드에서 동일 포트 노출 — `<etri-001-ip>`, `<e11-ip>`도 동작)
 
 ## Rancher에서 사용자/RBAC 셋업 가이드
 
-Rancher UI(https://192.0.2.8:30443)에 로그인 후:
+Rancher UI(https://<cp-node-ip>:30443)에 로그인 후:
 
 1. **첫 로그인**: bootstrap 비번 `admin` → 새 비번 설정 요구
 2. **Users 생성**: 좌측 메뉴 `☰` → **Users & Authentication** → **Users** → **Create**
@@ -90,7 +90,7 @@ Rancher UI(https://192.0.2.8:30443)에 로그인 후:
 OpenAI 호환 호출 예시 (사내 클라이언트에서):
 
 ```bash
-curl -X POST http://192.0.2.8:30800/v1/chat/completions \
+curl -X POST http://<cp-node-ip>:30800/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
     "model": "exaone-3.5-7.8b-instruct",
@@ -106,7 +106,7 @@ curl -X POST http://192.0.2.8:30800/v1/chat/completions \
 ```python
 from openai import OpenAI
 client = OpenAI(
-    base_url="http://192.0.2.8:30800/v1",
+    base_url="http://<cp-node-ip>:30800/v1",
     api_key="dummy"   # vllm은 인증 미적용 시 아무 값
 )
 resp = client.chat.completions.create(
@@ -125,21 +125,21 @@ sudo bash ~/llm-d-setup/scripts/01-cp-install-tooling.sh
 sudo bash ~/llm-d-setup/scripts/02-cp-init-cluster.sh
 ```
 
-`02-cp-init-cluster.sh` 마지막에 `kubeadm join 192.0.2.8:6443 --token ... --discovery-token-ca-cert-hash sha256:...` 명령이 출력됩니다. **그 줄을 복사해두세요.**
+`02-cp-init-cluster.sh` 마지막에 `kubeadm join <cp-node-ip>:6443 --token ... --discovery-token-ca-cert-hash sha256:...` 명령이 출력됩니다. **그 줄을 복사해두세요.**
 
 ### 2. etri-001 (worker) — sudo 비번 필요
 
 스크립트 복사:
 
 ```bash
-scp ~/llm-d-setup/scripts/03-worker-install.sh gspark@192.0.2.10:/tmp/
+scp ~/llm-d-setup/scripts/03-worker-install.sh gspark@<etri-001-ip>:/tmp/
 ```
 
 worker 노드에서 실행:
 
 ```bash
-ssh gspark@192.0.2.10 'sudo bash /tmp/03-worker-install.sh'
-ssh gspark@192.0.2.10 'sudo kubeadm join 192.0.2.8:6443 --token <...> --discovery-token-ca-cert-hash sha256:<...>'
+ssh gspark@<etri-001-ip> 'sudo bash /tmp/03-worker-install.sh'
+ssh gspark@<etri-001-ip> 'sudo kubeadm join <cp-node-ip>:6443 --token <...> --discovery-token-ca-cert-hash sha256:<...>'
 ```
 
 ### 3. join 확인
@@ -161,7 +161,7 @@ kubectl get pods -A
 - crictl 엔드포인트 설정
 
 ### `02-cp-init-cluster.sh`
-- `kubeadm init --apiserver-advertise-address=192.0.2.8 --pod-network-cidr=192.0.2.2/16 --service-cidr=192.0.2.15/12 --skip-phases=addon/kube-proxy --node-name=<소문자 hostname>`
+- `kubeadm init --apiserver-advertise-address=<cp-node-ip> --pod-network-cidr=<pod-cidr> --service-cidr=<svc-cidr> --skip-phases=addon/kube-proxy --node-name=<소문자 hostname>`
 - kubeconfig를 `/root/.kube/config`, `~gspark/.kube/config`로 복사
 - Gateway API CRDs (v1.2.0 standard) 설치
 - Cilium CLI 다운로드 + Cilium 1.16.5 설치 (`kubeProxyReplacement=true`, `gatewayAPI.enabled=true`, Hubble UI 활성화)
@@ -213,21 +213,21 @@ kubectl get pods -A
 
 ## 🎯 운영 entrypoint
 
-**공식 통합 IP**: `192.0.2.12` (사내 IT 할당)
+**공식 통합 IP**: `<gateway-host>` (사내 IT 할당)
 
 ```bash
 # RBLN: EXAONE-3.5-7.8B (한국어 친화)
-curl -X POST http://192.0.2.12/exaone/chat/completions \
+curl -X POST http://<gateway-host>/exaone/chat/completions \
   -H "Content-Type: application/json" \
   -d '{"model":"exaone-3.5-7.8b-instruct","messages":[{"role":"user","content":"..."}]}'
 
 # Furiosa: Llama-3.1-8B (precompiled)
-curl -X POST http://192.0.2.12/llama31/chat/completions \
+curl -X POST http://<gateway-host>/llama31/chat/completions \
   -H "Content-Type: application/json" \
   -d '{"model":"furiosa-ai/Llama-3.1-8B-Instruct","messages":[{"role":"user","content":"..."}]}'
 
 # NVIDIA A100: Llama-3.1-8B (vllm-openai)
-curl -X POST http://192.0.2.12/gpu/chat/completions \
+curl -X POST http://<gateway-host>/gpu/chat/completions \
   -H "Content-Type: application/json" \
   -d '{"model":"llama-3.1-8b-instruct-gpu","messages":[{"role":"user","content":"..."}]}'
 ```
@@ -240,7 +240,7 @@ curl -X POST http://192.0.2.12/gpu/chat/completions \
 
 ## 사내 IP 정책 메모
 
-⚠️ **임의 IP 점유 금지** — Cilium LoadBalancer IP pool에 회사가 할당 안 한 IP(192.0.2.11-222 등)를 잡으면 사내 다른 시스템과 ARP 충돌 위험. IT에서 정식 할당받은 IP만 사용한다.
+⚠️ **임의 IP 점유 금지** — Cilium LoadBalancer IP pool에 회사가 할당 안 한 IP(<미할당 IP> 등)를 잡으면 사내 다른 시스템과 ARP 충돌 위험. IT에서 정식 할당받은 IP만 사용한다.
 
 회사에서 신규 IP를 받으면 재구성:
 
@@ -270,7 +270,7 @@ EOF
 ```
 
 그동안 임시 노출:
-- **envoy Gateway NodePort `30788`**: `http://192.0.2.8:30788/{exaone,llama31,gpu}/chat/completions` (HTTPRoute path-based 분기 동작)
+- **envoy Gateway NodePort `30788`**: `http://<cp-node-ip>:30788/{exaone,llama31,gpu}/chat/completions` (HTTPRoute path-based 분기 동작)
 - 각 모델 직결: `:30800` (EXAONE/RBLN) · `:30801` (Llama/Furiosa) · `:30802` (Llama/A100)
 
 ## 트러블슈팅 메모
@@ -357,12 +357,12 @@ args:
 
 ## 노드별 하드웨어 메모
 
-### R7525 (관리, 192.0.2.8)
+### R7525 (관리, <cp-node-ip>)
 - Ubuntu 26.04 "resolute", 커널 7.x, 128 vCPU / 373GB RAM
-- NIC: `eno1` UP (192.0.2.8/24), 나머지 down
+- NIC: `eno1` UP (<cp-node-ip>/24), 나머지 down
 - 가속기 없음 (의도적 — 관리/컨트롤 플레인 전용)
 
-### etri-001 (worker, 192.0.2.10)
+### etri-001 (worker, <etri-001-ip>)
 - Ubuntu 22.04.5, 커널 6.8, 96코어 / 1.5TB RAM, NUMA 2-node, disk 1.5TB 여유
 - ~~NVIDIA A100 PCIe 80GB × 2 (44:00.0, 45:00.0)~~ — **e11로 이동**(2026-10-15 확인, 현재 etri-001에 NVIDIA 장치 없음, 45:00.0은 RNGD)
 - Rebellions RBLN-CA22 × 4 (83/84/c3/c4:00.0, NUMA 1, 15.7GiB/장) — KMD 3.0.0 정상
@@ -371,13 +371,49 @@ args:
 - venv: `~/vllm_test/venv` (vllm_rbln 0.10.2.post1, rebel-compiler 0.10.2, optimum-rbln 0.10.2)
 - HF cache: `~/.cache/huggingface` (143GB 사용)
 
-### etri-ESC8000-E11 (worker, 192.0.2.9:10022)
+### etri-ESC8000-E11 (worker, <e11-ip>:10022)
 - Ubuntu 22.04.5, 48코어 / 1TB RAM, 16 NUMA (SNC)
 - Furiosa RNGD × 2 (50/63:00.0), driver 2026.4.0
 - NVIDIA A100 PCIe 80GB × 2 (99/bd:00.0), driver 580.178, nvidia-container-toolkit 1.19.1 (`/etc/containerd/conf.d/99-nvidia.toml`) — 2026-10-15 복구
 - 노드 라벨 `feature.node.kubernetes.io/pci-10de.present=true`는 수동 부여(nvidia-device-plugin DS selector가 요구)
 - kubelet `evictionHard` nodefs/imagefs 5% (디스크 대부분이 사용자 홈 데이터, 백업 `config.yaml.bak-20261015`)
 - SSH 포트 10022 사용
+
+## ai-rm
+
+이 레포는 [ai-rm](https://github.com/ai-computing/ai-rm)(AI 반도체 통합 자원관리)의 **`l4-cluster` 계층, kind `cluster`** 구성요소다. 다른 구성요소가 올라가는 바탕인 K8s + llm-d 클러스터를 정의한다: 노드 부트스트랩 스크립트, Gateway/HTTPRoute, InferencePool·EPP, 모델 서버 매니페스트, 공유 모델 스토어, 관측 스택. 메타데이터는 루트의 `ai-rm.yaml`에 있다.
+
+**k8s + llm-d 연결.** 요청 경로는 `envoy-gateway (llm-d-gateway)` → `HTTPRoute`(path 분기, `manifests/openai-route.yaml`, `llm-d-gateway.yaml`) → `InferencePool` → EPP(`manifests/epp/`, `llmd-router-values.yaml`) → 모델 서버 Pod(`llm-serving` ns)다. 가속기는 노드의 device plugin 리소스(`nvidia.com/gpu`, RBLN, RNGD)와 nodeSelector로 배치한다. 매니페스트는 kustomize 디렉터리가 아니라 개별 `kubectl apply` / helm values 모음이라 `ai-rm.yaml`의 `deploy.manifests`는 `null`이다.
+
+**다른 ai-rm 구성요소가 붙는 자리**
+
+| 구성요소 | 계층 | 이 클러스터에 붙는 방식 |
+|---|---|---|
+| rngd-pd | l3-serving | RNGD 노드(`etri-001`, `etri-esc8000-e11`)에 prefill/decode Pod를 띄우고, 자체 InferencePool + EPP를 만든 뒤 Gateway에 path를 추가한다 (`manifests/epp/make-epp.sh <pool> /<path>`; 기록은 `PD disaggregation_HISTORY.md`) |
+| npu-lora | l3-serving | RNGD 노드에 학습 Job(privileged, `lmd-top --plan train … --apply`)으로 제출한다. 모델·어댑터는 공유 모델 스토어 PVC `model-store`(`manifests/README-model-store.md`)를 쓰고, 어댑터는 A100 vLLM(`manifests/vllm-a100-llama31-8b.yaml`, `--enable-lora`)이 런타임에 적재한다 |
+| lmd-top | l5-ops | control-plane에서 kubectl + Prometheus만 읽는 TUI. `LMD_PROM=$LLMD_PROM_ADDR LMD_NS=llm-serving lmd-top` |
+| rm-bench | l5-ops | Gateway(`http://$LLMD_GATEWAY_HOST/<path>/v1`)에 OpenAI 호환 부하를 건다. 같은 부하 에너지 비교는 `scripts/hetero-sweep.py` |
+| 모니터링 (`monitoring/`) | l4-cluster | 클러스터에서는 kube-prometheus-stack + DCGM/Furiosa/RBLN exporter + ServiceMonitor(`manifests/*servicemonitor.yaml`, `ipmi-exporter.yaml`)가 지표를 모으고, `monitoring/grafana-dashboards/`를 Grafana에 올린다. `monitoring/standalone-compose/`는 k8s 없는 단일 GPU 노드용 |
+
+**설치·테스트.** 클러스터 부트스트랩은 root 권한 수동 단계라 `ai-rm setup`이 실행할 install 명령은 없다(위 「실행 순서」, `scripts/01~05`). 가속기 없이 도는 빠른 검사:
+
+```bash
+python3 scripts/test-model-store-discovery.py      # 모델 스토어 discovery 오프라인 회귀 테스트
+bash -n scripts/*.sh manifests/epp/make-epp.sh       # 셸 스크립트 문법 검사
+```
+
+**인터페이스.** 제공: `Placement`(Gateway → InferencePool → EPP 라우팅, nodeSelector 기반 가속기 배치), `Metrics`(Prometheus/Grafana, 가속기·노드 wall 전력 exporter). 사용: `Accelerator`(노드 device plugin과 가속기 리소스), `Workload`(그 위에 올라가는 serving/학습 워크로드).
+
+**KPI.** 이종자원수(A100·ATOM·RNGD·GB10·CPU를 한 Gateway로 서빙), 전력효율(DCGM·IPMI wall 전력으로 tok/J, `scripts/hetero-sweep.py`), SLO(EPP 지표 TTFT/TPOT).
+
+**사이트 설정 (`cluster.local.env`).** 실제 주소는 커밋하지 않는다. `cp cluster.example.env cluster.local.env`(untracked) 후 값을 채우면 `scripts/lib/cluster-env.sh`가 읽는다. 이미 환경에 있는 값이 우선하고, 필요한 값이 없으면 스크립트가 바로 실패한다. 문서의 `<gateway-host>`, `<cp-node-ip>` 같은 placeholder 뜻도 `cluster.example.env` 주석에 있다.
+
+| 변수 | 쓰는 곳 |
+|---|---|
+| `LLMD_CP_IP`, `LLMD_POD_CIDR`, `LLMD_SVC_CIDR` | `scripts/02-cp-init-cluster.sh` (kubeadm init) |
+| `LLMD_GATEWAY_HOST` | `manifests/epp/make-epp.sh` 헬스 테스트 (`GW_ADDR`로 덮어쓰기 가능) |
+| `LLMD_PROM_ADDR` | `scripts/capture-lmd-top.sh`, lmd-top `LMD_PROM` |
+| `LLMD_MODEL_STORE_SMB` | `manifests/model-store.yaml` (`scripts/render-manifest.sh manifests/model-store.yaml \| kubectl apply -f -`) |
 
 ## 참고
 

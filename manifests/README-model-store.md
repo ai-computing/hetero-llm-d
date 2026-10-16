@@ -5,7 +5,7 @@
 
 ## 구성
 
-- **`model-store.yaml`** — SMB(NAS, `//192.0.2.14/lab`, 기존 `smb.csi.k8s.io` + `rag/smb-creds`) 위 RWX PVC `model-store`(ns `llm-serving`). SMB 라 RWX 가능. *전제: 그 share 에 쓰기 권한.*
+- **`model-store.yaml`** — SMB(NAS, `LLMD_MODEL_STORE_SMB`(예: `//<nas-host>/lab`), 기존 `smb.csi.k8s.io` + `rag/smb-creds`) 위 RWX PVC `model-store`(ns `llm-serving`). SMB 라 RWX 가능. *전제: 그 share 에 쓰기 권한.*
 - **`model-store-discovery.yaml`** — PVC 를 RO 스캔해 인벤토리를 ConfigMap `model-inventory` 로 발행하는 CronJob(10분). lmd-top 이 읽음.
 
 ## 레이아웃 규약
@@ -20,7 +20,7 @@ model-store/
 ## 적용
 
 ```bash
-kubectl apply -f manifests/model-store.yaml
+scripts/render-manifest.sh manifests/model-store.yaml | kubectl apply -f -   # ${LLMD_MODEL_STORE_SMB} ← cluster.local.env
 kubectl -n llm-serving get pvc model-store            # STATUS=Bound 확인
 kubectl apply -f manifests/model-store-discovery.yaml
 kubectl -n llm-serving create job --from=cronjob/model-discovery scan-now   # 즉시 1회
@@ -52,7 +52,7 @@ kubectl -n llm-serving get cm model-inventory -o jsonpath='{.data.inventory}'
 첫 적용 시 스캔 파드가 `cpu-2` 에 스케줄되어 마운트 실패했음(같은 share·creds 로 `rag` 의
 읽기전용 마운트는 `cpu-1/cpu-3` 에서 정상). 확인 순서:
 1. **share 쓰기 권한**: `rag` 는 이 share 를 **ro**(`file_mode=0444`)로 씀. `smb-creds` 로
-   `//192.0.2.14/lab` 에 쓰기가 되는지(안 되면 쓰기 가능한 전용 share 로 `source:` 변경).
+   `LLMD_MODEL_STORE_SMB`(예: `//<nas-host>/lab`) 에 쓰기가 되는지(안 되면 쓰기 가능한 전용 share 로 `source:` 변경).
 2. **노드별 접근**: 모든 서빙/스캔 노드에서 SMB 서버(445/tcp)가 닿는지. 특정 노드만 막히면
    디스커버리 CronJob 에 `nodeSelector`/`affinity` 로 접근 가능한 노드에 고정.
 3. **다이얼렉트**: 서버가 요구하는 `vers=`(3.0/3.1.1/2.1) 확인. `nas-lab` 은 `vers=3.0` 사용.

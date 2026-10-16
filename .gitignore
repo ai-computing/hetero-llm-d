@@ -5,6 +5,7 @@
 kubeconfig*
 *.kubeconfig
 .env
+cluster.local.env
 secrets.*
 
 # lmd-top — 독립 git 레포로 분리 관리 (이 레포에서 추적 안 함)

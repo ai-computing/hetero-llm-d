@@ -303,7 +303,7 @@
             <tr><td>모델 추가</td><td class="dim">docker run 하나 더</td><td>CR 한 줄 → 게이트웨이가 자동 편입</td></tr>
             <tr><td>가속기 다양화</td><td class="dim">같은 vendor만</td><td>NVIDIA + Rebellions + Furiosa + CPU <strong>동시</strong></td></tr>
             <tr><td>스케일</td><td class="dim">수동 replica</td><td>부하 메트릭 기반 오토스케일</td></tr>
-            <tr><td>외부 노출</td><td class="dim">nginx 직접</td><td>Gateway 단일 IP <span class="mono num-col">192.0.2.12</span></td></tr>
+            <tr><td>외부 노출</td><td class="dim">nginx 직접</td><td>Gateway 단일 IP <span class="mono num-col">198.51.100.233</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -476,7 +476,7 @@
     <div class="body-zone rise">
       <div class="node" style="flex:0 0 auto; align-items:center; text-align:center; border-color:var(--accent); background:var(--accent-dim)">
         <span class="tag">SINGLE ENTRYPOINT · envoy-gateway + EPP</span>
-        <span class="name mono num-col" style="font-size:2.9cqh">192.0.2.12</span>
+        <span class="name mono num-col" style="font-size:2.9cqh">198.51.100.233</span>
       </div>
       <div class="grid" style="grid-template-columns:repeat(4,1fr); flex:1 1 auto">
         <div class="card edge-gpu"><span class="k" style="color:var(--gpu)">GPU · NVIDIA</span><h3>A100 80GB × 2</h3><p><strong>EXAONE-3.5-32B-AWQ</strong><br>vLLM · TP=1 × 2 replica (DP)<br><span class="num-col mono">~62 t/s</span> · 한국어 검증</p></div>
@@ -825,7 +825,7 @@
         <div>
           <div class="col-head accent-t">관측 · 관리 UI</div>
           <div class="card" style="gap:1.1cqh">
-            <div class="kv-line"><span class="lbl">Grafana</span><span class="mono" style="font-size:1.9cqh">:30300 · admin/admin</span></div>
+            <div class="kv-line"><span class="lbl">Grafana</span><span class="mono" style="font-size:1.9cqh">:30300</span></div>
             <div class="kv-line"><span class="lbl">Rancher</span><span class="mono" style="font-size:1.9cqh">:30443</span></div>
             <div class="kv-line"><span class="lbl">Prometheus</span><span class="mono" style="font-size:1.9cqh">:30090</span></div>
             <div class="kv-line"><span class="lbl">Hubble</span><span class="mono" style="font-size:1.9cqh">:30081</span></div>
@@ -837,7 +837,7 @@
           <div class="col-head accent-t">데모 — 같은 IP, 모델만 교체</div>
           <div class="card" style="background:var(--ground-2)">
             <p class="mono" style="color:var(--text-dim); font-size:1.7cqh; line-height:1.7; white-space:pre-wrap">curl -X POST \
- http://192.0.2.12/v1/chat/completions \
+ http://198.51.100.233/v1/chat/completions \
  -H 'Content-Type: application/json' \
  -d '{"model":<span style="color:var(--rbln)">"koni-llama3.1-8b-rbln"</span>,
       "messages":[{"role":"user",

@@ -21,7 +21,7 @@
 | 자원 격리 | namespace만 | Rancher Project + ResourceQuota로 NPU 슬라이스 |
 | 사용자별 latency 우선 | 라우터에서 수동 | `InferenceObjective` priority |
 | 모델 비교 (A/B) | 따로 두 endpoint | 같은 prompt → 4 path 비교 (다른 backend) |
-| 외부 노출 | nginx 직접 | Gateway IP `192.0.2.12` 단일 |
+| 외부 노출 | nginx 직접 | Gateway IP `<gateway-host>` 단일 |
 
 ## 1. 워크로드 유형별 라우팅 가이드 (2026-06-01)
 
@@ -41,7 +41,7 @@
 
 ```bash
 docker run -d \
-  -e OPENAI_API_BASE_URL=http://192.0.2.12/v1 \
+  -e OPENAI_API_BASE_URL=http://<gateway-host>/v1 \
   -e OPENAI_API_KEY=dummy \
   -p 3000:8080 ghcr.io/open-webui/open-webui:main
 ```
@@ -56,9 +56,9 @@ UI에서 모델 선택 시 `deepseek-v4-flash`, `koni-llama3.1-8b-rbln` 노출.
 ```json
 {
   "models": [
-    {"title":"Llama-RBLN","provider":"openai","apiBase":"http://192.0.2.12/exaone","model":"llama-3.1-8b-rbln"},
-    {"title":"Llama-Furiosa","provider":"openai","apiBase":"http://192.0.2.12/llama31","model":"furiosa-ai/Llama-3.1-8B-Instruct"},
-    {"title":"Llama-A100","provider":"openai","apiBase":"http://192.0.2.12/gpu","model":"llama-3.1-8b-instruct-gpu"}
+    {"title":"Llama-RBLN","provider":"openai","apiBase":"http://<gateway-host>/exaone","model":"llama-3.1-8b-rbln"},
+    {"title":"Llama-Furiosa","provider":"openai","apiBase":"http://<gateway-host>/llama31","model":"furiosa-ai/Llama-3.1-8B-Instruct"},
+    {"title":"Llama-A100","provider":"openai","apiBase":"http://<gateway-host>/gpu","model":"llama-3.1-8b-instruct-gpu"}
   ]
 }
 ```
@@ -68,10 +68,10 @@ UI에서 모델 선택 시 `deepseek-v4-flash`, `koni-llama3.1-8b-rbln` 노출.
 ```python
 from openai import OpenAI
 clients = {
-  "rbln":    OpenAI(base_url="http://192.0.2.12/exaone/v1",    api_key="x"),
-  "furiosa": OpenAI(base_url="http://192.0.2.12/llama31/v1",   api_key="x"),
-  "a100":    OpenAI(base_url="http://192.0.2.12/gpu/v1",       api_key="x"),
-  "cpu":     OpenAI(base_url="http://192.0.2.12/cpu/v1",       api_key="x"),
+  "rbln":    OpenAI(base_url="http://<gateway-host>/exaone/v1",    api_key="x"),
+  "furiosa": OpenAI(base_url="http://<gateway-host>/llama31/v1",   api_key="x"),
+  "a100":    OpenAI(base_url="http://<gateway-host>/gpu/v1",       api_key="x"),
+  "cpu":     OpenAI(base_url="http://<gateway-host>/cpu/v1",       api_key="x"),
 }
 # 같은 prompt를 4 backend에 동시 보내 응답·지연 비교
 ```
@@ -120,7 +120,7 @@ for path in exaone llama31 gpu cpu; do
     gpu)     MODEL='llama-3.1-8b-instruct-gpu' ;;
     cpu)     MODEL='llama3.2:3b' ;;
   esac
-  time curl -s -X POST http://192.0.2.12/$path/chat/completions \
+  time curl -s -X POST http://<gateway-host>/$path/chat/completions \
     -H "Content-Type: application/json" \
     -d "{\"model\":\"$MODEL\",$PROMPT}" | jq -r '.choices[0].message.content'
 done

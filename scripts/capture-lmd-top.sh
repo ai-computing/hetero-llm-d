@@ -3,7 +3,9 @@ set -euo pipefail
 
 # Capture selected live lmd-top TestBackend views as embeddable SVG images.
 # The output is intentionally text-based so it works on headless control-plane nodes.
-PROMETHEUS="${LMD_PROM:-192.0.2.8:30090}"
+source "$(dirname "$0")/lib/cluster-env.sh"
+[[ -n "${LMD_PROM:-}" ]] || { require_env LLMD_PROM_ADDR; LMD_PROM="$LLMD_PROM_ADDR"; }
+PROMETHEUS="$LMD_PROM"
 NAMESPACE="${LMD_NS:-llm-serving}"
 WIDTH="${LMD_W:-150}"
 HEIGHT="${LMD_H:-42}"
@@ -15,6 +17,12 @@ trap 'rm -f "$rendered"' EXIT
 
 LMD_PROM="$PROMETHEUS" LMD_NS="$NAMESPACE" LMD_W="$WIDTH" LMD_H="$HEIGHT" \
   lmd-top --render >"$rendered"
+
+# Mask site addresses (docs are published): <subnet>.N -> 198.51.100.N (RFC 5737, same host part).
+for ip in "${LLMD_GATEWAY_HOST:-}" "${LLMD_PROM_ADDR%%:*}" "${LLMD_CP_IP:-}"; do
+  [[ "$ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.([0-9]+)$ ]] || continue
+  sed -i "s/${ip//./\\.}/198.51.100.${BASH_REMATCH[1]}/g" "$rendered"
+done
 
 render_svg() {
   local view="$1"

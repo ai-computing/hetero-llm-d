@@ -130,7 +130,7 @@ P/D 분리시 KV 전송(NIXL) 메트릭 (로드맵).
 
 ### 공통 프레임 (k9s 크롬)
 ```
-┌ lmd-top · llm-d @ k8s1.31 · 6 nodes ──────────── gw 192.0.2.12 ●Programmed ┐
+┌ lmd-top · llm-d @ k8s1.31 · 6 nodes ──────────── gw 198.51.100.233 ●Programmed ┐
 │ A100 1/2  RBLN 4idle  RNGD 0/6  │ pool koni: 0pods sat0.00 │ models 0/4 ⚡685W │  ← 집계 요약 바
 ├ 0:Overview 1:Accel 2:Models 3:EPP 4:Route 5:Pods ─────────────── /filter  ?help┤  ← 뷰 탭
 │  …본문…                                                                          │
@@ -176,7 +176,7 @@ P/D 분리시 KV 전송(NIXL) 메트릭 (로드맵).
 ### [1] Accelerators — all-smi식 카드 (생략, §앞 mockup 참조)
 ### [4] Routing — 트리
 ```
- llm-d-gateway (192.0.2.12 ●)
+ llm-d-gateway (198.51.100.233 ●)
  ├─ /v1   → InferencePool: vllm-a100-pool → [exaone ×0]
  ├─ /koni → InferencePool: llmd-router    → [koni ×0]
  ├─ /ds4  → ds4-deepseek-v4-flash (×0)
@@ -288,7 +288,7 @@ pub trait Panel {
 ```toml
 # ~/.config/lmd-top/lmd-top.toml
 [sources]
-prometheus = "http://192.0.2.8:30090"
+prometheus = "http://198.51.100.105:30090"
 namespace  = "llm-serving"
 epp_service = "llmd-router-epp"
 

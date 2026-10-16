@@ -7,7 +7,7 @@
 
 ## 0. 먼저 이것만
 
-우리는 Kubernetes 위에서 **OpenAI 호환 LLM API**를 돌리는 사내 추론 플랫폼을 운영합니다. 들어올 문은 하나입니다 — `http://192.0.2.12`. 그 뒤에서 GPU(GB10), NPU(Rebellions RBLN / Furiosa RNGD), CPU가 path에 따라 나뉩니다. 관측은 Grafana와 터미널 도구 **lmd-top**으로 합니다.
+우리는 Kubernetes 위에서 **OpenAI 호환 LLM API**를 돌리는 사내 추론 플랫폼을 운영합니다. 들어올 문은 하나입니다 — `http://<gateway-host>`. 그 뒤에서 GPU(GB10), NPU(Rebellions RBLN / Furiosa RNGD), CPU가 path에 따라 나뉩니다. 관측은 Grafana와 터미널 도구 **lmd-top**으로 합니다.
 
 지금(2026-07-13) 게이트웨이·EPP·메트릭 같은 **플랫폼은 켜져 있고**, 대부분의 모델 Deployment는 **replicas=0**으로 대기 중입니다. 필요할 때 scale-up 하면 됩니다.
 
@@ -42,7 +42,7 @@ L3  Model Server Pod      ← 주방 (vLLM / vLLM-RBLN / furiosa-llm / …)
 L4  Accelerator           ← 하드웨어 (GPU / RBLN / RNGD / CPU)
 ```
 
-**Gateway**는 클러스터 밖 HTTP를 받는 정문입니다. 우리 환경에서는 Envoy Gateway(`eg`)가 `llm-d-gateway`를 돌리고, Cilium L2로 `192.0.2.12`을 광고합니다.  
+**Gateway**는 클러스터 밖 HTTP를 받는 정문입니다. 우리 환경에서는 Envoy Gateway(`eg`)가 `llm-d-gateway`를 돌리고, Cilium L2로 `<gateway-host>`을 광고합니다.  
 **HTTPRoute**는 그 정문 안의 안내판입니다. `/atom/gemma`는 RBLN 풀로, `/gpu/qwen`은 GB10 쪽으로, `/v1`은 inject-proxy로 — URL path로 백엔드를 고릅니다.
 
 **InferencePool**은 “이 모델을 서빙하는 Pod들의 집합”입니다. Kubernetes Service와 비슷해 보이지만, 직접 round-robin하지 않고 **EPP에게 선택을 맡깁니다**.  
@@ -103,11 +103,11 @@ NVIDIA GPU는 weight만 올리면 바로 서빙할 수 있어 새 모델 PoC에 
 
 클라이언트가 `.233`으로 들어오면 HTTPRoute가 path로 나눕니다. `/atom/*`·`/rngd/*`는 InferencePool과 EPP를 거쳐 해당 NPU 노드의 모델 Pod로 가고, `/gpu/*`는 GB10이나 inject-proxy 쪽, `/cpu/*`는 ollama로 갑니다. EPP는 모델 Pod의 `/metrics`를 읽어 큐와 KV를 보고 Pod를 고릅니다. 모델 Pod는 device-plugin으로 카드를 받고, weight·컴파일 산출물은 NAS SMB에 물린 `model-store` PVC에서 가져옵니다.
 
-관측 쪽에서는 노드·가속기·vLLM·EPP exporter가 Prometheus(`192.0.2.8:30090`)로 모이고, Grafana(`:30300`)와 lmd-top이 그걸 봅니다. 클러스터 관리는 Rancher(`:30443`), Headlamp, Hubble이 control-plane NodePort로 열려 있습니다. 멀티테넌트는 `tenant-a` / `tenant-b`와 Rancher RBAC로 나눕니다.
+관측 쪽에서는 노드·가속기·vLLM·EPP exporter가 Prometheus(`<cp-node-ip>:30090`)로 모이고, Grafana(`:30300`)와 lmd-top이 그걸 봅니다. 클러스터 관리는 Rancher(`:30443`), Headlamp, Hubble이 control-plane NodePort로 열려 있습니다. 멀티테넌트는 `tenant-a` / `tenant-b`와 Rancher RBAC로 나눕니다.
 
 ### 망과 노드
 
-주 사내망은 `192.0.2.6/24`입니다. control-plane(R7525 `.105`), etri·CPU 워커, Gateway `.233`이 여기 있습니다. GB10 두 대(`dgx-spark0`, `gx10-4744`)는 `192.0.2.3/24`에 있고, 모델·문서 저장소 NAS는 `192.0.2.14`입니다. Pod/Service CIDR은 `192.0.2.2/16` / `192.0.2.15/12`(Cilium)입니다.
+주 사내망은 `<site-subnet>`입니다. control-plane(R7525 `.105`), etri·CPU 워커, Gateway `.233`이 여기 있습니다. GB10 두 대(`dgx-spark0`, `gx10-4744`)는 `<gb10-subnet>`에 있고, 모델·문서 저장소 NAS는 `<nas-host>`입니다. Pod/Service CIDR은 `<pod-cidr>` / `<svc-cidr>`(Cilium)입니다.
 
 역할만 짧게 말하면 — **R7525**는 관리·API·UI, **etri-001**은 RBLN×4와 RNGD×3을 가진 NPU 주력 노드, **esc8000**은 RNGD×2와 A100 80GB×2를 가진 노드(A100은 2026-10-15 etri-001에서 옮겨진 것을 확인하고 K8s에 `nvidia.com/gpu: 2`로 복구), **GB10 두 대**는 GPU 서빙, **cpu-1/2/3**은 EPP·proxy·ollama를 올리는 CPU 풀입니다.
 
@@ -123,7 +123,7 @@ NVIDIA GPU는 weight만 올리면 바로 서빙할 수 있어 새 모델 PoC에 
 
 Grafana는 차트를, k9s는 Pod를, nvidia-smi류는 카드만 잘 봅니다. 장애나 용량 문제를 가르려면 사실 **Gateway → EPP → 모델 → 하드웨어**를 한꺼번에 봐야 하는데, 그때마다 도구를 옮겨 다니게 됩니다.
 
-**lmd-top**은 그 네 계층을 한 터미널 화면에서 상관해서 보여 주는 llm-d 전용 TUI입니다. 자체 데이터베이스는 없고, Prometheus와 kubectl만 읽습니다. 이 클러스터에서는 `LMD_PROM=192.0.2.8:30090`, `LMD_NS=llm-serving`이면 됩니다.
+**lmd-top**은 그 네 계층을 한 터미널 화면에서 상관해서 보여 주는 llm-d 전용 TUI입니다. 자체 데이터베이스는 없고, Prometheus와 kubectl만 읽습니다. 이 클러스터에서는 `LMD_PROM=<cp-node-ip>:30090`, `LMD_NS=llm-serving`이면 됩니다.
 
 ### 화면과 llm-d 계층
 
@@ -160,7 +160,7 @@ RBLN을 컴파일해 올리려면 Deploy, Gateway나 PVC가 빠졌는지 보려�
 ### 실행과 권한
 
 ```bash
-export LMD_PROM=192.0.2.8:30090 LMD_NS=llm-serving
+export LMD_PROM=<cp-node-ip>:30090 LMD_NS=llm-serving
 lmd-top                 # 기본: 읽기 전용(observe)
 lmd-top --mode admin    # scale / restart / compile apply
 lmd-top --snapshot      # 텍스트로 한 번 요약
@@ -212,19 +212,19 @@ lmd-top --doctor
 
 ### 관리 UI
 
-- Rancher — https://192.0.2.8:30443  
-- Headlamp — http://192.0.2.8:30502  
-- Grafana — http://192.0.2.8:30300  
-- Prometheus — http://192.0.2.8:30090  
-- Hubble — http://192.0.2.8:30081  
+- Rancher — https://<cp-node-ip>:30443  
+- Headlamp — http://<cp-node-ip>:30502  
+- Grafana — http://<cp-node-ip>:30300  
+- Prometheus — http://<cp-node-ip>:30090  
+- Hubble — http://<cp-node-ip>:30081  
 
 ### 노드
 
-- `gspark-poweredge-r7525` — 192.0.2.8 — control-plane  
-- `etri-001` — 192.0.2.10 — RBLN×4, RNGD×3  
-- `etri-esc8000-e11` — 192.0.2.9 (SSH 포트 10022) — RNGD×2, A100 80GB×2  
-- `dgx-spark0` — 192.0.2.5 — GB10×1  
-- `gx10-4744` — 192.0.2.4 — GB10×1  
+- `gspark-poweredge-r7525` — <cp-node-ip> — control-plane  
+- `etri-001` — <etri-001-ip> — RBLN×4, RNGD×3  
+- `etri-esc8000-e11` — <e11-ip> (SSH 포트 10022) — RNGD×2, A100 80GB×2  
+- `dgx-spark0` — <gb10-a-ip> — GB10×1  
+- `gx10-4744` — <gb10-b-ip> — GB10×1  
 - `cpu-1` / `cpu-2` / `cpu-3` — .178 / .179 / .186 — EPP·proxy  
 
 ### path → 백엔드
@@ -245,16 +245,16 @@ EPP 플러그인: ConfigMap `*-epp` → `default-plugins.yaml`.
 ### 호출 예
 
 ```bash
-curl -s http://192.0.2.12/v1/models | jq .
+curl -s http://<gateway-host>/v1/models | jq .
 
-curl -s -X POST http://192.0.2.12/atom/koni/chat/completions \
+curl -s -X POST http://<gateway-host>/atom/koni/chat/completions \
   -H 'Content-Type: application/json' \
   -d '{"model":"koni-llama3.1-8b-rbln","messages":[{"role":"user","content":"안녕"}],"max_tokens":64}'
 ```
 
 ```python
 from openai import OpenAI
-client = OpenAI(base_url="http://192.0.2.12/v1", api_key="dummy")
+client = OpenAI(base_url="http://<gateway-host>/v1", api_key="dummy")
 print(client.models.list())
 ```
 

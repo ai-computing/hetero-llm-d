@@ -2,7 +2,7 @@
 # 목적: HF 가중치 + NPU(RBLN/Furiosa) 컴파일 산출물을 노드 간 "한 번 받고/컴파일하고, 어디서나 서빙".
 #       hostPath(노드마다 중복) → 공유 PVC 로 전환. lmd-top Deploy 뷰의 단일 진실원천.
 #
-# 백엔드: 이 클러스터에 이미 있는 SMB CSI(smb.csi.k8s.io, //192.0.2.14/lab, secret rag/smb-creds)를
+# 백엔드: 이 클러스터에 이미 있는 SMB CSI(smb.csi.k8s.io, ${LLMD_MODEL_STORE_SMB}, secret rag/smb-creds)를
 #         그대로 사용(nas-lab PV 와 동일 패턴). SMB 는 RWX 지원.
 # 전제:  rag/smb-creds 로 해당 share 에 **쓰기 권한**이 있어야 함(nas-lab 은 ro 였음).
 #         쓰기 share 가 따로면 volumeAttributes.source 를 그 share 로 바꿀 것.
@@ -12,7 +12,7 @@
 #   llm-model-store/compiled/{org}--{name}/rbln/{npu}-tp{n}-s{len}/  # RBLN 컴파일본(하드웨어·옵션별)
 #   llm-model-store/compiled/{org}--{name}/furiosa/{opts-hash}/      # Furiosa 컴파일본
 #
-# 적용:  kubectl apply -f manifests/model-store.yaml
+# 적용:  scripts/render-manifest.sh manifests/model-store.yaml | kubectl apply -f -   (LLMD_MODEL_STORE_SMB in cluster.local.env)
 # 확인:  kubectl -n llm-serving get pvc model-store   # STATUS=Bound
 apiVersion: v1
 kind: PersistentVolume
@@ -35,7 +35,7 @@ spec:
     driver: smb.csi.k8s.io
     volumeHandle: llm-model-store
     volumeAttributes:
-      source: //192.0.2.14/lab      # 쓰기 가능한 share 로. (전용 share 있으면 //.../models 등)
+      source: ${LLMD_MODEL_STORE_SMB}   # 쓰기 가능한 share 로. (전용 share 있으면 //.../models 등)
     nodeStageSecretRef:
       name: smb-creds
       namespace: rag

@@ -10,7 +10,7 @@
 |---|---|---|---|
 | **OpenAI 호환 API** | ✅ | 4 모델 서버 (ds4 / KONI / ollama / Qwen3-Embedding) | `/v1/chat/completions`, `/v1/embeddings`, `/v1/models`, SSE streaming |
 | **Multi-model 동시 서빙** | ✅ | DeepSeek V4 Flash / KONI / ollama / embedding | 풀별로 가속기 다름 |
-| **Path-based 라우팅** | ✅ | envoy-gateway HTTPRoute on `192.0.2.12` | OpenAI path 통합 |
+| **Path-based 라우팅** | ✅ | envoy-gateway HTTPRoute on `<gateway-host>` | OpenAI path 통합 |
 | **EPP (Endpoint Picker)** | ✅ **v0.7** | `llmd-router-epp` | gRPC ext_proc :9002 — `ghcr.io/llm-d/llm-d-router-endpoint-picker-dev:main` image |
 | **EPP scorer plugin set** | ✅ **v0.7** | queue / kv-cache-utilization / prefix-cache + **no-hit-lru-scorer** | LRU eviction on cache miss (v0.7 신규) |
 | **InferencePool / InferenceObjective** | ✅ | `llmd-router` 풀에 low-latency(100) / high-throughput(10) | SLO priority |
