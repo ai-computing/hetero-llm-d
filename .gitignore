@@ -19,3 +19,18 @@ secrets.*
 
 # Claude Code 로컬 설정 (공유 불필요)
 .claude/
+
+# 문서 PDF 빌드용 로컬 툴체인
+.venv-docs/
+.tools/
+
+# npu-lora: separate repository (ai-computing/npu-lora)
+/npu-lora/
+
+# lmd-top-autoloop: git worktree of lmd-top (ai-computing/lmd-top)
+/lmd-top-autoloop/
+# Orca workspace state, Python caches, print previews
+.orca/
+__pycache__/
+*.pyc
+/인쇄 미리보기.pdf
