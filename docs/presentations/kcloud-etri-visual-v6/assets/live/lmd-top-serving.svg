@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1499" height="744" viewBox="0 0 1499 744">
+  <title>Live lmd-top Serving view</title>
+  <rect width="100%" height="100%" rx="8" fill="#111318"/>
+  <circle cx="20" cy="20" r="5" fill="#ff5f57"/><circle cx="38" cy="20" r="5" fill="#febc2e"/><circle cx="56" cy="20" r="5" fill="#28c840"/>
+  <text x="76" y="25" fill="#9da5b4" font-family="DejaVu Sans Mono, monospace" font-size="13">lmd-top live capture · Serving</text>
+  <text xml:space="preserve" x="22" y="54" fill="#e6e9ef" font-family="DejaVu Sans Mono, monospace" font-size="15">
+    <tspan x="22" dy="0" fill="#8bd5ca">⠋ lmd-top [observe]  llm-d · 8 nodes  ⌂ gw 192.0.2.12 ●  · updated 4s ago</tspan>
+    <tspan x="22" dy="20">● SERVING 2/20  req/s –  err –  TTFT –  E2E –  │ accel 1/12 busy  VRAM 2%  ⚡ 347W  ⚠4 alert (A)</tspan>
+    <tspan x="22" dy="20">⇥  0:Overview   1:Traffic   2:Serving   3:Infra   4:Deploy   5:Events   6:Setup    ◂  Serving  · Perf · Pods ▸</tspan>
+    <tspan x="22" dy="20">╭ ▸ Serving · running deployments · x stop · s scale · r restart · o sort · ⏎ actions · 1/20 ────────────────────────────────────────────────────────╮</tspan>
+    <tspan x="22" dy="20">│ STATUS▼     MODEL                                                                    ENGINE       TARGET               REP    NODE           t/s   │</tspan>
+    <tspan x="22" dy="20">│▎⚠ Degraded  hetero-pd-gateway                                                        custom       –                    1/1    npu-node-1       –     │</tspan>
+    <tspan x="22" dy="20">│ ● Serving   ds4-inject-proxy                                                         custom       –                    2/2    cpu-1          –     │</tspan>
+    <tspan x="22" dy="20">│ ○ Scaled-0  ds4-deepseek-v4-flash                                                    custom       –                    0/0    ?              –     │</tspan>
+    <tspan x="22" dy="20">│ ○ Scaled-0  ds4-v4flash-gb10                                                         custom       –                    0/0    ?              –     │</tspan>
+    <tspan x="22" dy="20">│ ○ Scaled-0  ds4-v4flash-gb10-n2                                                      custom       –                    0/0    ?              –     │</tspan>
+    <tspan x="22" dy="20">│ ○ Scaled-0  gemma4-rbln                                                              vLLM         –                    0/0    cpu-2          –     │</tspan>
+    <tspan x="22" dy="20">│ ○ Scaled-0  k-exaone-236b-llm-d-m…                                                   Furiosa-LLM  tp=4                 0/0    ?              –     │</tspan>
+    <tspan x="22" dy="20">│ ○ Scaled-0  ollama-cpu                                                               custom       –                    0/0    ?              –     │</tspan>
+    <tspan x="22" dy="20">│ ○ Scaled-0  serve-furiosa-ai-qwen…                                                   Furiosa-LLM  tp=8                 0/0    cpu-2          –     │</tspan>
+    <tspan x="22" dy="20">│ ○ Scaled-0  sw-atom-decode-b1                                                        custom       RBLN_BATCH_ARTIFACT… 0/0    ?              –     │</tspan>
+    <tspan x="22" dy="20">│ ○ Scaled-0  sw-atom-decode-b2                                                        custom       RBLN_BATCH_ARTIFACT… 0/0    ?              –     │</tspan>
+    <tspan x="22" dy="20">│ ○ Scaled-0  sw-atom-decode-b4                                                        custom       RBLN_BATCH_ARTIFACT… 0/0    ?              –     │</tspan>
+    <tspan x="22" dy="20">│ ○ Scaled-0  sw-atom-prefill                                                          custom       RBLN_PREFILL_ARTIFA… 0/0    ?              –     │</tspan>
+    <tspan x="22" dy="20">│ ○ Scaled-0  sw-rngd-decode                                                           custom       –                    0/0    ?              –     │</tspan>
+    <tspan x="22" dy="20">│ ○ Scaled-0  sw-rngd-decode-b4                                                        custom       –                    0/0    ?              –     │</tspan>
+    <tspan x="22" dy="20">│ ○ Scaled-0  sw-rngd-prefill                                                          custom       –                    0/0    ?              –     │</tspan>
+    <tspan x="22" dy="20">│ ○ Scaled-0  vllm-exaone                                                              custom       tp=1 max-len=32768 … 0/0    ?              –     │</tspan>
+    <tspan x="22" dy="20">│ ○ Scaled-0  vllm-qwen05b-gb10                                                        vLLM         max-len=8192         0/0    ?              –     │</tspan>
+    <tspan x="22" dy="20">│ ○ Scaled-0  vllm-rbln-koni                                                           vLLM-RBLN    –                    0/0    ?              –     │</tspan>
+    <tspan x="22" dy="20">│ ○ Scaled-0  vllm-v4flash                                                             vLLM         tp=2 max-len=16384 … 0/0    ?              –     │</tspan>
+    <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>
+    <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>
+    <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>
+    <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>
+    <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>
+    <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>
+    <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>
+    <tspan x="22" dy="20">╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯</tspan>
+    <tspan x="22" dy="20"> ⚠ 4 new alerts — press A</tspan>
+  </text>
+</svg>

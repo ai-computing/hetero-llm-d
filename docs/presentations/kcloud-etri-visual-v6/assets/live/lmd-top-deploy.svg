@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1499" height="744" viewBox="0 0 1499 744">
+  <title>Live lmd-top Deploy view</title>
+  <rect width="100%" height="100%" rx="8" fill="#111318"/>
+  <circle cx="20" cy="20" r="5" fill="#ff5f57"/><circle cx="38" cy="20" r="5" fill="#febc2e"/><circle cx="56" cy="20" r="5" fill="#28c840"/>
+  <text x="76" y="25" fill="#9da5b4" font-family="DejaVu Sans Mono, monospace" font-size="13">lmd-top live capture · Deploy</text>
+  <text xml:space="preserve" x="22" y="54" fill="#e6e9ef" font-family="DejaVu Sans Mono, monospace" font-size="15">
+    <tspan x="22" dy="0" fill="#8bd5ca">⠋ lmd-top [observe]  llm-d · 8 nodes  ⌂ gw 192.0.2.12 ●  · updated 4s ago</tspan>
+    <tspan x="22" dy="20">● SERVING 2/20  req/s –  err –  TTFT –  E2E –  │ accel 1/12 busy  VRAM 2%  ⚡ 347W  ⚠4 alert (A)</tspan>
+    <tspan x="22" dy="20">⇥  0:Overview   1:Traffic   2:Serving   3:Infra   4:Deploy   5:Events   6:Setup    ◂  Deploy  · Zoo ▸</tspan>
+    <tspan x="22" dy="20">╭ ▸ Model List · 배 포  가 능  (family › model/build › target) · 1/10 ───────────────────────────────────────────────────────────────────────────────────╮</tspan>
+    <tspan x="22" dy="20">│catalog: ✓ ready ⚙ needs-compile ✗ no-cap   store: ◇ [HF][RBLN][RNGD]                                                                               │</tspan>
+    <tspan x="22" dy="20">│✓ exaone-3.5-32b         chat     [GPU]×2 hf://LGAI-EXAONE/EXAONE-3.5-32B-I…                                                                        │</tspan>
+    <tspan x="22" dy="20">│▪ llama                                                                                                                                             │</tspan>
+    <tspan x="22" dy="20">│  └ ⚙ koni-llama3.1-8b       chat     [RBLN]×4 pvc://rbln-artifacts/koni-tp4                                                                        │</tspan>
+    <tspan x="22" dy="20">│  └ ✓ llama3.1-8b            chat     [GPU]×1 [RBLN]×4 hf://meta-llama/Llama-3.1-8B-Inst…                                                           │</tspan>
+    <tspan x="22" dy="20">│⚙ gemma4-rbln            chat     [RBLN]×4 pvc://rbln-artifacts/gemma4                                                                              │</tspan>
+    <tspan x="22" dy="20">│▪ qwen3                                                                                                                                             │</tspan>
+    <tspan x="22" dy="20">│  └ ⚙ qwen3-embedding-8b     embeddi… [RNGD]×2 pvc://furiosa-artifacts/qwen3-emb…                                                                   │</tspan>
+    <tspan x="22" dy="20">│  └ ✓ qwen3-4b-fp8           chat     [RNGD]×1 hf://furiosa-ai/Qwen3-4B-FP8                                                                         │</tspan>
+    <tspan x="22" dy="20">│▪ furiosa-ai/qwen3-4b                                                                                                                               │</tspan>
+    <tspan x="22" dy="20">│  └ ◇ [RNGD] Qwen3-4B-FP8           compiled · tp4 pp1 se… 109M                                                                                     │</tspan>
+    <tspan x="22" dy="20">│  └ ◇ [RNGD] Qwen3-4B-FP8           compiled · tp8         5.2M                                                                                     │</tspan>
+    <tspan x="22" dy="20">│  └ ◇ [RNGD] Qwen3-4B-FP8           compiled · tp8 pp1 se… 46M                                                                                      │</tspan>
+    <tspan x="22" dy="20">│  └ ◇ [RNGD] Qwen3-4B-FP8           compiled · tp8 pp1 se… 109M                                                                                     │</tspan>
+    <tspan x="22" dy="20">│⏎/a actions · d deploy · c RBLN / f Furiosa compile (지 원  모 델 ) · ◇=스 토 어  실 재  빌 드  · 아 래  Activity 패 널 은  ^w                                      │</tspan>
+    <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>
+    <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>
+    <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>
+    <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>
+    <tspan x="22" dy="20">╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯</tspan>
+    <tspan x="22" dy="20">╭ Activity · compile + deploy · l logs · D delete ───────────────────────────────────────────────────────────────────────────────────────────────────╮</tspan>
+    <tspan x="22" dy="20">│KIND     TARGET                                                                              STARTED  STATUS                                        │</tspan>
+    <tspan x="22" dy="20">│compile  qwen--qwen3-4b → RBLN rbln-ca22-tp4-s40…                                            1m       Running        ██░░░░░░░░  ···  starting…     │</tspan>
+    <tspan x="22" dy="20">│compile  qwen--qwen3-4b → RBLN rbln-ca22-tp4-s81…                                            34m      Failed         rebel-compiler failed during co│</tspan>
+    <tspan x="22" dy="20">│deploy   hetero-pd-gateway ×1 @npu-node-1                                                      5d       ⚠ Degraded 1/1                                │</tspan>
+    <tspan x="22" dy="20">│deploy   ds4-inject-proxy ×2 @cpu-1                                                          12d      ● Serving 2/2                                 │</tspan>
+    <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>
+    <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>
+    <tspan x="22" dy="20">╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯</tspan>
+    <tspan x="22" dy="20"> ⚠ 4 new alerts — press A</tspan>
+  </text>
+</svg>

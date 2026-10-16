@@ -2,6 +2,9 @@
 
 GPU·NPU·CPU 노드들을 K8s + llm-d로 묶어 관리하기 위한 설치 자동화 스크립트와 운영 메모.
 
+> **처음 읽는 분:** llm-d 배경지식 + 우리 환경 구성 + `lmd-top` 실측 스크린샷은  
+> **[docs/ENVIRONMENT-GUIDE.md](./docs/ENVIRONMENT-GUIDE.md)** 를 먼저 보세요.
+
 ## 목표 토폴로지
 
 ```
@@ -20,9 +23,9 @@ GPU·NPU·CPU 노드들을 K8s + llm-d로 묶어 관리하기 위한 설치 자�
        ┌────────▼────────┐ ┌───────▼────────┐ ┌──────▼─────────┐
        │ npu-node-1        │ │ (future)       │ │ npu-node-2   │
        │ 192.0.2.10  │ │ NVIDIA-only?   │ │ 192.0.2.9 │
-       │ A100 x2         │ │                │ │ Furiosa RNGD x4│
-       │ RBLN-CA22 x4    │ │                │ │ (보류)         │
-       │ Furiosa RNGD x2 │ │                │ │                │
+       │ RBLN-CA22 x4    │ │                │ │ Furiosa RNGD x2│
+       │ Furiosa RNGD x3 │ │                │ │ A100 80GB x2   │
+       │                 │ │                │ │                │
        │ Ubuntu 22.04    │ │                │ │ Ubuntu 22.04   │
        └─────────────────┘ └────────────────┘ └────────────────┘
 ```
@@ -34,7 +37,7 @@ GPU·NPU·CPU 노드들을 K8s + llm-d로 묶어 관리하기 위한 설치 자�
 
 ## 진행 현황 (2026-06-01)
 
-> 라이브 상태 스냅샷은 [STATUS.md](./STATUS.md). 기능 매트릭스는 [FEATURES.md](./FEATURES.md), NPU 한계는 [NPU-FEATURES.md](./NPU-FEATURES.md), 활용 시나리오는 [PLAYBOOK.md](./PLAYBOOK.md).
+> **온보딩:** [docs/ENVIRONMENT-GUIDE.md](./docs/ENVIRONMENT-GUIDE.md) · 라이브 스냅샷: [STATUS.md](./STATUS.md) · 기능: [FEATURES.md](./FEATURES.md) · NPU: [NPU-FEATURES.md](./NPU-FEATURES.md) · 활용: [PLAYBOOK.md](./PLAYBOOK.md)
 
 | 단계 | 상태 | 비고 |
 |------|------|------|
@@ -193,8 +196,8 @@ kubectl get pods -A
 
 ### 우리 환경 시사점
 
-- **npu-node-1**: A100×2(driver 문제 보류) + RBLN-CA22×4(7.8B EXAONE 서빙 중) + RNGD×2 — 한 노드에 GPU/NPU 두 진영 공존 → llm-d로 **이종 풀(heterogeneous pool)** 운영 검증 환경으로 이상적
-- **npu-node-2**: RNGD×4 전용 → Furiosa-LLM으로 Llama-3.1-8B 서빙. GPU 없는 대신 전력 ⅓, **perf/W 1위 후보**
+- **npu-node-1**: RBLN-CA22×4 + RNGD×3 — 한 노드에 두 NPU 진영 공존 (A100×2는 2026-10 기준 e11로 이동) → llm-d로 **이종 풀(heterogeneous pool)** 운영 검증 환경으로 이상적
+- **npu-node-2**: RNGD×2 + A100 80GB×2 → Furiosa와 NVIDIA GPU가 한 노드에 공존
 - **추천 운영 패턴**:
   - **모델 종류 자주 바꾸는 R&D** → A100 살려서 vLLM 자유 실행
   - **production 서빙 (모델 fix)** → NPU로 옮겨 비용/전력 최적화
@@ -233,7 +236,7 @@ curl -X POST http://192.0.2.12/gpu/chat/completions \
 |---|---|---|---|
 | `/exaone` | EXAONE-3.5-7.8B-Instruct | Rebellions RBLN-CA22 × 4 | npu-node-1 |
 | `/llama31` | Llama-3.1-8B-Instruct | Furiosa RNGD × 4 | npu-node-2 |
-| `/gpu` | Llama-3.1-8B-Instruct | NVIDIA A100 80GB × 2 | npu-node-1 |
+| `/gpu` | Llama-3.1-8B-Instruct | NVIDIA A100 80GB × 2 | npu-node-2 (2026-10 이전엔 npu-node-1) |
 
 ## 사내 IP 정책 메모
 
@@ -361,18 +364,20 @@ args:
 
 ### npu-node-1 (worker, 192.0.2.10)
 - Ubuntu 22.04.5, 커널 6.8, 96코어 / 1.5TB RAM, NUMA 2-node, disk 1.5TB 여유
-- NVIDIA A100 PCIe 80GB × 2 (44:00.0, 45:00.0, NUMA 0) — **드라이버 580.159과 NVML mismatch, reboot 필요**
+- ~~NVIDIA A100 PCIe 80GB × 2 (44:00.0, 45:00.0)~~ — **e11로 이동**(2026-10-15 확인, 현재 npu-node-1에 NVIDIA 장치 없음, 45:00.0은 RNGD)
 - Rebellions RBLN-CA22 × 4 (83/84/c3/c4:00.0, NUMA 1, 15.7GiB/장) — KMD 3.0.0 정상
-- Furiosa RNGD × 2 (03/04:00.0) — 보너스
+- Furiosa RNGD × 3 (03/04/45:00.0)
 - containerd active, docker installed (inactive), helm 설치됨, kubectl/kubeadm 미설치
 - venv: `~/vllm_test/venv` (vllm_rbln 0.10.2.post1, rebel-compiler 0.10.2, optimum-rbln 0.10.2)
 - HF cache: `~/.cache/huggingface` (143GB 사용)
 
-### npu-node-2 (보류, 192.0.2.9:10022)
+### npu-node-2 (worker, 192.0.2.9:10022)
 - Ubuntu 22.04.5, 48코어 / 1TB RAM, 16 NUMA (SNC)
-- Furiosa RNGD × 4 (16/6a/94/be:00.0), driver 2026.2.0
+- Furiosa RNGD × 2 (50/63:00.0), driver 2026.4.0
+- NVIDIA A100 PCIe 80GB × 2 (99/bd:00.0), driver 580.178, nvidia-container-toolkit 1.19.1 (`/etc/containerd/conf.d/99-nvidia.toml`) — 2026-10-15 복구
+- 노드 라벨 `feature.node.kubernetes.io/pci-10de.present=true`는 수동 부여(nvidia-device-plugin DS selector가 요구)
+- kubelet `evictionHard` nodefs/imagefs 5% (디스크 대부분이 사용자 홈 데이터, 백업 `config.yaml.bak-20261015`)
 - SSH 포트 10022 사용
-- 현재 보류 — Rebellions 경로 완성 후 join 예정
 
 ## 참고
 

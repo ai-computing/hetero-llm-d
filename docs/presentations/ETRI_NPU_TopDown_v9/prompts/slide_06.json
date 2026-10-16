@@ -1,0 +1,46 @@
+{
+  "slide": 6,
+  "title": "준비와 운영을 lmd-top에서 연결했습니다",
+  "prompt": "# Codex PPT Slide Image Prompt\n\n## Canvas\n{\n  \"type\": \"16:9 full-slide PowerPoint image\",\n  \"language\": \"Korean\",\n  \"slide_number\": 6,\n  \"render_slide_number\": false\n}\n\n## Required Background\n{\n  \"deck_context\": {\n    \"core_claim\": \"ETRI analyzed NPU execution conditions and low-level paths, implemented custom-stage replacement and actual KV-transfer NPU PD runtimes, and developed lmd-top for model operations. These are separate research implementations, not one finished automatic controller.\",\n    \"narrative\": \"1 whole map → 2 conditions problem → 3 low-level entry points → 4 custom code integration → 5 stage separation → 6 operations → 7 collaboration return to map.\",\n    \"facts\": \"Hardware/vendor compiler/Kubernetes/Prometheus are reused infrastructure, not ETRI inventions. PD is a split execution method, not IR. Do not claim GPU-NPU PD completed: completed PD records are RNGD/ATOM. No benchmark numbers. May not claim all custom kernels verified. lmd-top manages vendor compile Jobs, not compiler itself.\"\n  },\n  \"slide_local_context\": \"Screenshot is real observe PTY frame, not synthetic. Failed/Degraded/Scaled-0 and missing data are real state at capture. lmd-top manages vendor Jobs not compilation itself, and no completed automatic PD control.\"\n}\n\n## Global Style\n{\n  \"palette\": \"ETRI blue #005EB8, navy text, pure white, pale blue research modules, muted gray supporting infrastructure\",\n  \"typography\": \"Large impeccably readable Korean sans, title ~44px equivalent; short labels, generous whitespace\",\n  \"rules\": \"16:9 full slide image; no page numbers; no decorative stripes; ETRI wordmark at upper right as approved sample. One main diagram, maximum three explanation groups; do not repeat long footer sentences.\"\n}\n\n## Input Images\n\n- Image 1: /home/user/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png — Approved style only: blue/white Korean technical presentation. Vary layout, do not repeat full stack.\n- Image 2: /home/user/llm-d-setup/docs/presentations/kcloud-etri-research-v7/assets/lmd-top-real.png — STRICT INPUT ACTUAL UI. Embed original screenshot unchanged, keep all text/colors/values/pixels visually faithful. Not loose inspiration. Do not redraw fake UI.\n\n\n## Slide\n{\n  \"number\": 6,\n  \"title\": \"준비와 운영을 lmd-top에서 연결했습니다\",\n  \"role\": \"actual screenshot hero\",\n  \"intent\": \"Return upward to operations after low-level and PD discussion; only one lmd-top slide.\"\n}\n\n## Text\n{\n  \"title\": \"준비와 운영을 lmd-top에서 연결했습니다\",\n  \"key_points\": [\n    \"원본·컴파일 산출물 구분\",\n    \"컴파일·배포 작업 관리\",\n    \"모델·요청·장비 상태 관측\"\n  ],\n  \"speaker_focus\": null\n}\n\n## Layout\nActual supplied TUI screenshot LARGE on right occupying ~68% width, fit entire original without cutting text; left ~26% has THREE brief numbered callouts with exact listed points, broken to two short lines if needed. No other dashboard or fake terminal. Small top breadcrumb '실행 계층 → 모델 운영'. Small caption under screenshot '실제 터미널 녹화 화면'. Avoid overlaying UI or modifying its values.\n\n## Constraints\n[\n  \"Must preserve strict input screenshot faithfully; if cannot include it, return blocker, do not draw a mock screenshot. No performance claims. Color styling around screenshot matches approved sample.\"\n]\n\n## Style Reference Rule\nUse Image 1 as the approved sample-slide style reference. Match its palette, typography mood, density, texture, and overall visual identity. Do not copy its exact layout unless this slide's layout explicitly asks for it.\n\n## Input Image Handling Rules\nFor any input image marked as a strict input asset, include it visibly and preserve its content. Do not redraw, replace, relabel, or invent a similar figure. Scale and crop only as needed for composition while keeping the important labels, arrows, data, and relationships recognizable.\n\n## Universal Constraints\n- The final image itself must contain the title and key points.\n- Render Chinese text exactly and legibly; avoid garbled characters.\n- Keep the confirmed deck style consistent while varying layout by slide role.\n- No watermark, unrelated logo, or extra slide number.\n",
+  "out": "slide_06.png",
+  "input_images": [
+    {
+      "path": "/home/user/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
+      "role": "Approved style only: blue/white Korean technical presentation. Vary layout, do not repeat full stack."
+    },
+    {
+      "path": "/home/user/llm-d-setup/docs/presentations/kcloud-etri-research-v7/assets/lmd-top-real.png",
+      "role": "STRICT INPUT ACTUAL UI. Embed original screenshot unchanged, keep all text/colors/values/pixels visually faithful. Not loose inspiration. Do not redraw fake UI."
+    }
+  ],
+  "requires_context_images": true,
+  "expected_backend": "built-in image tool",
+  "sample_generation_method": {
+    "backend_used": "built-in image tool",
+    "tool_name": "image_gen__imagegen",
+    "mode": "generate",
+    "model": "built-in default",
+    "size": "16:9",
+    "quality": "built-in default",
+    "prompt_source": "approved sample slide 1: ETRI whole-stack conceptual map",
+    "approved_sample_path": "/home/user/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
+    "input_context_preparation": "view_image all local inputs then referenced_image_paths in image_gen__imagegen",
+    "handoff_rule": "Use same built-in image backend; return blocker if unavailable. No local rendering or overlays."
+  },
+  "generation_contract": {
+    "must_use_selected_image_backend": true,
+    "must_match_sample_generation_method": true,
+    "forbidden_final_image_methods": [
+      "local drawing/rendering scripts",
+      "Pillow-generated slides",
+      "SVG/HTML/CSS/canvas screenshots",
+      "python-pptx/PptxGenJS/native PPT layout screenshots",
+      "manually composited text/image overlays"
+    ],
+    "must_return": [
+      "backend_used",
+      "selected_source",
+      "qa_note"
+    ]
+  }
+}

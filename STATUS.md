@@ -1,6 +1,51 @@
 # 클러스터 현황 스냅샷
 
+<!-- research-hub:header:begin (maintained by .research/report.py; keep the "- **Key**: value" format) -->
+- **State**: idle
+- **Updated**: 2026-10-16 11:47+09:00
+- **Agent**: claude@control-node
+- **Task**: LLMD-2 (done)
+- **Last result**: STATUS.md를 클러스터 전용으로 정리: lmd-top(성숙도 평가)·npu-lora(LoRA 품질/PoC, full-FT 확장) 항목을 하위 프로젝트 STATUS.md로 옮기고 Goal에서 분리 추적 명시. 하위 초안 2개 실파일 대조·정정, 초안 문구 제거
+- **Next**: 이종 에너지 sweep 재개(A100 1s DCGM 재측정 + RNGD solo/ATOM PD) 및 experiments/ 기록
+- **Blockers**: none
+<!-- research-hub:header:end -->
+
+## Goal
+
+이 레포의 목표는 GPU(A100)·Rebellions ATOM(RBLN-CA22)·Furiosa RNGD·CPU가 섞인 사내 K8s 클러스터를 **llm-d(Gateway → InferencePool → EPP)로 묶어 이기종 LLM 서빙을 운영하는 것**이다 (`README.md` 「목표 토폴로지」, `FEATURES.md`). 그 위에서 NPU가 llm-d 기능을 어디까지 지원하는지 검증하고 (`NPU-FEATURES.md`), 공유 모델 스토어로 다운로드·컴파일·배포를 일원화한다 (`manifests/README-model-store.md`, `0e90396`). 연구 범위는 이기종 PD disaggregation(2026-08, `PD disaggregation_HISTORY.md`)과, 2026-10부터 이종 가속기의 같은 부하 성능·에너지 비교(`scripts/hetero-sweep.py`)까지 넓혔다. 운영 TUI `lmd-top`은 `lmd-top/STATUS.md`, RNGD 파인튜닝 학습(`npu-lora/`)은 `npu-lora/STATUS.md`에서 따로 추적한다.
+
+## Findings
+
+최신순. 출처를 괄호에 적었다. 레포에 원자료가 없는 수치는 그렇다고 밝혔다.
+
+- **2026-10-15 · 하드웨어 배치가 문서와 달랐다.** A100 × 2는 npu-node-1이 아니라 `npu-node-2`(PCI 99/bd:00.0)에 있다. 현재 구성은 npu-node-1 = RBLN×4 + RNGD×3, e11 = RNGD×2 + A100×2다. e11 A100은 driver 580.178과 nvidia-container-toolkit 1.19.1로 복구했다. kubelet `evictionHard`는 nodefs/imagefs 5%로 낮췄다 (README.md 작업 트리 diff 「npu-node-2」, 이 파일 아래 하드웨어 변경 메모).
+- **2026-10-15 · e11 A100 vLLM v0.11.0 Llama-3.1-8B 미니 sweep 결과다.** 입력 614, 출력 128, 60 s로 돌렸다. 동시성 1/8/32/64에서 각각 84/621/1945/3094 tok/s가 나왔다. 노드 wall 전력은 약 940 → 985 W, tok/J(wall)는 0.09 → 3.15였다. 다만 e11 wall 전력에는 다른 사용자 작업이 섞여 있고, DCGM 스크랩 간격도 거칠다. 그래서 에너지 수치는 잠정치다. 레포에 `experiments/` 기록이나 원본 JSONL은 없다. 매니페스트는 `manifests/vllm-a100-llama31-8b.yaml`, 전력 수집은 `manifests/ipmi-exporter.yaml`(유휴 wall 약 620~670 W/노드)이다.
+- **2026-09-10 · 모델 스토어 인벤토리에 출처 정보가 붙었다.** 인벤토리가 각 산출물을 빌드한 toolchain과 스토어 df를 함께 발행한다. 오프라인 회귀 테스트는 `scripts/test-model-store-discovery.py`다 (`33f7a40`, `f232df7`).
+- **2026-08 · 이기종 PD disaggregation을 실험했다(`~/workspace/01_pd_disag`).** 정리 문서는 `PD disaggregation_HISTORY.md`다.
+  - 공식 Furiosa 엔진에서 재프리필 PD를 복제 구성과 비교했다. 입력 2048, N=32에서 복제 717.6 tok/s, PD 326.3 tok/s였다. 긴 입력에서는 PD가 불리했다 (§3.4).
+  - 자체 런타임으로 실제 KV를 전송했다. resident-KV로 decode를 48.2 → 16.3 ms/token, 약 2.96배 줄였다 (§5.1).
+  - shape 제한 8, group 8에서 B=4 step이 17.62 ms(4.40 ms/token)였다. 게이트웨이 TPOT는 27.00 → 20.10 ms가 됐다 (§5.4, `rngd_llmd` `42f3e78`).
+  - 4조합 비교(S=256, B=4)에서 RNGD→RNGD가 52.29 tok/s로 가장 높았다. RNGD→ATOM은 24.56, ATOM→RNGD는 36.75, ATOM→ATOM은 20.65 tok/s였다. ATOM decode TPOT는 약 90 ms로, RNGD 약 30 ms의 3배였다 (§6.2).
+  - 같은 배치 조건으로 다시 재면 카드당 처리량은 1카드 solo가 2카드 PD보다 1.48~1.99배 높았다 (§6.5, `384310c`).
+  - continuous batching은 static보다 느렸다(34.2 vs 51.9 tok/s, §6.4).
+- **2026-07-01 · K-EXAONE-236B-A23B(NVFP4A16)를 RNGD × 4에서 llm-d로 서빙했다.** `/exaone` 경로가 gateway → InferencePool → 전용 EPP → RNGD로 200 응답을 돌려줬다. TTFT p95는 약 0.23 s였다. 차트가 `ceil(tp/8)=1`을 계산하므로 rngd=4 패치가 필요하다 (`9b5f4be`, `689e1cb`).
+- **2026-06-01 · 기준 서빙 스냅샷이다.** EXAONE-3.5-32B-AWQ를 A100 × 2 DP로 서빙해 약 62 t/s가 나왔다. KONI-Llama3.1-8B를 RBLN TP=4로 서빙해 약 14 t/s가 나왔다. llm-d v0.7 EPP(`no-hit-lru-scorer` 포함)를 적용했다 (이 파일 아래 표, `FEATURES.md`).
+- **2026-05-29 · NPU의 llm-d 기능 호환성이다.** RBLN과 RNGD 모두 OpenAI API, streaming, JSON, prefix caching, chunked prefill, TP, EPP 라우팅을 지원한다. Multi-LoRA serving, speculative decoding, 런타임 양자화는 사전 컴파일 정적 그래프 때문에 지원하지 않는다. Furiosa는 tool calling도 지원하지 않는다. RBLN tool calling(`llama3_json`)은 실측으로 확인했다. Furiosa Llama-3.1-8B는 한국어 응답에서 garbage 토큰을 냈다 (`NPU-FEATURES.md`).
+
+## Open questions
+
+- **이종 에너지 비교가 미완이다.** `scripts/hetero-sweep.py`는 A100 6점만 측정하고 사용자 요청으로 중단했다. DCGM 갱신이 약 20 s 간격이라 A100 카드 전력은 재측정해야 한다(이후 `--collect-interval=1000`으로 바꿨다고 기록돼 있다). e11 wall 전력에서 다른 사용자 부하를 어떻게 빼거나 피할지도 정해야 한다. RNGD solo와 ATOM PD 구성은 아직 측정하지 않았다.
+- **PD 재측정이 남았다.** 8/25 최적화까지 반영해 모든 조합과 solo를 같은 메타데이터(commit, shape cap, group, prefetch)로 다시 재야 한다. `load_continuous.jsonl`에서 sched 필드가 불일치하는 원인도 밝혀야 한다. NIXL은 아직 스텁이다. GPU prefill → NPU decode가 가능하고 이득인지도 검증하지 않았다 (`PD disaggregation_HISTORY.md` §12).
+- **모델 스토어 SMB 마운트가 노드마다 다르다.** cpu-2에서 CIFS error 115가 났다. 컴파일 Job을 RBLN 노드에서 돌릴 수 있는지도 확인하지 않았다 (`manifests/README-model-store.md` 트러블슈팅). discovery CronJob 변경분(`scanned_at`)은 아직 커밋하지 않았고 클러스터에도 적용하지 않았다 (작업 트리 diff).
+- **노드 장애가 남아 있다.** cpu-3은 2026-07-07부터 down이고, open-webui PVC가 cpu-3에 묶여 있다. gb10-node-1과 gb10-node-2(GB10)는 DiskPressure 뒤 응답하지 않는다. 물리 접근이 필요하고 원인도 밝히지 못했다. e11은 사용자 결정으로 cordon 상태다.
+- **아래 2026-06 스냅샷이 낡았다.** ds4/DeepSeek, A100 위치, 활성 모델 표가 현재와 다르다. 현재 llm-serving의 모델 Deployment는 의도적으로 replicas 0이다. 스냅샷을 현재 상태로 다시 쓸지 정해야 한다.
+- **보안 정리가 남았다.** HF 토큰은 revoke하는 것을 권장한다. NAS `smb-creds` Secret은 다시 만들어야 한다 (아래 「알려진 한계」).
+
+---
+
 > 작성 시점: 2026-06-01 (live, EXAONE-3.5 DP + KONI 최적화 적용)
+> **2026-10-15 하드웨어 변경**: A100 × 2는 이제 **npu-node-2**에 있다(npu-node-1에서 이동, 현재 npu-node-1에는 NVIDIA 장치 없음). 현재 구성은 npu-node-1 = RBLN×4 + RNGD×3, e11 = RNGD×2 + A100×2. 아래 표는 2026-06 스냅샷이다.
+>
 > 전체 매뉴얼은 [README.md](./README.md), 매니페스트는 `manifests/`, 셋업 스크립트는 `scripts/`
 
 ## 한 줄 요약
@@ -184,6 +229,22 @@ curl -X POST http://192.0.2.12/v1/chat/completions \
 
 - ds4 pod 죽으면: `kubectl rollout restart deployment/ds4-deepseek-v4-flash -n llm-serving` (100GB 재다운로드 주의)
 - KONI pod 죽으면: `kubectl rollout restart deployment/vllm-rbln-koni -n llm-serving` (모델 로드 ~3분)
-- A100 driver/library mismatch 재발: `sudo modprobe -r nvidia_uvm nvidia_drm nvidia_modeset nvidia && sudo modprobe nvidia` (참고: `scripts/05-nvidia-setup.sh`)
+- A100 driver/library mismatch 재발 (현재 e11): `sudo modprobe -r nvidia_uvm nvidia_drm nvidia_modeset nvidia && sudo modprobe nvidia` (참고: `scripts/05-nvidia-setup.sh`). `no runtime for "nvidia"` 에러는 containerd에 nvidia 런타임 미등록이다 → `nvidia-ctk runtime configure --runtime=containerd` 후 containerd 재시작
 - Gateway IP `192.0.2.12`: Cilium L2 announcement 통해 광고, 양도 시 `ciliumloadbalancerippool` 패치
 - EPP rollback (v1.5.0 standard): `kubectl set image deployment/llmd-router-epp -n llm-serving epp=registry.k8s.io/gateway-api-inference-extension/epp:v1.5.0` (단 no-hit-lru-scorer plugin 제거 ConfigMap 패치 필요)
+
+## Log
+
+<!-- research-hub:log (report.py inserts new entries below this line, newest first) -->
+
+### 2026-10-16 11:47+09:00 — LLMD-2 ✅
+
+- Result: STATUS.md를 클러스터 전용으로 정리: lmd-top(성숙도 평가)·npu-lora(LoRA 품질/PoC, full-FT 확장) 항목을 하위 프로젝트 STATUS.md로 옮기고 Goal에서 분리 추적 명시. 하위 초안 2개 실파일 대조·정정, 초안 문구 제거
+- Next: 이종 에너지 sweep 재개(A100 1s DCGM 재측정 + RNGD solo/ATOM PD) 및 experiments/ 기록
+- By: claude@control-node · main@f232df7-dirty
+
+### 2026-10-16 10:40+09:00 — LLMD-1 ✅
+
+- Result: STATUS.md bootstrap: Goal/Findings(2026-05~10-16, 출처 표기)/Open questions 작성. 최신: RNGD LoRA 품질 = A100 (NSMC 87.5 vs 87.6%)
+- Next: 이종 에너지 sweep 재개(A100 1s DCGM 재측정 + RNGD solo/ATOM PD) 및 experiments/ 기록
+- By: claude@control-node · main@f232df7-dirty

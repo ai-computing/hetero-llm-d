@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1499" height="904" viewBox="0 0 1499 904">
+  <title>Live lmd-top Overview view</title>
+  <rect width="100%" height="100%" rx="8" fill="#111318"/>
+  <circle cx="20" cy="20" r="5" fill="#ff5f57"/><circle cx="38" cy="20" r="5" fill="#febc2e"/><circle cx="56" cy="20" r="5" fill="#28c840"/>
+  <text x="76" y="25" fill="#9da5b4" font-family="DejaVu Sans Mono, monospace" font-size="13">lmd-top live capture · Overview</text>
+  <text xml:space="preserve" x="22" y="54" fill="#e6e9ef" font-family="DejaVu Sans Mono, monospace" font-size="15">
+    <tspan x="22" dy="0" fill="#8bd5ca">⠋ lmd-top [observe]  llm-d · 8 nodes  ⌂ gw 192.0.2.12 ●  · updated 4s ago</tspan>
+    <tspan x="22" dy="20">● SERVING 1/12  req/s –  err –  TTFT –  E2E –  │ accel 1/14 busy  VRAM 13%  ⚡ 398W  ⚠2 alert (A)</tspan>
+    <tspan x="22" dy="20">⇥  0:Overview   1:Traffic   2:Serving   3:Infra   4:Deploy   5:Events   6:Setup</tspan>
+    <tspan x="22" dy="20">╭ Cluster ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮</tspan>
+    <tspan x="22" dy="20">│14 accel  GB10×2 RBLN×4 RNGD×8 │ util 7% temp 40°C │ VRAM 97/735GB 13% disk 46% ⚡ 398W │ models 1/12                                                │</tspan>
+    <tspan x="22" dy="20">│VRAM  █████│░░░░│░░░░│░░░░│░░░░│░░░░│░░░░│░░░░│░░░░│░░ 97/735GB used                                                                                │</tspan>
+    <tspan x="22" dy="20">│GB10 ○ ●                                                                                                                                            │</tspan>
+    <tspan x="22" dy="20">│RBLN ○ ○ ○ ○                                                                                                                                        │</tspan>
+    <tspan x="22" dy="20">│RNGD ○ ○ ○ ○ ○ ○ ○ ○                                                                                                                                │</tspan>
+    <tspan x="22" dy="20">╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯</tspan>
+    <tspan x="22" dy="20">╭ Status ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮</tspan>
+    <tspan x="22" dy="20">│● 1 model(s) serving, 1 accelerator(s) hot (&gt;80%)                                                                                                   │</tspan>
+    <tspan x="22" dy="20">╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯</tspan>
+    <tspan x="22" dy="20">╭ Accelerators (by kind / node) ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮</tspan>
+    <tspan x="22" dy="20">│● GB10×1 @gb10-node-1       ··········   0% mem ●·········   9/131GB  trend              ▄                                                           │</tspan>
+    <tspan x="22" dy="20">│● GB10×1 @gb10-node-2        ●●●●●●●●●●  96% mem ●●●●●●●···  88/129GB  trend              ▄                                                           │</tspan>
+    <tspan x="22" dy="20">│● RBLN×4 @npu-node-1         ··········   0% mem ··········   0/ 68GB  trend              ▁                                                           │</tspan>
+    <tspan x="22" dy="20">│  … +2 more (see Accel / Nodes tab)                                                                                                                 │</tspan>
+    <tspan x="22" dy="20">╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯</tspan>
+    <tspan x="22" dy="20">╭ Inference (EPP / InferencePool) ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮</tspan>
+    <tspan x="22" dy="20">│EPP path via InferencePool ●                                                                                                                        │</tspan>
+    <tspan x="22" dy="20">│○ llmd-router      endpoints 0/0  sat –                                                                                                             │</tspan>
+    <tspan x="22" dy="20">│○ gemma4-rbln-pool endpoints 0/0  sat –                                                                                                             │</tspan>
+    <tspan x="22" dy="20">╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯</tspan>
+    <tspan x="22" dy="20">╭ Models · ⏎ detail ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮</tspan>
+    <tspan x="22" dy="20">│ MODEL▼                                                              ENGINE       ACCEL         READY  RUN  WAIT KV    t/s   PATH        STATUS     │</tspan>
+    <tspan x="22" dy="20">│▎vllm-v4flash                                                        vLLM         –             0/0    –    –    –     –     –           ○ Scaled-0 │</tspan>
+    <tspan x="22" dy="20">│ vllm-rbln-koni                                                      vLLM-RBLN    –             0/0    –    –    –     –     /atom/koni  ○ Scaled-0 │</tspan>
+    <tspan x="22" dy="20">│ vllm-qwen05b-gb10                                                   vLLM         –             0/0    –    –    –     –     /gpu/qwen   ○ Scaled-0 │</tspan>
+    <tspan x="22" dy="20">│ vllm-exaone                                                         custom       –             0/0    –    –    –     –     –           ○ Scaled-0 │</tspan>
+    <tspan x="22" dy="20">│ serve-furiosa-ai-qw…                                                Furiosa-LLM  –             0/0    –    –    –     –     –           ○ Scaled-0 │</tspan>
+    <tspan x="22" dy="20">│ ollama-cpu                                                          Ollama       –             0/0    –    –    –     –     /cpu/ollama ○ Scaled-0 │</tspan>
+    <tspan x="22" dy="20">│ k-exaone-236b-llm-d…                                                Furiosa-LLM  –             0/0    –    –    –     –     –           ○ Scaled-0 │</tspan>
+    <tspan x="22" dy="20">│ gemma4-rbln                                                         vLLM         –             0/0    –    –    –     –     –           ○ Scaled-0 │</tspan>
+    <tspan x="22" dy="20">│ ds4-v4flash-gb10-n2                                                 custom       –             0/0    –    –    –     –     –           ○ Scaled-0 │</tspan>
+    <tspan x="22" dy="20">│ ds4-v4flash-gb10                                                    custom       –             0/0    –    –    –     –     –           ○ Scaled-0 │</tspan>
+    <tspan x="22" dy="20">│ ds4-inject-proxy                                                    custom       –             2/2    –    –    –     –     /gpu/deeps… ● Running  │</tspan>
+    <tspan x="22" dy="20">│ ds4-deepseek-v4-fla…                                                custom       –             0/0    –    –    –     –     –           ○ Scaled-0 │</tspan>
+    <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>
+    <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>
+    <tspan x="22" dy="20">╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯</tspan>
+    <tspan x="22" dy="20"> ⚠ 2 new alerts — press A</tspan>
+  </text>
+</svg>

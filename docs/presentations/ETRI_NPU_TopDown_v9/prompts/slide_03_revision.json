@@ -1,0 +1,20 @@
+{
+  "slide": 3,
+  "title": "모델이 NPU에서 실행되는 과정을 분석했습니다",
+  "prompt": "Create a full 16:9 Korean technical slide. Match attached approved slide1 ETRI blue/white style, large navy title and ETRI upper right; no page numbers. Title: 모델이 NPU에서 실행되는 과정을 분석했습니다. Simple left-to-right three-step illustrated story with large icons: '모델' (neural network icon) → '실행 준비' (compiler/file icon) → 'NPU 실행' (chip icon). Under stages respectively: '어떤 연산으로 구성되나?', '장비가 실행할 형태로 변환', '연산과 데이터 이동'. Highlight a pale-blue bracket spanning execution preparation and NPU execution labeled '우리가 분석한 범위'. Below it two short readable explanations: '저수준 IR: 연산·메모리 동작을 표현한 중간 단계' and '무엇을 계산하고, 데이터를 어디로 옮기는지 확인'. Closing small callout '실행 시간에 영향을 주는 지점과 변경 가능한 부분 파악'. No Rust, DSL, HBM, DM, DMA, API names, code or benchmark numbers. This is analysis of vendor-provided compiler/runtime, not own compiler development. Lots of whitespace, clearly readable Korean. One main flow, no dense cards.",
+  "out": "slide_03.png",
+  "input_images": [
+    {
+      "path": "/home/user/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
+      "role": "approved style only"
+    }
+  ],
+  "expected_backend": "built-in image tool",
+  "sample_generation_method": {
+    "backend_used": "built-in image tool",
+    "tool_name": "image_gen__imagegen",
+    "mode": "generate",
+    "input_context_preparation": "view_image then referenced_image_paths",
+    "model": "built-in default"
+  }
+}

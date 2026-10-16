@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1499" height="744" viewBox="0 0 1499 744">
+  <title>Live lmd-top Flow view</title>
+  <rect width="100%" height="100%" rx="8" fill="#111318"/>
+  <circle cx="20" cy="20" r="5" fill="#ff5f57"/><circle cx="38" cy="20" r="5" fill="#febc2e"/><circle cx="56" cy="20" r="5" fill="#28c840"/>
+  <text x="76" y="25" fill="#9da5b4" font-family="DejaVu Sans Mono, monospace" font-size="13">lmd-top live capture · Flow</text>
+  <text xml:space="preserve" x="22" y="54" fill="#e6e9ef" font-family="DejaVu Sans Mono, monospace" font-size="15">
+    <tspan x="22" dy="0" fill="#8bd5ca">⠋ lmd-top [observe]  llm-d · 8 nodes  ⌂ gw 192.0.2.12 ●  · updated 4s ago</tspan>
+    <tspan x="22" dy="20">● SERVING 2/20  req/s –  err –  TTFT –  E2E –  │ accel 1/12 busy  VRAM 2%  ⚡ 347W  ⚠4 alert (A)</tspan>
+    <tspan x="22" dy="20">⇥  0:Overview   1:Traffic   2:Serving   3:Infra   4:Deploy   5:Events   6:Setup    ◂  Flow  · EPP ▸</tspan>
+    <tspan x="22" dy="20">╭ ▸ Flow · Gateway→EPP→Model→Infra · ↑↓ route · p/i/m/e pivot · 1/9 ─────────────────────────────────────────────────────────────────────────────────╮</tspan>
+    <tspan x="22" dy="20">│layers: [GW] gateway  [EPP] picker  [MODEL] serving  [SVC] direct  [INFRA] pod/node                                                                 │</tspan>
+    <tspan x="22" dy="20">│[GW] llm-d-gateway  192.0.2.12  ●Programmed                                                                                                     │</tspan>
+    <tspan x="22" dy="20">│└─ [ROUTE] 9 route rules                                                                                                                            │</tspan>
+    <tspan x="22" dy="20">│   ├─ ○ /rngd/llama8… →[EPP]llama8b-pd-pool →[MODEL](no serving)                                                                                    │</tspan>
+    <tspan x="22" dy="20">│   ├─ ○ /atom/gemma   →[EPP]gemma4-rbln-pool →[MODEL](no serving)                                                                                   │</tspan>
+    <tspan x="22" dy="20">│   ├─ ● /gpu/deepseek →[SVC]ds4-inject-proxy →[MODEL]ds4-inject-proxy 2/2 – [custom]                                                                │</tspan>
+    <tspan x="22" dy="20">│   │  ├─ [INFRA] ds4-inject-proxy-bf8fd88b8-bj… Running @cpu-1                                                                                      │</tspan>
+    <tspan x="22" dy="20">│   │  └─ [INFRA] ds4-inject-proxy-bf8fd88b8-qk… Running @cpu-2                                                                                      │</tspan>
+    <tspan x="22" dy="20">│   ├─ ○ /atom/koni    →[SVC]vllm-rbln-koni →[MODEL]vllm-rbln-koni 0/0 – [vLLM-RBLN]                                                                 │</tspan>
+    <tspan x="22" dy="20">│   ├─ ○ /cpu/ollama   →[SVC]ollama-cpu →[MODEL]ollama-cpu 0/0 – [Ollama]                                                                            │</tspan>
+    <tspan x="22" dy="20">│   ├─ ● /v1           →[SVC]ds4-inject-proxy →[MODEL]ds4-inject-proxy 2/2 – [custom]                                                                │</tspan>
+    <tspan x="22" dy="20">│   │  ├─ [INFRA] ds4-inject-proxy-bf8fd88b8-bj… Running @cpu-1                                                                                      │</tspan>
+    <tspan x="22" dy="20">│   │  └─ [INFRA] ds4-inject-proxy-bf8fd88b8-qk… Running @cpu-2                                                                                      │</tspan>
+    <tspan x="22" dy="20">│   ├─ ○ /gpu/qwen     →[SVC]vllm-qwen05b-gb10 →[MODEL]vllm-qwen05b-gb… 0/0 – [vLLM]                                                                 │</tspan>
+    <tspan x="22" dy="20">│   ├─ ○ /rngd/exaone  →[EPP]k-exaone-236b-pool →[MODEL](no serving)                                                                                 │</tspan>
+    <tspan x="22" dy="20">│   └─ ○ /rngd/qwen3-… →[EPP]serve-furiosa-ai-qw… →[MODEL](no serving)                                                                               │</tspan>
+    <tspan x="22" dy="20">│  ✓ routes go through InferencePool (EPP-routed)                                                                                                    │</tspan>
+    <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>
+    <tspan x="22" dy="20">╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯</tspan>
+    <tspan x="22" dy="20">╭ InferencePool / EPP / SLO / Autoscale ─────────────────────────────────────────────────────────────────────────────────────────────────────────────╮</tspan>
+    <tspan x="22" dy="20">│[EPP] llmd-router       ●0/0 ep ←(no route) picker:llmd-router-epp                                                                                  │</tspan>
+    <tspan x="22" dy="20">│[EPP] gemma4-rbln-pool  ●0/0 ep ←/atom/gemma picker:gemma4-rbln-epp                                                                                 │</tspan>
+    <tspan x="22" dy="20">│[EPP] k-exaone-236b-pool●0/0 ep ←/rngd/exaone picker:k-exaone-236b-epp                                                                              │</tspan>
+    <tspan x="22" dy="20">│[EPP] llama8b-pd-pool   ●1/1 ep ←/rngd/llama8b… picker:llama8b-pd-epp                                                                               │</tspan>
+    <tspan x="22" dy="20">│[EPP] serve-furiosa-ai-…●0/0 ep ←/rngd/qwen3-4… picker:serve-furiosa-ai-qwen3-4b-fp8-epp                                                            │</tspan>
+    <tspan x="22" dy="20">│[EPP] vllm-a100-pool    ●0/0 ep ←(no route) picker:llmd-router-epp                                                                                  │</tspan>
+    <tspan x="22" dy="20">│SLO  low-latency(p100→llmd-router)  gemma4-rbln(p10→gemma4-rbln-pool)  high-throughput(p10→llmd-router)                                             │</tspan>
+    <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>
+    <tspan x="22" dy="20">╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯</tspan>
+    <tspan x="22" dy="20"> ⚠ 4 new alerts — press A</tspan>
+  </text>
+</svg>
