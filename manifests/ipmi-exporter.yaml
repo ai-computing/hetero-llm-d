@@ -1,0 +1,84 @@
+# 노드 전체(wall) 전력 — BMC DCMI 를 Prometheus 로.
+# 카드 전력(RBLN CARD_POWER / furiosa_npu_hw_power / DCGM)만으로는 host idle·전환 비용이 빠지므로
+# 에너지 실험(J/요청, tok/J)은 이 값(ipmi_dcmi_power_consumption_watts)을 기준으로 한다.
+# 대상: BMC(/dev/ipmi0)가 있는 가속기 노드만. GB10 은 IPMI 없음(node_hwmon_power_* 사용).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ipmi-exporter
+  namespace: monitoring
+data:
+  config.yml: |
+    modules:
+      default:
+        collectors: [dcmi, ipmi]
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: ipmi-exporter
+  namespace: monitoring
+  labels: {app: ipmi-exporter}
+spec:
+  selector:
+    matchLabels: {app: ipmi-exporter}
+  template:
+    metadata:
+      labels: {app: ipmi-exporter}
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values: [etri-001, etri-esc8000-e11]
+      tolerations: [{operator: Exists}]
+      containers:
+        - name: exporter
+          image: prometheuscommunity/ipmi-exporter:v1.10.0
+          args: ["--config.file=/config/config.yml"]
+          ports: [{name: http, containerPort: 9290}]
+          securityContext: {privileged: true, runAsUser: 0}   # /dev/ipmi0 는 root 0600 (이미지 기본은 nobody)
+          resources:
+            requests: {cpu: 10m, memory: 32Mi}
+            limits: {memory: 128Mi}
+          volumeMounts:
+            - {name: config, mountPath: /config}
+            - {name: ipmi, mountPath: /dev/ipmi0}
+      volumes:
+        - name: config
+          configMap: {name: ipmi-exporter}
+        - name: ipmi
+          hostPath: {path: /dev/ipmi0, type: CharDevice}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ipmi-exporter
+  namespace: monitoring
+  labels: {app: ipmi-exporter}
+spec:
+  clusterIP: None
+  selector: {app: ipmi-exporter}
+  ports: [{name: http, port: 9290, targetPort: http}]
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: ipmi-exporter
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack
+spec:
+  selector:
+    matchLabels: {app: ipmi-exporter}
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+      scrapeTimeout: 12s
+      relabelings:
+        - sourceLabels: [__meta_kubernetes_pod_node_name]
+          targetLabel: node

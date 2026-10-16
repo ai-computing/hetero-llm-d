@@ -56,3 +56,17 @@ kubectl -n llm-serving get cm model-inventory -o jsonpath='{.data.inventory}'
 2. **노드별 접근**: 모든 서빙/스캔 노드에서 SMB 서버(445/tcp)가 닿는지. 특정 노드만 막히면
    디스커버리 CronJob 에 `nodeSelector`/`affinity` 로 접근 가능한 노드에 고정.
 3. **다이얼렉트**: 서버가 요구하는 `vers=`(3.0/3.1.1/2.1) 확인. `nas-lab` 은 `vers=3.0` 사용.
+
+Discovery publishes `data.scanned_at` as Unix seconds when the scan completes.
+Updated lmd-top shows scan age separately from ConfigMap fetch quality and exports
+`store_scanned_at` in JSON. Older scanners remain readable but show unknown scan
+age; a recent fetch does not establish that the filesystem was recently scanned.
+The updated CronJob manifest must be applied through the normal deployment process
+before existing clusters start publishing this field.
+
+Offline scanner regression checks: `python3 scripts/test-model-store-discovery.py`
+(from the setup repository root; requires Python 3, PyYAML and bash). The test runs
+the actual manifest script with temporary model trees and a fake kubectl, covering
+successful publication, mandatory size-scan failure, missing root, ConfigMap creation
+and apply failure, optional capacity failure and absent legacy build provenance.
+It never contacts Kubernetes or scans the production store.

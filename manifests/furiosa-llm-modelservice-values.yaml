@@ -25,7 +25,7 @@ decode:
     kubernetes.io/hostname: etri-esc8000-e11
   containers:
     - name: "furiosa-llm"
-      image: "furiosaai/furiosa-llm:latest"
+      image: "furiosaai/furiosa-llm:2026.3.0"   # pinned: 2026.4 drops --tensor-parallel-size
       modelCommand: furiosaLLMServe
       mountModelVolume: true
       resources:

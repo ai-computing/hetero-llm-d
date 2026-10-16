@@ -34,7 +34,7 @@ decode:
     kubernetes.io/hostname: etri-esc8000-e11
   containers:
     - name: "furiosa-llm"
-      image: "furiosaai/furiosa-llm:latest"   # consider pinning to a K-EXAONE-supporting tag
+      image: "furiosaai/furiosa-llm:2026.3.0"   # pinned: 2026.4 drops --tensor-parallel-size (TP lives in the FXB artifact)
       modelCommand: furiosaLLMServe
       args:
         - "--reasoning-parser"
