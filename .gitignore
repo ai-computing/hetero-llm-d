@@ -35,3 +35,8 @@ secrets.*
 __pycache__/
 *.pyc
 /인쇄 미리보기.pdf
+
+# Presentation decks and generated PDFs live in the project document store, not in git
+# (they can contain internal addresses that the text scanner cannot see).
+*.pptx
+*.pdf
