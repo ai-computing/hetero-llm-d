@@ -2,11 +2,11 @@
 
 <!-- research-hub:header:begin (maintained by .research/report.py; keep the "- **Key**: value" format) -->
 - **State**: idle
-- **Updated**: 2026-10-16 11:47+09:00
+- **Updated**: 2026-10-16 15:01+09:00
 - **Agent**: claude@control-node
-- **Task**: LLMD-2 (done)
-- **Last result**: STATUS.md를 클러스터 전용으로 정리: lmd-top(성숙도 평가)·npu-lora(LoRA 품질/PoC, full-FT 확장) 항목을 하위 프로젝트 STATUS.md로 옮기고 Goal에서 분리 추적 명시. 하위 초안 2개 실파일 대조·정정, 초안 문구 제거
-- **Next**: 이종 에너지 sweep 재개(A100 1s DCGM 재측정 + RNGD solo/ATOM PD) 및 experiments/ 기록
+- **Task**: LLMD-31 (done)
+- **Last result**: 민감정보 정리 완료(181a3e3, push): check_sensitive 323건(내부 IP) → clean. 스크립트 4개(02-cp-init, capture-lmd-top, epp/make-epp, 03-worker 안내문)와 model-store.yaml을 cluster.local.env(untracked) + scripts/lib/cluster-env.sh로 파라미터화, render-manifest.sh 추가(라이브 PV와 dry-run 동일), cluster.example.env 커밋. 문서 IP는 placeholder, cast/svg/ASCII는 같은 길이 198.51.100.x로 교체. 문서의 Grafana/Rancher admin/admin 제거. ai-rm.yaml + README ## ai-rm 추가.
+- **Next**: 실제 Grafana/Rancher 관리자 비밀번호 변경 여부 확인, docs/ pptx·pdf 바이너리 내 IP 점검
 - **Blockers**: none
 <!-- research-hub:header:end -->
 
@@ -40,6 +40,7 @@
 - **노드 장애가 남아 있다.** cpu-3은 2026-07-07부터 down이고, open-webui PVC가 cpu-3에 묶여 있다. gb10-node-1과 gb10-node-2(GB10)는 DiskPressure 뒤 응답하지 않는다. 물리 접근이 필요하고 원인도 밝히지 못했다. e11은 사용자 결정으로 cordon 상태다.
 - **아래 2026-06 스냅샷이 낡았다.** ds4/DeepSeek, A100 위치, 활성 모델 표가 현재와 다르다. 현재 llm-serving의 모델 Deployment는 의도적으로 replicas 0이다. 스냅샷을 현재 상태로 다시 쓸지 정해야 한다.
 - **보안 정리가 남았다.** HF 토큰은 revoke하는 것을 권장한다. NAS `smb-creds` Secret은 다시 만들어야 한다 (아래 「알려진 한계」).
+  - 2026-10-16 추적 파일에서 내부 IP와 문서의 admin/admin 표기를 지웠다(`181a3e3`, 실제 값은 untracked `cluster.local.env`). git 이력에는 아직 남아 있고, 이력 정리는 hub가 맡는다. 실제 Grafana·Rancher 관리자 비밀번호가 기본값에서 바뀌었는지는 확인하지 않았다. `docs/`의 pptx/pdf 바이너리는 검사 대상이 아니어서 IP가 들어 있을 수 있다.
 
 ---
 
@@ -236,6 +237,12 @@ curl -X POST http://<gateway-host>/v1/chat/completions \
 ## Log
 
 <!-- research-hub:log (report.py inserts new entries below this line, newest first) -->
+
+### 2026-10-16 15:01+09:00 — LLMD-31 ✅
+
+- Result: 민감정보 정리 완료(181a3e3, push): check_sensitive 323건(내부 IP) → clean. 스크립트 4개(02-cp-init, capture-lmd-top, epp/make-epp, 03-worker 안내문)와 model-store.yaml을 cluster.local.env(untracked) + scripts/lib/cluster-env.sh로 파라미터화, render-manifest.sh 추가(라이브 PV와 dry-run 동일), cluster.example.env 커밋. 문서 IP는 placeholder, cast/svg/ASCII는 같은 길이 198.51.100.x로 교체. 문서의 Grafana/Rancher admin/admin 제거. ai-rm.yaml + README ## ai-rm 추가.
+- Next: 실제 Grafana/Rancher 관리자 비밀번호 변경 여부 확인, docs/ pptx·pdf 바이너리 내 IP 점검
+- By: claude@control-node · main@181a3e3-dirty
 
 ### 2026-10-16 11:47+09:00 — LLMD-2 ✅
 
