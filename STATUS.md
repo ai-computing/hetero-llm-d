@@ -2,11 +2,11 @@
 
 <!-- research-hub:header:begin (maintained by .research/report.py; keep the "- **Key**: value" format) -->
 - **State**: idle
-- **Updated**: 2026-10-16 15:01+09:00
+- **Updated**: 2026-10-19 09:10+09:00
 - **Agent**: claude@gspark-PowerEdge-R7525
-- **Task**: LLMD-31 (done)
-- **Last result**: 민감정보 정리 완료(181a3e3, push): check_sensitive 323건(내부 IP) → clean. 스크립트 4개(02-cp-init, capture-lmd-top, epp/make-epp, 03-worker 안내문)와 model-store.yaml을 cluster.local.env(untracked) + scripts/lib/cluster-env.sh로 파라미터화, render-manifest.sh 추가(라이브 PV와 dry-run 동일), cluster.example.env 커밋. 문서 IP는 placeholder, cast/svg/ASCII는 같은 길이 198.51.100.x로 교체. 문서의 Grafana/Rancher admin/admin 제거. ai-rm.yaml + README ## ai-rm 추가.
-- **Next**: 실제 Grafana/Rancher 관리자 비밀번호 변경 여부 확인, docs/ pptx·pdf 바이너리 내 IP 점검
+- **Task**: LLMD-32 (done)
+- **Last result**: PR https://github.com/ai-computing/llm-d-setup/pull/1 — rm_core.conformance 3/3 PASS(sim/loopback/greedy; 이 repo는 adapter 없음), CRD acceleratorprofiles.airm.ai-computing.io 실클러스터 설치, ScrapeConfig·airm-placement·대시보드 server dry-run OK, check_sensitive clean
+- **Next**: PR 머지 후 scripts/airm-install.sh apply manifests로 수집 설정·airm-placement·대시보드 적용
 - **Blockers**: none
 <!-- research-hub:header:end -->
 
@@ -18,6 +18,7 @@
 
 최신순. 출처를 괄호에 적었다. 레포에 원자료가 없는 수치는 그렇다고 밝혔다.
 
+- **2026-10-19 · ai-rm protocol v0.1 통합 (LLMD-32, PR #1).** rm-core v0.1.0의 `AcceleratorProfile` CRD를 실제 클러스터에 설치했다(`scripts/airm-install.sh apply crd`, 객체는 아직 0개). `airm_*` ScrapeConfig, 빈 `llm-serving/airm-placement`, Grafana `airm.json`은 server dry-run만 통과시켰고 적용하지 않았다. EPP placement scorer 자리는 문서로만 표시했다(`deploy/airm/README.md`).
 - **2026-10-15 · 하드웨어 배치가 문서와 달랐다.** A100 × 2는 etri-001이 아니라 `etri-esc8000-e11`(PCI 99/bd:00.0)에 있다. 현재 구성은 etri-001 = RBLN×4 + RNGD×3, e11 = RNGD×2 + A100×2다. e11 A100은 driver 580.178과 nvidia-container-toolkit 1.19.1로 복구했다. kubelet `evictionHard`는 nodefs/imagefs 5%로 낮췄다 (README.md 작업 트리 diff 「etri-ESC8000-E11」, 이 파일 아래 하드웨어 변경 메모).
 - **2026-10-15 · e11 A100 vLLM v0.11.0 Llama-3.1-8B 미니 sweep 결과다.** 입력 614, 출력 128, 60 s로 돌렸다. 동시성 1/8/32/64에서 각각 84/621/1945/3094 tok/s가 나왔다. 노드 wall 전력은 약 940 → 985 W, tok/J(wall)는 0.09 → 3.15였다. 다만 e11 wall 전력에는 다른 사용자 작업이 섞여 있고, DCGM 스크랩 간격도 거칠다. 그래서 에너지 수치는 잠정치다. 레포에 `experiments/` 기록이나 원본 JSONL은 없다. 매니페스트는 `manifests/vllm-a100-llama31-8b.yaml`, 전력 수집은 `manifests/ipmi-exporter.yaml`(유휴 wall 약 620~670 W/노드)이다.
 - **2026-09-10 · 모델 스토어 인벤토리에 출처 정보가 붙었다.** 인벤토리가 각 산출물을 빌드한 toolchain과 스토어 df를 함께 발행한다. 오프라인 회귀 테스트는 `scripts/test-model-store-discovery.py`다 (`33f7a40`, `f232df7`).
@@ -237,6 +238,12 @@ curl -X POST http://<gateway-host>/v1/chat/completions \
 ## Log
 
 <!-- research-hub:log (report.py inserts new entries below this line, newest first) -->
+
+### 2026-10-19 09:10+09:00 — LLMD-32 ✅
+
+- Result: PR https://github.com/ai-computing/llm-d-setup/pull/1 — rm_core.conformance 3/3 PASS(sim/loopback/greedy; 이 repo는 adapter 없음), CRD acceleratorprofiles.airm.ai-computing.io 실클러스터 설치, ScrapeConfig·airm-placement·대시보드 server dry-run OK, check_sensitive clean
+- Next: PR 머지 후 scripts/airm-install.sh apply manifests로 수집 설정·airm-placement·대시보드 적용
+- By: claude@gspark-PowerEdge-R7525 · airm/v0.1@0a3fa29-dirty
 
 ### 2026-10-16 15:01+09:00 — LLMD-31 ✅
 
