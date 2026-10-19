@@ -383,7 +383,7 @@ args:
 
 이 레포는 [ai-rm](https://github.com/ai-computing/ai-rm)(AI 반도체 통합 자원관리)의 **`l4-cluster` 계층, kind `cluster`** 구성요소다. 다른 구성요소가 올라가는 바탕인 K8s + llm-d 클러스터를 정의한다: 노드 부트스트랩 스크립트, Gateway/HTTPRoute, InferencePool·EPP, 모델 서버 매니페스트, 공유 모델 스토어, 관측 스택. 메타데이터는 루트의 `ai-rm.yaml`에 있다.
 
-**k8s + llm-d 연결.** 요청 경로는 `envoy-gateway (llm-d-gateway)` → `HTTPRoute`(path 분기, `manifests/openai-route.yaml`, `llm-d-gateway.yaml`) → `InferencePool` → EPP(`manifests/epp/`, `llmd-router-values.yaml`) → 모델 서버 Pod(`llm-serving` ns)다. 가속기는 노드의 device plugin 리소스(`nvidia.com/gpu`, RBLN, RNGD)와 nodeSelector로 배치한다. 매니페스트는 kustomize 디렉터리가 아니라 개별 `kubectl apply` / helm values 모음이라 `ai-rm.yaml`의 `deploy.manifests`는 `null`이다.
+**k8s + llm-d 연결.** 요청 경로는 `envoy-gateway (llm-d-gateway)` → `HTTPRoute`(path 분기, `manifests/openai-route.yaml`, `llm-d-gateway.yaml`) → `InferencePool` → EPP(`manifests/epp/`, `llmd-router-values.yaml`) → 모델 서버 Pod(`llm-serving` ns)다. 가속기는 노드의 device plugin 리소스(`nvidia.com/gpu`, RBLN, RNGD)와 nodeSelector로 배치한다. `manifests/`는 kustomize 디렉터리가 아니라 개별 `kubectl apply` / helm values 모음이다.
 
 **다른 ai-rm 구성요소가 붙는 자리**
 
@@ -394,6 +394,8 @@ args:
 | lmd-top | l5-ops | control-plane에서 kubectl + Prometheus만 읽는 TUI. `LMD_PROM=$LLMD_PROM_ADDR LMD_NS=llm-serving lmd-top` |
 | rm-bench | l5-ops | Gateway(`http://$LLMD_GATEWAY_HOST/<path>/v1`)에 OpenAI 호환 부하를 건다. 같은 부하 에너지 비교는 `scripts/hetero-sweep.py` |
 | 모니터링 (`monitoring/`) | l4-cluster | 클러스터에서는 kube-prometheus-stack + DCGM/Furiosa/RBLN exporter + ServiceMonitor(`manifests/*servicemonitor.yaml`, `ipmi-exporter.yaml`)가 지표를 모으고, `monitoring/grafana-dashboards/`를 Grafana에 올린다. `monitoring/standalone-compose/`는 k8s 없는 단일 GPU 노드용 |
+
+**ai-rm v0.1.** `ai-rm.yaml`의 `deploy.manifests`는 `deploy/airm`(수집 설정·`airm-placement`), CRD와 되돌리기는 아래 「ai-rm protocol v0.1」.
 
 **설치·테스트.** 클러스터 부트스트랩은 root 권한 수동 단계라 `ai-rm setup`이 실행할 install 명령은 없다(위 「실행 순서」, `scripts/01~05`). 가속기 없이 도는 빠른 검사:
 
@@ -414,6 +416,26 @@ bash -n scripts/*.sh manifests/epp/make-epp.sh       # 셸 스크립트 문법 �
 | `LLMD_GATEWAY_HOST` | `manifests/epp/make-epp.sh` 헬스 테스트 (`GW_ADDR`로 덮어쓰기 가능) |
 | `LLMD_PROM_ADDR` | `scripts/capture-lmd-top.sh`, lmd-top `LMD_PROM` |
 | `LLMD_MODEL_STORE_SMB` | `manifests/model-store.yaml` (`scripts/render-manifest.sh manifests/model-store.yaml \| kubectl apply -f -`) |
+
+### ai-rm protocol v0.1 (rm-core `v0.1.0`)
+
+이 클러스터는 [rm-core PROTOCOL v0.1](https://github.com/ai-computing/rm-core/blob/v0.1.0/PROTOCOL.md)이 돌 자리를 제공한다. 상세와 형식은 [`deploy/airm/README.md`](deploy/airm/README.md).
+
+| 항목 | 위치 |
+|---|---|
+| `AcceleratorProfile` CRD (`airm.ai-computing.io/v1alpha1`) | `scripts/airm-install.sh`가 rm-core 태그 `v0.1.0`에서 받아 sha256 확인 후 적용(사본 없음) |
+| `airm_*` 지표 수집 | `deploy/airm/scrape-airm.yaml` — `airm.ai-computing.io/scrape: "true"` 어노테이션 pod의 `/metrics`(기본 포트 9400) |
+| `airm_*` 대시보드 | `monitoring/grafana-dashboards/airm.json` (ConfigMap `grafana-dashboard-airm`) |
+| 배치 결정 전달 지점 | ConfigMap `llm-serving/airm-placement` (v0.1은 빈 값, EPP scorer 자리만 문서화) |
+| umbrella chart 공통 값 | `deploy/helm/cluster-values.yaml` |
+
+```bash
+scripts/airm-install.sh dry-run              # 서버 dry-run: CRD + ScrapeConfig + ConfigMap + 대시보드
+scripts/airm-install.sh apply crd            # CRD 설치
+scripts/airm-install.sh apply manifests      # 수집 설정·airm-placement·대시보드
+```
+
+**되돌리기.** `scripts/airm-install.sh delete manifests` 후 `scripts/airm-install.sh delete crd`(= `kubectl delete crd acceleratorprofiles.airm.ai-computing.io`). CRD를 지우면 모든 `AcceleratorProfile` 객체도 함께 지워진다. 운영 중인 모델 서버·EPP 설정은 이 단계에서 바꾸지 않는다.
 
 ## 참고
 

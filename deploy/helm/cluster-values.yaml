@@ -1,0 +1,26 @@
+# Cluster-wide values the ai-rm umbrella chart (ai-rm charts/ai-rm) passes to its subcharts as
+# `global.cluster`. Keys and generic defaults only: no addresses, hostnames or credentials.
+# Site overrides live in ai-rm deploy/clusters/<name>/ (and cluster.local.env for scripts).
+global:
+  cluster:
+    # Namespace of the llm-d serving stack: model server pods, InferencePools, EPPs, Gateway.
+    namespace: llm-serving
+    # Namespace of kube-prometheus-stack (Prometheus, Grafana sidecar, ScrapeConfig).
+    monitoringNamespace: monitoring
+
+    gateway:
+      name: llm-d-gateway           # manifests/llm-d-gateway.yaml
+      className: eg                 # envoy-gateway GatewayClass
+      httpRoute: openai-route       # path-based routing (manifests/openai-route.yaml)
+
+    modelStore:
+      pvcName: model-store          # ReadWriteMany PVC, manifests/model-store.yaml
+      mountPath: /mnt/store         # convention in compile-job / vllm-a100 manifests
+      inventoryConfigMap: model-inventory   # written by manifests/model-store-discovery.yaml
+
+    airm:
+      protocol: "0.1"
+      placementConfigMap: airm-placement    # deploy/airm/airm-placement.yaml, in `namespace`
+      scrapeAnnotation: airm.ai-computing.io/scrape
+      metricsPort: 9400                     # default when a pod sets no airm.ai-computing.io/port
+      nodeLabelPrefix: airm.ai-computing.io/ # <vendor>.<model>=<count>, managed=true

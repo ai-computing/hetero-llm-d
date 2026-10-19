@@ -50,6 +50,12 @@ the shared one is fragile (Helm-managed) and breaks the pools it no longer watch
    ```
 4. **Switch the route** rule for that path to the InferencePool, then `curl .../models` → 200.
 
+## ai-rm placement scorer slot (not active)
+
+ai-rm protocol v0.1 reserves a scorer in each EPP's `schedulingProfiles` that will read the
+placement controller's decisions from ConfigMap `llm-serving/airm-placement`. No live EPP config
+is changed for it yet; the format and the exact slot are in `deploy/airm/README.md`.
+
 ## Gotchas learned the hard way
 
 - The reference Deployment has **`spec.paused: true`** — a fresh clone creates no pods

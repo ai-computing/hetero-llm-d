@@ -1,4 +1,5 @@
 name: llm-d-setup
+protocol: "0.1"
 layer: l4-cluster
 kind: cluster
 summary: 이기종(A100·RBLN ATOM·Furiosa RNGD·CPU) K8s 클러스터를 llm-d(Gateway→InferencePool→EPP)로 묶는 매니페스트·셋업 스크립트·모델 스토어·모니터링 구성
@@ -8,13 +9,16 @@ install: []                   # 클러스터 부트스트랩은 root 권한 수�
 test:
   - python3 scripts/test-model-store-discovery.py
   - bash -n scripts/*.sh manifests/epp/make-epp.sh
+  - scripts/airm-install.sh dry-run   # 서버 dry-run (클러스터 접근 필요)
 deploy:
   target: llm-d
-  manifests: null             # manifests/는 개별 kubectl apply / helm values 모음 (kustomize 디렉터리 아님)
+  manifests: deploy/airm       # ai-rm 수집 설정·airm-placement. CRD는 rm-core v0.1.0에서 scripts/airm-install.sh가 받는다
+  values: deploy/helm/cluster-values.yaml   # umbrella chart 클러스터 공통 값 (키·기본값만)
   image: null                 # scripts/04-build-vllm-rbln.sh가 노드 로컬 이미지 vllm-rbln:0.10.2를 만들지만 레지스트리 배포는 없음
 config:
   env_example: cluster.example.env
 interfaces:
   provides: [Placement, Metrics]
   uses: [Accelerator, Workload]
+metrics: []                   # 이 레포는 airm_* 지표를 직접 내지 않고 수집만 한다 (deploy/airm/scrape-airm.yaml)
 kpi: [이종자원수, 전력효율, SLO]
