@@ -1,0 +1,1282 @@
+[
+ {
+  "rid": "a435da7c-5cf7-4dd8-ac8a-42b427b623c4",
+  "lat": 1.3785712718963623,
+  "status": 200,
+  "ok": true,
+  "text": "1560\n\nTo calculate 52 * 30, follow these",
+  "ptok": 107,
+  "ctok": 77,
+  "vendor": "a100"
+ },
+ {
+  "rid": "3e0f407f-e651-4d60-9e1a-666d09a51c32",
+  "lat": 2.4561030864715576,
+  "status": 200,
+  "ok": false,
+  "text": "The result is: 7080\n\nTo calculate 85 * 8",
+  "ptok": 121,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "52d735c5-c376-47bc-81c3-9fe940eb8d3e",
+  "lat": 2.4546892642974854,
+  "status": 200,
+  "ok": true,
+  "text": "2820\n\nTo calculate 47 * 60, follow these",
+  "ptok": 123,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "3c1ca8e2-ce87-414c-8330-d7984e881ddf",
+  "lat": 1.6199541091918945,
+  "status": 200,
+  "ok": true,
+  "text": "61*62 = 3782\n\nTo calculate 61*62, we mul",
+  "ptok": 103,
+  "ctok": 84,
+  "vendor": "a100"
+ },
+ {
+  "rid": "4399414e-2019-4102-b4f4-e5b8606cee6f",
+  "lat": 2.453483819961548,
+  "status": 200,
+  "ok": true,
+  "text": "5184\n\nTo calculate 72*72, follow these s",
+  "ptok": 93,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "bd91125a-e28e-44fc-8ef5-576a12ad3362",
+  "lat": 2.4895401000976562,
+  "status": 200,
+  "ok": true,
+  "text": "1440\n\nTo calculate 40 * 36, follow these",
+  "ptok": 114,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "e5cb02d7-0de0-4a0d-9aa5-a4cf69831b04",
+  "lat": 2.4888036251068115,
+  "status": 200,
+  "ok": true,
+  "text": "1980\n\nTo calculate 32 * 27, follow these",
+  "ptok": 66,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "6aacf194-68af-4470-95d8-6feb0ce7615c",
+  "lat": 2.4060840606689453,
+  "status": 200,
+  "ok": true,
+  "text": "6561\n\nTo calculate 81*81, follow these s",
+  "ptok": 79,
+  "ctok": 124,
+  "vendor": "a100"
+ },
+ {
+  "rid": "c53ac6dc-1f83-4f5f-a897-980c9b4736c6",
+  "lat": 2.073853015899658,
+  "status": 200,
+  "ok": true,
+  "text": "3520\n\nTo calculate 44 * 80, follow these",
+  "ptok": 98,
+  "ctok": 105,
+  "vendor": "a100"
+ },
+ {
+  "rid": "6df5e1b8-2947-4ae5-a264-a9a760f3f036",
+  "lat": 2.046103000640869,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 6667.\n\nTo calculate 89 * 7",
+  "ptok": 124,
+  "ctok": 104,
+  "vendor": "a100"
+ },
+ {
+  "rid": "5a85d1af-4e2e-4a4d-9d21-17c3955eef84",
+  "lat": 2.5238444805145264,
+  "status": 200,
+  "ok": true,
+  "text": "1986\n\nTo calculate 13*54, follow these s",
+  "ptok": 116,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "51e5a728-935b-4cb7-a2f7-b6095bac9d0a",
+  "lat": 1.652967929840088,
+  "status": 200,
+  "ok": true,
+  "text": "43254\n\nTo calculate 54 * 81, follow thes",
+  "ptok": 100,
+  "ctok": 82,
+  "vendor": "a100"
+ },
+ {
+  "rid": "fc1ecc1d-59f5-4e58-a116-6d09d1f8abfe",
+  "lat": 1.8974030017852783,
+  "status": 200,
+  "ok": true,
+  "text": "3750\n\nTo calculate 75*50, follow these s",
+  "ptok": 126,
+  "ctok": 95,
+  "vendor": "a100"
+ },
+ {
+  "rid": "fe682910-c776-4f01-a7e8-b750e11d9aa6",
+  "lat": 2.566793203353882,
+  "status": 200,
+  "ok": true,
+  "text": "1878\n\nTo calculate 29*62, follow these s",
+  "ptok": 117,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "14b5ce68-bf89-4fdc-9fdb-3cce2a19acb1",
+  "lat": 1.51487398147583,
+  "status": 200,
+  "ok": true,
+  "text": "1480\n\nTo calculate 37 * 40, follow these",
+  "ptok": 129,
+  "ctok": 72,
+  "vendor": "a100"
+ },
+ {
+  "rid": "2722764a-c699-4b52-9e4d-cdeac7cbf2bf",
+  "lat": 2.625044345855713,
+  "status": 200,
+  "ok": false,
+  "text": "2193\n\nTo calculate 73 * 61, follow these",
+  "ptok": 67,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "8e63ca50-ab31-457b-a9f5-5719de0d83d0",
+  "lat": 2.6240193843841553,
+  "status": 200,
+  "ok": true,
+  "text": "1864\n\nTo calculate 29*64, we follow the ",
+  "ptok": 98,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "b1cbc08e-3a91-425b-b887-a62a16a415a7",
+  "lat": 1.9126925468444824,
+  "status": 200,
+  "ok": true,
+  "text": "19890\n\nTo calculate 42 * 45, follow thes",
+  "ptok": 103,
+  "ctok": 91,
+  "vendor": "a100"
+ },
+ {
+  "rid": "f181ae7f-5ccf-4aef-904a-548114d4fa52",
+  "lat": 2.5868942737579346,
+  "status": 200,
+  "ok": true,
+  "text": "2020\n\nTo calculate 20*37, follow these s",
+  "ptok": 115,
+  "ctok": 124,
+  "vendor": "a100"
+ },
+ {
+  "rid": "76ac2959-3000-4560-aeb2-0ccc99671975",
+  "lat": 2.3184566497802734,
+  "status": 200,
+  "ok": false,
+  "text": "4184\n\nTo calculate 93 * 68, follow these",
+  "ptok": 105,
+  "ctok": 111,
+  "vendor": "a100"
+ },
+ {
+  "rid": "4489640c-ef3e-447a-ab76-84d0bc01f0ae",
+  "lat": 2.702871799468994,
+  "status": 200,
+  "ok": true,
+  "text": "3438\n\nTo calculate 49 * 78, follow these",
+  "ptok": 121,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "0b3242e5-6ac9-4d47-87b4-14a16d43f509",
+  "lat": 2.038466453552246,
+  "status": 200,
+  "ok": true,
+  "text": "1400\n\nTo calculate 35*40, follow these s",
+  "ptok": 106,
+  "ctok": 95,
+  "vendor": "a100"
+ },
+ {
+  "rid": "fb249256-d16b-44ea-b0b8-2a5dc36e9259",
+  "lat": 2.7013423442840576,
+  "status": 200,
+  "ok": true,
+  "text": "2191\n\nTo calculate 53 * 67, follow these",
+  "ptok": 84,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "07e4f108-4946-4a30-ab22-99e53a024179",
+  "lat": 2.737805128097534,
+  "status": 200,
+  "ok": true,
+  "text": "2100\n\nTo calculate 71 * 36, follow these",
+  "ptok": 96,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "1b34c712-3383-48c7-837e-9b7bc9f68de4",
+  "lat": 2.736999988555908,
+  "status": 200,
+  "ok": true,
+  "text": "6584\n\nTo calculate 87 * 92, follow these",
+  "ptok": 73,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "563fd791-1067-46ef-93f6-b38eb4028697",
+  "lat": 2.737136125564575,
+  "status": 200,
+  "ok": true,
+  "text": "19878\n\nTo calculate 27 * 74, follow thes",
+  "ptok": 83,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "ef88856e-77be-4fa4-ad60-7a83e43a5b0c",
+  "lat": 2.1973817348480225,
+  "status": 200,
+  "ok": true,
+  "text": "5832\n\nTo calculate 72 * 81, follow these",
+  "ptok": 117,
+  "ctok": 99,
+  "vendor": "a100"
+ },
+ {
+  "rid": "a7ba0f2d-558a-4d67-a306-5ef334ba06ca",
+  "lat": 2.7828292846679688,
+  "status": 200,
+  "ok": true,
+  "text": "2100\n\nTo calculate 42*75, follow these s",
+  "ptok": 112,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "b6d64f28-225c-42ca-aafd-a0e50a282ca7",
+  "lat": 2.7820096015930176,
+  "status": 200,
+  "ok": true,
+  "text": "4226\n\nTo calculate 97 * 58, follow these",
+  "ptok": 85,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "5dd0bcbc-d50f-4bd3-a287-852b3a708910",
+  "lat": 2.8186967372894287,
+  "status": 200,
+  "ok": true,
+  "text": "42208\n\nTo calculate 47 * 96, follow thes",
+  "ptok": 96,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "d06d43e8-ce65-4c99-8568-141ae1ec0f44",
+  "lat": 2.5948946475982666,
+  "status": 200,
+  "ok": true,
+  "text": "1387\n\nTo find the product of 17 and 81, ",
+  "ptok": 80,
+  "ctok": 117,
+  "vendor": "a100"
+ },
+ {
+  "rid": "7e1eec76-f047-4262-b6b3-15da795705a2",
+  "lat": 2.8173251152038574,
+  "status": 200,
+  "ok": true,
+  "text": "13851\n\nTo calculate 49 * 27, follow thes",
+  "ptok": 141,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "c0b6e163-f740-45a4-b53d-867bbf43f9bb",
+  "lat": 2.8409769535064697,
+  "status": 200,
+  "ok": true,
+  "text": "2474\n\nTo calculate 92 * 27, follow these",
+  "ptok": 75,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "be4e0c07-8268-45a2-9e65-e99873a4972e",
+  "lat": 2.840778350830078,
+  "status": 200,
+  "ok": true,
+  "text": "4181\n\nTo calculate 73 * 47, follow these",
+  "ptok": 131,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "766c5a97-a239-4fb2-b841-42cb36fe3546",
+  "lat": 1.9676432609558105,
+  "status": 200,
+  "ok": true,
+  "text": "48368\n\nTo calculate 64 * 76, follow thes",
+  "ptok": 96,
+  "ctok": 83,
+  "vendor": "a100"
+ },
+ {
+  "rid": "5f806365-e37c-47c4-b263-64ac13323a2a",
+  "lat": 1.808222770690918,
+  "status": 200,
+  "ok": true,
+  "text": "4320\n\nTo calculate 96 * 45, follow these",
+  "ptok": 99,
+  "ctok": 77,
+  "vendor": "a100"
+ },
+ {
+  "rid": "e71d08c6-4e71-4be9-8f0e-f3ff7f7e4d75",
+  "lat": 0.4997401237487793,
+  "status": 200,
+  "ok": false,
+  "text": "897",
+  "ptok": 102,
+  "ctok": 2,
+  "vendor": "a100"
+ },
+ {
+  "rid": "36e3f94e-4f82-460d-8976-7988b2806fcb",
+  "lat": 2.466951608657837,
+  "status": 200,
+  "ok": true,
+  "text": "21021\n\nTo calculate 53*87, follow these ",
+  "ptok": 88,
+  "ctok": 107,
+  "vendor": "a100"
+ },
+ {
+  "rid": "025eb625-3b47-438b-992c-fed39f7b0f46",
+  "lat": 2.920325756072998,
+  "status": 200,
+  "ok": true,
+  "text": "196\n\nTo calculate 14*14, follow these st",
+  "ptok": 70,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "6843d9bf-487e-49f0-ace5-af7420bc63a1",
+  "lat": 2.91934871673584,
+  "status": 200,
+  "ok": false,
+  "text": "48624\n\nTo calculate 79 * 96, follow thes",
+  "ptok": 76,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "7b90b47f-0667-481d-85cf-41f0a474b927",
+  "lat": 2.285339832305908,
+  "status": 200,
+  "ok": true,
+  "text": "8281\n\nTo calculate 91*91, follow these s",
+  "ptok": 89,
+  "ctok": 97,
+  "vendor": "a100"
+ },
+ {
+  "rid": "0edf92a4-8b87-4260-b629-1ad7db8fb9fc",
+  "lat": 2.0872302055358887,
+  "status": 200,
+  "ok": true,
+  "text": "77 * 23 = 1771\n\nTo calculate this, I fol",
+  "ptok": 95,
+  "ctok": 85,
+  "vendor": "a100"
+ },
+ {
+  "rid": "e331a771-b796-4dd1-87ff-caefe7106e79",
+  "lat": 2.954807758331299,
+  "status": 200,
+  "ok": true,
+  "text": "19812\n\nTo calculate 92 * 21, follow thes",
+  "ptok": 109,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "7ca08537-c16e-43cb-9acc-929789778abf",
+  "lat": 2.9539284706115723,
+  "status": 200,
+  "ok": true,
+  "text": "44100\n\nTo calculate 49 * 90, follow thes",
+  "ptok": 81,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "d71bd033-201d-4e66-9dce-f22f49189370",
+  "lat": 2.1251163482666016,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 870.\n\nTo find the product ",
+  "ptok": 141,
+  "ctok": 86,
+  "vendor": "a100"
+ },
+ {
+  "rid": "40553392-266b-44a5-b4bd-daf653526aee",
+  "lat": 2.9929213523864746,
+  "status": 200,
+  "ok": true,
+  "text": "27892\n\nTo calculate 36*77, follow these ",
+  "ptok": 99,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "7e2ff675-914c-496f-b7d6-2803a5304ae9",
+  "lat": 2.991973400115967,
+  "status": 200,
+  "ok": true,
+  "text": "1861\n\nTo calculate 39*49, we follow the ",
+  "ptok": 131,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "476d5e2d-d64f-40f5-8509-7e3a254ef553",
+  "lat": 3.013620138168335,
+  "status": 200,
+  "ok": true,
+  "text": "24705\n\nTo calculate 85 * 29, follow thes",
+  "ptok": 138,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "4a700def-e412-4241-ac0e-e5bfb6f21f2f",
+  "lat": 2.771404981613159,
+  "status": 200,
+  "ok": true,
+  "text": "4544\n\nTo calculate 54 * 71, follow these",
+  "ptok": 133,
+  "ctok": 116,
+  "vendor": "a100"
+ },
+ {
+  "rid": "1c9c0b4f-13cb-47cb-aab8-722663c80f2e",
+  "lat": 3.0130398273468018,
+  "status": 200,
+  "ok": true,
+  "text": "2112\n\nTo calculate 34*64, follow these s",
+  "ptok": 69,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "58b36da6-9c33-4776-8395-b977984313ec",
+  "lat": 3.0596377849578857,
+  "status": 200,
+  "ok": true,
+  "text": "54656\n\nTo calculate 64 * 84, follow thes",
+  "ptok": 125,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "2f120959-d0af-4257-a679-d1fc019cc540",
+  "lat": 2.9728052616119385,
+  "status": 200,
+  "ok": true,
+  "text": "4864\n\nTo calculate 58 * 84, follow these",
+  "ptok": 127,
+  "ctok": 124,
+  "vendor": "a100"
+ },
+ {
+  "rid": "2a98513c-1c83-4eb2-b826-820b8b78a08e",
+  "lat": 1.9401218891143799,
+  "status": 200,
+  "ok": true,
+  "text": "The result is: 3698\n\nTo calculate 43 * 8",
+  "ptok": 134,
+  "ctok": 73,
+  "vendor": "a100"
+ },
+ {
+  "rid": "cd54bae0-3b0e-4a9c-89f5-288e7c99f9bc",
+  "lat": 3.081857919692993,
+  "status": 200,
+  "ok": true,
+  "text": "378\n\nTo calculate 21*14, follow these st",
+  "ptok": 72,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "1c5b2b2d-b5f4-4cb9-8793-0d26f16afd9c",
+  "lat": 2.0806169509887695,
+  "status": 200,
+  "ok": true,
+  "text": "2109\n\nTo calculate 43 * 51, follow these",
+  "ptok": 113,
+  "ctok": 79,
+  "vendor": "a100"
+ },
+ {
+  "rid": "7608f8b4-1553-40f8-9f7b-a3dfbfeb063e",
+  "lat": 3.081132650375366,
+  "status": 200,
+  "ok": true,
+  "text": "24500\n\nTo calculate 70*35, follow these ",
+  "ptok": 134,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "412ea47d-f8d6-480c-af5a-9330d90f2e9a",
+  "lat": 3.1194345951080322,
+  "status": 200,
+  "ok": false,
+  "text": "1213\n\nTo calculate 41 * 23, follow these",
+  "ptok": 97,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "8f137aa7-6784-4eb0-a115-6dc3c1461077",
+  "lat": 3.11844801902771,
+  "status": 200,
+  "ok": true,
+  "text": "1986\n\nTo calculate 46 * 33, follow these",
+  "ptok": 84,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "c09fe609-5fd3-4807-beef-cb28b50b7872",
+  "lat": 3.141158103942871,
+  "status": 200,
+  "ok": true,
+  "text": "2100\n\nTo calculate 42 * 34, follow these",
+  "ptok": 115,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "bcef4ed9-2a21-44d7-86c9-418dc90712c9",
+  "lat": 2.355825424194336,
+  "status": 200,
+  "ok": true,
+  "text": "528\n\nTo calculate 33*16, follow these st",
+  "ptok": 93,
+  "ctok": 91,
+  "vendor": "a100"
+ },
+ {
+  "rid": "71dd1323-75b5-4781-aba5-28441561a218",
+  "lat": 2.7513015270233154,
+  "status": 200,
+  "ok": true,
+  "text": "42268\n\nTo calculate 54 * 62, follow thes",
+  "ptok": 89,
+  "ctok": 109,
+  "vendor": "a100"
+ },
+ {
+  "rid": "8f957afa-2e71-4731-83b9-626205140dec",
+  "lat": 3.139496326446533,
+  "status": 200,
+  "ok": true,
+  "text": "1872\n\nTo calculate 28*64, follow these s",
+  "ptok": 99,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "f0714caf-20a7-49fa-a06b-444253164ede",
+  "lat": 3.0529263019561768,
+  "status": 200,
+  "ok": true,
+  "text": "84 * 47 = 3932\n\nTo calculate this, I fol",
+  "ptok": 92,
+  "ctok": 124,
+  "vendor": "a100"
+ },
+ {
+  "rid": "71d98aad-2f9d-42e5-ae2b-e9bd78ee1c48",
+  "lat": 3.1385486125946045,
+  "status": 200,
+  "ok": true,
+  "text": "2021\n\nTo calculate 31*41, follow these s",
+  "ptok": 92,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "193ee02d-13fc-428d-940d-751e7192211d",
+  "lat": 1.76893949508667,
+  "status": 200,
+  "ok": true,
+  "text": "77 * 23 = 1771\n\nTo calculate this, I fol",
+  "ptok": 133,
+  "ctok": 85,
+  "vendor": "a100"
+ },
+ {
+  "rid": "49069543-d411-4941-a029-0c67e3ab64ac",
+  "lat": 2.498581886291504,
+  "status": 200,
+  "ok": true,
+  "text": "2940\n\nTo calculate 70*56, follow these s",
+  "ptok": 71,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "0fdaccfa-7e12-44b2-94dc-e8a847e7236b",
+  "lat": 1.9753048419952393,
+  "status": 200,
+  "ok": true,
+  "text": "4350\n\nTo calculate 58 * 75, follow these",
+  "ptok": 102,
+  "ctok": 98,
+  "vendor": "a100"
+ },
+ {
+  "rid": "1a533d95-7ad4-4368-b780-b86206fefe2f",
+  "lat": 2.1478593349456787,
+  "status": 200,
+  "ok": true,
+  "text": "121\n\nTo calculate 12*11, follow these st",
+  "ptok": 94,
+  "ctok": 109,
+  "vendor": "a100"
+ },
+ {
+  "rid": "a1cf9ff8-30b5-49f8-bdc2-f617e2a8d326",
+  "lat": 2.4825236797332764,
+  "status": 200,
+  "ok": true,
+  "text": "18*94 = 1698\n\nTo calculate 18*94, follow",
+  "ptok": 66,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "146203f6-893e-4922-ad22-db5b76e5bafe",
+  "lat": 2.492459535598755,
+  "status": 200,
+  "ok": true,
+  "text": "486\n\nTo calculate 32*15, follow these st",
+  "ptok": 91,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "4f0102aa-00d2-4827-8160-5abee0e5dbae",
+  "lat": 2.469158172607422,
+  "status": 200,
+  "ok": true,
+  "text": "4864\n\nTo calculate 49*64, follow these s",
+  "ptok": 124,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "403b12df-08f1-4963-805d-8cc6e5fca0e0",
+  "lat": 2.468376636505127,
+  "status": 200,
+  "ok": true,
+  "text": "1217\n\nTo calculate 30 * 41, follow these",
+  "ptok": 134,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "89acb847-796c-48df-b5c2-fdb1395b7bcd",
+  "lat": 2.458841562271118,
+  "status": 200,
+  "ok": true,
+  "text": "2103\n\nTo calculate 39*47, follow these s",
+  "ptok": 76,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "af2bd33c-f1a9-4013-bb48-54178c894313",
+  "lat": 2.4581549167633057,
+  "status": 200,
+  "ok": true,
+  "text": "4180\n\nTo calculate 95 * 70, follow these",
+  "ptok": 88,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "3a930ee7-0af7-43f3-ae10-1095dbb1d801",
+  "lat": 2.4637768268585205,
+  "status": 200,
+  "ok": false,
+  "text": "3400\n\nTo calculate 83 * 40, follow these",
+  "ptok": 117,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "09e74a13-6616-4d5f-b58d-130424f62998",
+  "lat": 2.4818053245544434,
+  "status": 200,
+  "ok": true,
+  "text": "30630\n\nTo calculate 56*55, follow these ",
+  "ptok": 102,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "6c9e3171-6a71-4c32-a55e-d67229a5ac06",
+  "lat": 2.4580612182617188,
+  "status": 200,
+  "ok": true,
+  "text": "288\n\nTo calculate 16*18, follow these st",
+  "ptok": 88,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "c82635b6-7bd0-4759-88f9-04963a4526b3",
+  "lat": 2.4577009677886963,
+  "status": 200,
+  "ok": true,
+  "text": "The result is: 6771\n\nTo calculate 93 * 7",
+  "ptok": 101,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "eb63e40a-0cfa-4504-b4ba-8b10a94dde6c",
+  "lat": 1.781540870666504,
+  "status": 200,
+  "ok": true,
+  "text": "288\n\nTo calculate 18 * 16, follow these ",
+  "ptok": 76,
+  "ctok": 90,
+  "vendor": "a100"
+ },
+ {
+  "rid": "5186ccfc-c7b1-4f43-8172-037ebef3ae07",
+  "lat": 1.3851392269134521,
+  "status": 200,
+  "ok": true,
+  "text": "31 * 28 = 868\n\nTo calculate this, I foll",
+  "ptok": 105,
+  "ctok": 69,
+  "vendor": "a100"
+ },
+ {
+  "rid": "42c0567f-2fcf-440f-a3bc-43cb276dee77",
+  "lat": 1.5890984535217285,
+  "status": 200,
+  "ok": false,
+  "text": "7079\n\nTo calculate 79 * 91, follow these",
+  "ptok": 149,
+  "ctok": 81,
+  "vendor": "a100"
+ },
+ {
+  "rid": "322f3c35-9817-4b27-8b05-c1d5f763ec01",
+  "lat": 2.4025111198425293,
+  "status": 200,
+  "ok": true,
+  "text": "198\n\nTo calculate 16*12, follow these st",
+  "ptok": 125,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "26a6349c-9e40-4e2c-b66f-73d137878637",
+  "lat": 2.3993537425994873,
+  "status": 200,
+  "ok": true,
+  "text": "3028\n\nTo calculate 14*54, follow these s",
+  "ptok": 79,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "bd20eadc-6771-4b31-96d7-a5a8886df376",
+  "lat": 2.3921773433685303,
+  "status": 200,
+  "ok": true,
+  "text": "21924\n\nTo calculate 53*78, follow these ",
+  "ptok": 81,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "359459ce-4d0f-4e01-9f9d-bd7fd465313d",
+  "lat": 2.380068778991699,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 2883.\n\nTo calculate 42*69,",
+  "ptok": 118,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "d9b547b9-98b9-4d7b-9377-4b068998d59b",
+  "lat": 2.3763632774353027,
+  "status": 200,
+  "ok": true,
+  "text": "4187\n\nTo calculate 83 * 49, follow these",
+  "ptok": 80,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "72300764-b0fb-4471-bf21-887bdf1c8e27",
+  "lat": 2.391026496887207,
+  "status": 200,
+  "ok": false,
+  "text": "4187\n\nTo calculate 19*73, follow these s",
+  "ptok": 94,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "db7c2153-9c5b-46d3-b5d6-b47ad07c581f",
+  "lat": 1.9574096202850342,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 1575.\n\nTo calculate 35*45,",
+  "ptok": 109,
+  "ctok": 101,
+  "vendor": "a100"
+ },
+ {
+  "rid": "cac89c5c-b5c2-4295-8525-1659d9f86943",
+  "lat": 2.3904309272766113,
+  "status": 200,
+  "ok": false,
+  "text": "7048\n\nTo calculate 95 * 88, follow these",
+  "ptok": 112,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "667857f8-7193-4376-8705-a5e50fc35d7b",
+  "lat": 1.8143727779388428,
+  "status": 200,
+  "ok": true,
+  "text": "728\n\nTo calculate 52 * 14, follow these ",
+  "ptok": 78,
+  "ctok": 94,
+  "vendor": "a100"
+ },
+ {
+  "rid": "fd3a7f44-3c31-4d5e-8cf9-18a382a6d9d1",
+  "lat": 0.08568644523620605,
+  "status": 200,
+  "ok": false,
+  "text": "571",
+  "ptok": 88,
+  "ctok": 2,
+  "vendor": "a100"
+ },
+ {
+  "rid": "618721fe-ea0d-483a-b2be-05f863563677",
+  "lat": 2.369209051132202,
+  "status": 200,
+  "ok": true,
+  "text": "20242\n\nTo calculate 42*31, follow these ",
+  "ptok": 93,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "0e57e481-730a-4a80-b73d-c910ee9572e0",
+  "lat": 2.0385212898254395,
+  "status": 200,
+  "ok": true,
+  "text": "48678\n\nTo calculate 54 * 93, follow thes",
+  "ptok": 126,
+  "ctok": 108,
+  "vendor": "a100"
+ },
+ {
+  "rid": "41e0840b-e566-43f3-b585-7abec5456540",
+  "lat": 2.34452223777771,
+  "status": 200,
+  "ok": true,
+  "text": "41826\n\nTo calculate 94 * 69, follow thes",
+  "ptok": 119,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "82264e9d-6a1c-4da6-9da2-ba5142a8a91e",
+  "lat": 2.343993902206421,
+  "status": 200,
+  "ok": true,
+  "text": "3060\n\nTo calculate 78 * 45, follow these",
+  "ptok": 119,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "e30fef90-d0c8-44a1-a208-8525d65d3937",
+  "lat": 2.3365731239318848,
+  "status": 200,
+  "ok": true,
+  "text": "2100\n\nTo calculate 77*30, follow these s",
+  "ptok": 66,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "2400a3e9-8eed-4f99-946a-27b852b513b3",
+  "lat": 2.3222198486328125,
+  "status": 200,
+  "ok": false,
+  "text": "23478\n\nTo calculate 77 * 54, follow thes",
+  "ptok": 139,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "6b97b6d6-2c36-4a41-baed-51b1d1ed7646",
+  "lat": 1.6319994926452637,
+  "status": 200,
+  "ok": true,
+  "text": "4183\n\nTo calculate 19*67, follow these s",
+  "ptok": 104,
+  "ctok": 85,
+  "vendor": "a100"
+ },
+ {
+  "rid": "902ae99b-c610-4629-999b-b9a71e77c9bf",
+  "lat": 2.329632520675659,
+  "status": 200,
+  "ok": true,
+  "text": "2599\n\nTo calculate 91 * 29, follow these",
+  "ptok": 95,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "aca8ab79-331b-4c65-9a9c-ecbae0496982",
+  "lat": 2.309014081954956,
+  "status": 200,
+  "ok": false,
+  "text": "7066\n\nTo calculate 79 * 94, follow these",
+  "ptok": 98,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "2e2a3da6-1e5c-412d-b1e2-2bd7a965a554",
+  "lat": 2.3085529804229736,
+  "status": 200,
+  "ok": true,
+  "text": "2408\n\nTo calculate 92 * 26, follow these",
+  "ptok": 70,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "9cfd8306-efc4-4562-952d-ffd9c61ae37d",
+  "lat": 2.3020753860473633,
+  "status": 200,
+  "ok": true,
+  "text": "9409\n\nTo calculate 97*97, we can use the",
+  "ptok": 134,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "84d93bda-4315-4139-999a-60884fa45b3f",
+  "lat": 2.301905870437622,
+  "status": 200,
+  "ok": false,
+  "text": "4182\n\nTo calculate 94 * 78, follow these",
+  "ptok": 109,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "e203cd31-357e-44e4-a1a4-52f8c0e36f70",
+  "lat": 2.301469087600708,
+  "status": 200,
+  "ok": true,
+  "text": "42258\n\nTo calculate 82 * 69, follow thes",
+  "ptok": 76,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "75157bd6-8121-4c34-a719-048fe0773588",
+  "lat": 2.1652345657348633,
+  "status": 200,
+  "ok": true,
+  "text": "4208\n\nTo calculate 84 * 56, follow these",
+  "ptok": 70,
+  "ctok": 120,
+  "vendor": "a100"
+ },
+ {
+  "rid": "8f2dcc9e-45be-4d4e-b9eb-82b68870b3ee",
+  "lat": 2.2838077545166016,
+  "status": 200,
+  "ok": true,
+  "text": "2028\n\nTo calculate 30 * 44, follow these",
+  "ptok": 76,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "e7af6cf7-3b5a-4ea9-9050-16985766dda8",
+  "lat": 1.3969953060150146,
+  "status": 200,
+  "ok": false,
+  "text": "83*79 = 6533\n\nTo calculate 83*79, follow",
+  "ptok": 70,
+  "ctok": 72,
+  "vendor": "a100"
+ },
+ {
+  "rid": "e179fb08-be75-40a4-bd4d-3529fcf5febf",
+  "lat": 2.2981224060058594,
+  "status": 200,
+  "ok": true,
+  "text": "The result is: 3197\n\nTo calculate 41 * 7",
+  "ptok": 116,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "dc52293d-5e22-4cd5-966c-386220bbb188",
+  "lat": 2.277156352996826,
+  "status": 200,
+  "ok": true,
+  "text": "3969\n\nTo calculate 63*63, follow these s",
+  "ptok": 69,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "31b7e0f6-9333-4adc-86f1-20ae9c3f6d0b",
+  "lat": 2.2767016887664795,
+  "status": 200,
+  "ok": true,
+  "text": "1980\n\nTo calculate 37 * 36, follow these",
+  "ptok": 85,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "8fe801ba-bc3b-4fcf-b2b9-9cae9d215341",
+  "lat": 2.268260955810547,
+  "status": 200,
+  "ok": true,
+  "text": "44201\n\nTo calculate 44*99, follow these ",
+  "ptok": 98,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "d4abb34c-e325-4889-9cc9-1402548a414f",
+  "lat": 2.2681233882904053,
+  "status": 200,
+  "ok": true,
+  "text": "8055\n\nTo calculate 95 * 87, follow these",
+  "ptok": 140,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "fe4f34a5-87c5-430f-bfba-30e3ca37131c",
+  "lat": 2.2376630306243896,
+  "status": 200,
+  "ok": true,
+  "text": "1984\n\nTo calculate 28 * 43, follow these",
+  "ptok": 119,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "d42188c1-aa94-4529-a2d4-ac603085fe9b",
+  "lat": 2.237227201461792,
+  "status": 200,
+  "ok": true,
+  "text": "4225\n\nTo calculate 79 * 55, follow these",
+  "ptok": 75,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "8c833e73-2005-42f3-a14b-882041a66358",
+  "lat": 2.227630615234375,
+  "status": 200,
+  "ok": true,
+  "text": "2100\n\nTo calculate 71 * 36, follow these",
+  "ptok": 121,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "0ae2c582-8349-40c8-af5f-f39ae0ec91e9",
+  "lat": 1.7894301414489746,
+  "status": 200,
+  "ok": true,
+  "text": "3069\n\nTo calculate 93 * 33, follow these",
+  "ptok": 138,
+  "ctok": 98,
+  "vendor": "a100"
+ },
+ {
+  "rid": "86095746-e181-4ade-9009-351417fdf9f4",
+  "lat": 2.218252182006836,
+  "status": 200,
+  "ok": true,
+  "text": "7389\n\nTo calculate 11*69, follow these s",
+  "ptok": 122,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "1d2ecbd2-a91f-40ff-a9f9-833d3e040c38",
+  "lat": 2.2145872116088867,
+  "status": 200,
+  "ok": true,
+  "text": "2025\n\nTo calculate 89 * 35, follow these",
+  "ptok": 78,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "c045b792-6ef6-44a9-a88d-4e028b951249",
+  "lat": 2.214381217956543,
+  "status": 200,
+  "ok": true,
+  "text": "The result is: 1167\n\nTo calculate 13 * 8",
+  "ptok": 129,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "0547e26d-dace-47aa-bb20-c5f46ea4ef9a",
+  "lat": 2.2053933143615723,
+  "status": 200,
+  "ok": true,
+  "text": "294\n\nTo calculate 12*22, follow these st",
+  "ptok": 110,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "ccdf4431-3b2f-4556-8578-b09c98f15e7f",
+  "lat": 2.072399854660034,
+  "status": 200,
+  "ok": true,
+  "text": "440\n\nTo calculate 40*11, follow these st",
+  "ptok": 103,
+  "ctok": 118,
+  "vendor": "a100"
+ },
+ {
+  "rid": "8c7c9917-9c0d-439c-bbdd-54972316420f",
+  "lat": 2.185239553451538,
+  "status": 200,
+  "ok": true,
+  "text": "1128\n\nTo calculate 14 * 82, follow these",
+  "ptok": 130,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "919c1a44-ebed-43f3-acff-ff143de0077b",
+  "lat": 2.184784412384033,
+  "status": 200,
+  "ok": true,
+  "text": "9604\n\nTo calculate 96 * 98, follow these",
+  "ptok": 75,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "536cc010-34b3-49a0-8b04-2c1c1b37cb87",
+  "lat": 1.4907193183898926,
+  "status": 200,
+  "ok": true,
+  "text": "23 * 31 = 713\n\nTo calculate this, I foll",
+  "ptok": 107,
+  "ctok": 81,
+  "vendor": "a100"
+ },
+ {
+  "rid": "4d86ced4-edb1-4f85-aa61-61db289ee83f",
+  "lat": 2.1731150150299072,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 1771.\n\nTo calculate 38 * 4",
+  "ptok": 137,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "26a9d866-4bbe-4b9d-8ceb-8becd999120d",
+  "lat": 2.1607604026794434,
+  "status": 200,
+  "ok": true,
+  "text": "41820\n\nTo calculate 46*90, follow these ",
+  "ptok": 68,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "1bcc2ec0-a06b-485a-ad27-73c6e5b04c98",
+  "lat": 2.1605334281921387,
+  "status": 200,
+  "ok": true,
+  "text": "2028\n\nTo calculate 95 * 44, follow these",
+  "ptok": 81,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "bc85fb32-b5d1-46b6-8971-71b750ff1518",
+  "lat": 2.1501033306121826,
+  "status": 200,
+  "ok": true,
+  "text": "4560\n\nTo calculate 57*80, follow these s",
+  "ptok": 132,
+  "ctok": 128,
+  "vendor": "a100"
+ }
+]
