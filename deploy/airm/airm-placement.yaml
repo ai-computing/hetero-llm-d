@@ -1,0 +1,15 @@
+# Hand-off point between the ai-rm placement controller (writer) and the llm-d EPP scorer /
+# serving pods (readers). v0.1 ships it empty; format: deploy/airm/README.md.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: airm-placement
+  namespace: llm-serving
+  labels:
+    app.kubernetes.io/part-of: ai-rm
+    airm.ai-computing.io/managed: "true"
+  annotations:
+    airm.ai-computing.io/protocol: "0.1"
+data:
+  decisions.json: |
+    {"protocol": "0.1", "generation": 0, "updatedAt": null, "decisions": []}

@@ -4,7 +4,7 @@
 
 | 경로 | 내용 |
 |---|---|
-| `grafana-dashboards/` | Grafana 대시보드 JSON. `vllm_colon_min.json`은 vLLM colon 지표(TTFT/TPOT/E2E/TPS) 대시보드 |
+| `grafana-dashboards/` | Grafana 대시보드 JSON. `vllm_colon_min.json`은 vLLM colon 지표(TTFT/TPOT/E2E/TPS) 대시보드, `airm.json`은 ai-rm protocol v0.1 `airm_*` 지표 대시보드(`scripts/airm-install.sh apply manifests`로 ConfigMap 적재, `deploy/airm/README.md`) |
 | `standalone-compose/` | k8s 없이 GPU 노드 한 대에서 vLLM + Prometheus + Grafana + DCGM을 띄우는 docker-compose 스택 (개발·재현용) |
 
 `ai-computing/rm_monitor@5d23892`에서 옮겨 왔습니다. 부하 생성·trace 재생 도구는 `ai-computing/rm-bench`, 운영 콘솔은 `ai-computing/lmd-top`입니다.
