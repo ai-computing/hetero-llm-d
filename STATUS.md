@@ -2,11 +2,11 @@
 
 <!-- research-hub:header:begin (maintained by .research/report.py; keep the "- **Key**: value" format) -->
 - **State**: active
-- **Updated**: 2026-10-19 11:26+09:00
-- **Agent**: claude@gspark-PowerEdge-R7525
-- **Task**: 이종 혼합 풀 라우팅 검증 (Llama-8B A100·ATOM·RNGD)
-- **Last result**: 한 InferencePool에 A100·RBLN·RNGD 3벤더 라우팅 동작(engine-type 라벨로 메트릭 매핑). 기본 EPP 점수는 속도 무시: 3벤더 unique-prefix c64 128tok 37.6s(3.4 req/s) vs A100 단독 5.5s(23.3 req/s) — RBLN 꼬리지연이 전체 결정, 유휴 RNGD는 거의 미선택. 출력 일치: A100·RNGD 38/40 동일(정답 32/40), RBLN(PD실험 아티팩트) 23/40
-- **Next**: capacity-aware heterogeneous scorer(LMDTOP-22) 이미지 빌드 후 같은 부하로 비교
+- **Updated**: 2026-10-19 18:41+09:00
+- **Agent**: claude@DESKTOP-R49IQ68
+- **Task**: W4/W5 cache-aware routing and autoscaling (cluster side)
+- **Last result**: EPP profiles queue-kv / approx-prefix / precise-prefix (opt-in), KEDA ScaledObjects for A100 vLLM and rngd-pd prefill/decode, airm-placement hook (node affinity + KEDA cap) in airm-install.sh; offline checks pass (12 unit tests, kubeconform -strict 37/37, EPP configs vs llm-d-router e194457dc507); live rollout pending
+- **Next**: lead: apply approx-prefix EPP + keda-vllm-a100 on the cluster, measure A100 cold start
 - **Blockers**: none
 <!-- research-hub:header:end -->
 
@@ -18,6 +18,7 @@
 
 최신순. 출처를 괄호에 적었다. 레포에 원자료가 없는 수치는 그렇다고 밝혔다.
 
+- **2026-10-19 · 근사 prefix 점수는 엔진 지원 없이 돈다(소스 확인, 실측 전).** 고정한 llm-d-router `e194457dc507`의 `approx-prefix-cache-producer`는 EPP가 토크나이저 없이(`estimate`) 토큰을 어림해 블록 해시와 "어느 pod로 보냈는지"만 기억한다. 이득은 엔진의 prefix 캐시에 달렸다: A100 vLLM은 재사용, `--block-size 512 --max-model-len 512` vllm-rbln은 꽉 찬 블록이 없어 효과 없음, rngd-pd는 aicomp#46 전까지 매번 prefill하므로 부하만 몰린다. 그래서 프로파일 `approx-prefix`는 prefix 가중치를 1(큐·KV 각 2)로 둔다. precise 모드는 엔진 KV 이벤트(ZMQ `kv@<pod-ip>@<model>`, vLLM msgpack)와 실제 토큰 ID(vLLM render sidecar)가 둘 다 있어야 한다 (`manifests/epp/README.md` Scheduling profiles).
 - **2026-10-19 · 한 InferencePool에 A100·RBLN ATOM·RNGD를 섞어 Llama-3.1-8B를 라우팅했다.** 파드마다 `llm-d.ai/engine-type` 라벨을 달면 EPP가 엔진별 메트릭 매핑(`vllm` / `furiosa-llm`)을 골라 세 벤더 모두에 라우팅한다. 다만 기본 점수(queue·KV·prefix)는 속도를 보지 않는다. 128요청·128토큰·동시성 64에서 3벤더 풀은 37.6초(3.4 req/s)로 A100 단독 5.5초(23.3 req/s)보다 6.6배 느렸다. 느린 RBLN(batch 8)이 받은 요청의 꼬리 지연이 전체 완료 시간을 정했고, 유휴 RNGD는 거의 선택되지 않았다. 고정 프롬프트 40개에서 A100과 RNGD 출력은 38/40 같았고(정답 32/40), 이번 RBLN 아티팩트(PD 실험용, optimum-rbln 0.11.0.post1)는 23/40만 맞았다. 예전 `~/vllm_test` RBLN 아티팩트(0.10.0.post1)는 0.11 런타임이 `LOADING_INVALID_VERSION`으로 거부한다 (`experiments/2026-10-19-hetero-llama8b-mixed-pool.md`, `manifests/hetero-llama8b-mixed.yaml`).
 - **2026-10-19 · ai-rm protocol v0.1 통합 (LLMD-32, PR #1).** rm-core v0.1.0의 `AcceleratorProfile` CRD를 실제 클러스터에 설치했다(`scripts/airm-install.sh apply crd`, 객체는 아직 0개). `airm_*` ScrapeConfig, 빈 `llm-serving/airm-placement`, Grafana `airm.json`은 server dry-run만 통과시켰고 적용하지 않았다. EPP placement scorer 자리는 문서로만 표시했다(`deploy/airm/README.md`).
 - **2026-10-15 · 하드웨어 배치가 문서와 달랐다.** A100 × 2는 etri-001이 아니라 `etri-esc8000-e11`(PCI 99/bd:00.0)에 있다. 현재 구성은 etri-001 = RBLN×4 + RNGD×3, e11 = RNGD×2 + A100×2다. e11 A100은 driver 580.178과 nvidia-container-toolkit 1.19.1로 복구했다. kubelet `evictionHard`는 nodefs/imagefs 5%로 낮췄다 (README.md 작업 트리 diff 「etri-ESC8000-E11」, 이 파일 아래 하드웨어 변경 메모).
@@ -239,6 +240,13 @@ curl -X POST http://<gateway-host>/v1/chat/completions \
 ## Log
 
 <!-- research-hub:log (report.py inserts new entries below this line, newest first) -->
+
+### 2026-10-19 18:41+09:00 — W4/W5 cache-aware routing and autoscaling (cluster side)
+
+- Result: EPP profiles queue-kv / approx-prefix / precise-prefix (opt-in), KEDA ScaledObjects for A100 vLLM and rngd-pd prefill/decode, airm-placement hook (node affinity + KEDA cap) in airm-install.sh; offline checks pass (12 unit tests, kubeconform -strict 37/37, EPP configs vs llm-d-router e194457dc507); live rollout pending
+- Next: lead: apply approx-prefix EPP + keda-vllm-a100 on the cluster, measure A100 cold start
+- New todos: precise-prefix on the PD path after aicomp#46; NPU ScaledObjects live after aicomp#45
+- By: claude@DESKTOP-R49IQ68 · w4-w5-epp-profiles-keda@a4be199-dirty
 
 ### 2026-10-19 11:26+09:00 — 이종 혼합 풀 라우팅 검증 (Llama-8B A100·ATOM·RNGD)
 

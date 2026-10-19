@@ -50,11 +50,51 @@ the shared one is fragile (Helm-managed) and breaks the pools it no longer watch
    ```
 4. **Switch the route** rule for that path to the InferencePool, then `curl .../models` → 200.
 
+## Scheduling profiles
+
+`profiles/` holds EndpointPickerConfigs that `make-epp.sh` installs instead of the reference's
+config when `EPP_PROFILE` is set (`EPP_RENDER_ONLY=1` prints the manifests and touches nothing).
+They are written for the EPP image this repo runs (llm-d-router `e194457dc507`, same as lmd-top's
+epp-score-observer) and checked by `python3 scripts/check-epp-config.py`: the EPP decodes its config
+strictly, so an unknown plugin type or parameter key would stop it at start-up.
+
+| Profile | Plugins | Needs |
+|---|---|---|
+| `queue-kv.yaml` | queue-scorer (2), kv-cache-utilization-scorer (2) | `/metrics`; pods labelled `llm-d.ai/engine-type` (`vllm` default, `furiosa-llm` mapped) |
+| `approx-prefix.yaml` | + approx-prefix-cache-producer → prefix-cache-scorer (1) | nothing more |
+| `precise-prefix.yaml` | token-producer (vLLM render) → precise-prefix-cache-producer → prefix-cache-scorer (3), queue (2), KV (2) | engine KV events; render sidecar (`precise-prefix-render-sidecar.yaml`, patched in by `make-epp.sh`) |
+
+**Approximate prefix scoring works without engine support.** The producer gets token IDs from the
+auto-created `estimate` token-producer (byte packing, no tokenizer), hashes them into blocks
+(`blockSizeTokens`, at least 64, or the engine's block size when `vllm:cache_config_info` /
+`furiosa_llm_cache_config_info` is scraped) and records the endpoint each request was sent to in a
+per-endpoint LRU. Nothing is read from the engine except the optional cache-config metric. The gain
+needs an engine that caches prefixes at a block size smaller than the shared prefix: yes for the A100
+vLLM pool (`--enable-prefix-caching`); no for vllm-rbln compiled with `--block-size 512` and
+`--max-model-len 512` (no full block is ever shared); none on the rngd-pd path until aicomp#46 adds
+prefix reuse, where affinity only concentrates load. Hence prefix weight 1 against 2 + 2 for load.
+
+**Precise prefix scoring (opt-in)** follows the engines' own caches. Contract for an engine
+(what Optimus Prime needs to publish for aicomp#46, as vLLM does with
+`--kv-events-config '{"enable_kv_cache_events":true,"publisher":"zmq","endpoint":"tcp://*:5557","topic":"kv@$(POD_IP)@<model>"}'`):
+
+- a ZMQ PUB socket on the pod at port 5557 (+ data-parallel rank), topic `kv@<pod-ip>@<model>`; the
+  model name from the topic goes into the block key, so it must be the served model name requests use;
+- vLLM KV-event batches (msgpack): `BlockStored` with the block's `token_ids` (plus `extra_keys` for
+  `cache_salt` / multimodal inputs), `BlockRemoved`, `AllBlocksCleared`;
+- the EPP rehashes `token_ids` itself (`tokenProcessorConfig.blockSizeTokens`), so the engine's block
+  size and hash function do not have to match; the engine's hashes are only opaque keys.
+
+The EPP subscribes per endpoint when it sees the pod (`endpoint-notification-source` →
+precise-prefix-cache-producer). An endpoint that publishes nothing scores 0 on prefix and is still
+routed by queue and KV, so the profile can run on a mixed pool.
+
 ## ai-rm placement scorer slot (not active)
 
 ai-rm protocol v0.1 reserves a scorer in each EPP's `schedulingProfiles` that will read the
 placement controller's decisions from ConfigMap `llm-serving/airm-placement`. No live EPP config
-is changed for it yet; the format and the exact slot are in `deploy/airm/README.md`.
+is changed for it yet; the format and the exact slot are in `deploy/airm/README.md`. Until then the
+decisions act on scheduling instead (node affinity, `scripts/airm-install.sh apply placement`).
 
 ## Gotchas learned the hard way
 

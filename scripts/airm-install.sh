@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 # ai-rm protocol v0.1 cluster pieces: AcceleratorProfile CRD (fetched from the pinned rm-core tag,
 # never copied into this repo) + deploy/airm/ (airm_* ScrapeConfig, empty airm-placement ConfigMap)
-# + the airm Grafana dashboard ConfigMap.
+# + the airm Grafana dashboard ConfigMap. `placement` makes serving Deployments follow the
+# rm-controller decisions in ConfigMap airm-placement (scripts/airm-placement.py).
 #
-#   scripts/airm-install.sh dry-run [crd|manifests|all]   # kubectl apply --dry-run=server (default)
-#   scripts/airm-install.sh apply   [crd|manifests|all]
+#   scripts/airm-install.sh dry-run [crd|manifests|placement|all]   # --dry-run=server (default)
+#   scripts/airm-install.sh apply   [crd|manifests|placement|all]
 #   scripts/airm-install.sh delete  [crd|manifests|all]   # rollback; deleting the CRD deletes every AcceleratorProfile
+#
+# `all` is crd + manifests; `placement` is never implied, because it restarts the pods it moves.
 #
 # Pin: RM_CORE_REF (tag) + RM_CORE_CRD_SHA256. Bump both together with the rm-core dependency.
 #
@@ -20,6 +23,7 @@ AIRM_KUBECTL_TIMEOUT="${AIRM_KUBECTL_TIMEOUT:-60}"
 CRD_URL="https://raw.githubusercontent.com/ai-computing/rm-core/${RM_CORE_REF}/k8s/acceleratorprofile.crd.yaml"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 MANIFESTS="$ROOT/deploy/airm"
+AIRM_NAMESPACE="${AIRM_NAMESPACE:-llm-serving}"   # = global.cluster.namespace (deploy/helm/cluster-values.yaml)
 
 action="${1:-dry-run}"
 what="${2:-all}"
@@ -29,7 +33,11 @@ case "$action" in
   delete)  kubectl_args=(delete --ignore-not-found -f) ;;
   *) echo "usage: $0 [dry-run|apply|delete] [crd|manifests|all]" >&2; exit 2 ;;
 esac
-case "$what" in crd|manifests|all) ;; *) echo "unknown target: $what" >&2; exit 2 ;; esac
+case "$what" in crd|manifests|placement|all) ;; *) echo "unknown target: $what" >&2; exit 2 ;; esac
+if [[ "$action" == delete && "$what" == placement ]]; then
+  echo "placement has no delete: remove the affinity with helm upgrade / kubectl edit, or clear the decisions" >&2
+  exit 2
+fi
 
 fetch_crd() {
   local cache="${XDG_CACHE_HOME:-$HOME/.cache}/airm/rm-core-${RM_CORE_REF}"
@@ -86,4 +94,20 @@ if [[ "$what" == manifests || "$what" == all ]]; then
       --from-file=airm.json="$ROOT/monitoring/grafana-dashboards/airm.json" --dry-run=client -o yaml \
     | kubectl label --local -f - grafana_dashboard=1 app.kubernetes.io/part-of=ai-rm -o yaml \
     | kc "${kubectl_args[@]}" -
+fi
+
+if [[ "$what" == placement ]]; then
+  echo "== airm-placement -> Deployments labelled airm.ai-computing.io/pool (namespace $AIRM_NAMESPACE)"
+  tmp="$(mktemp -d)"; trap 'rm -rf "$tmp"' EXIT
+  kc get configmap airm-placement -n "$AIRM_NAMESPACE" -o json >"$tmp/cm.json" </dev/null
+  kc get deployments -n "$AIRM_NAMESPACE" -l airm.ai-computing.io/pool -o json >"$tmp/deploy.json" </dev/null
+  # KEDA may be absent; then there is nothing to cap.
+  kc get scaledobjects.keda.sh -n "$AIRM_NAMESPACE" -o json >"$tmp/so.json" </dev/null 2>/dev/null     || echo '{"items": []}' >"$tmp/so.json"
+  python3 "$ROOT/scripts/airm-placement.py" plan --decisions "$tmp/cm.json"       --deployments "$tmp/deploy.json" --scaledobjects "$tmp/so.json" >"$tmp/plan.tsv"
+  dry=(); [[ "$action" == dry-run ]] && dry=(--dry-run=server)
+  while IFS=$'	' read -r kind name patch; do
+    echo "-- $kind/$name"
+    kc patch "$kind" "$name" -n "$AIRM_NAMESPACE" --type=merge -p "$patch" ${dry[@]+"${dry[@]}"} </dev/null
+  done <"$tmp/plan.tsv"
+  [[ -s "$tmp/plan.tsv" ]] || echo "(nothing to change)"
 fi
