@@ -2,11 +2,11 @@
 
 <!-- research-hub:header:begin (maintained by .research/report.py; keep the "- **Key**: value" format) -->
 - **State**: idle
-- **Updated**: 2026-10-19 09:10+09:00
+- **Updated**: 2026-10-19 09:58+09:00
 - **Agent**: claude@gspark-PowerEdge-R7525
-- **Task**: LLMD-32 (done)
-- **Last result**: PR https://github.com/ai-computing/llm-d-setup/pull/1 — rm_core.conformance 3/3 PASS(sim/loopback/greedy; 이 repo는 adapter 없음), CRD acceleratorprofiles.airm.ai-computing.io 실클러스터 설치, ScrapeConfig·airm-placement·대시보드 server dry-run OK, check_sensitive clean
-- **Next**: PR 머지 후 scripts/airm-install.sh apply manifests로 수집 설정·airm-placement·대시보드 적용
+- **Task**: LLMD-33 (done)
+- **Last result**: PR #1 리뷰 반영(airm/v0.1): rm-core CRD 핀 v0.1.1(extra 필드, sha256 14cde6fa…) + 문서 참조 갱신. dry-run 무한 대기 원인 = CRD curl에 타임아웃 없음(빈 캐시 + 응답 없는 프록시에서 재현); curl --max-time/--retry, kubectl 전부 timeout+--request-timeout 래퍼, /readyz 사전 점검으로 분명한 오류. 검증: dry-run all 1.0 s 통과(CRD configured), 장애 3종 모두 10~60 s 내 rc=1, rm_core.conformance 3/3 PASS, test-model-store-discovery OK, 대시보드 18/18 지표
+- **Next**: -
 - **Blockers**: none
 <!-- research-hub:header:end -->
 
@@ -238,6 +238,13 @@ curl -X POST http://<gateway-host>/v1/chat/completions \
 ## Log
 
 <!-- research-hub:log (report.py inserts new entries below this line, newest first) -->
+
+### 2026-10-19 09:58+09:00 — LLMD-33 ✅
+
+- Result: PR #1 리뷰 반영(airm/v0.1): rm-core CRD 핀 v0.1.1(extra 필드, sha256 14cde6fa…) + 문서 참조 갱신. dry-run 무한 대기 원인 = CRD curl에 타임아웃 없음(빈 캐시 + 응답 없는 프록시에서 재현); curl --max-time/--retry, kubectl 전부 timeout+--request-timeout 래퍼, /readyz 사전 점검으로 분명한 오류. 검증: dry-run all 1.0 s 통과(CRD configured), 장애 3종 모두 10~60 s 내 rc=1, rm_core.conformance 3/3 PASS, test-model-store-discovery OK, 대시보드 18/18 지표
+- Params: rm_core=v0.1.1
+- Experiments: experiments/2026-10-19-airm-install-hang.md
+- By: claude@gspark-PowerEdge-R7525 · airm/v0.1@48f1a6a-dirty
 
 ### 2026-10-19 09:10+09:00 — LLMD-32 ✅
 

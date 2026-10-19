@@ -1,11 +1,11 @@
 # deploy/airm — ai-rm protocol v0.1 cluster pieces
 
-This cluster's side of the [ai-rm protocol v0.1](https://github.com/ai-computing/rm-core/blob/v0.1.0/PROTOCOL.md):
+This cluster's side of the [ai-rm protocol v0.1](https://github.com/ai-computing/rm-core/blob/v0.1.1/PROTOCOL.md):
 the places where the contracts run. Apply everything with `scripts/airm-install.sh`.
 
 | What | Where | Protocol |
 |---|---|---|
-| `AcceleratorProfile` CRD (`airm.ai-computing.io/v1alpha1`, cluster-scoped) | fetched from the rm-core tag `v0.1.0` by `scripts/airm-install.sh` (sha256-pinned, no copy in this repo) | §3.1 |
+| `AcceleratorProfile` CRD (`airm.ai-computing.io/v1alpha1`, cluster-scoped) | fetched from the rm-core tag `v0.1.1` by `scripts/airm-install.sh` (sha256-pinned, no copy in this repo) | §3.1 |
 | `airm_*` scrape: pods annotated `airm.ai-computing.io/scrape: "true"` | `scrape-airm.yaml` (ScrapeConfig `monitoring/airm-pods`, job `airm`) | §6 |
 | `airm_*` Grafana dashboard | `monitoring/grafana-dashboards/airm.json` → ConfigMap `monitoring/grafana-dashboard-airm` (sidecar label `grafana_dashboard=1`) | §6 |
 | Placement hand-off | `airm-placement.yaml` (ConfigMap `llm-serving/airm-placement`, empty in v0.1) | §5.2 |

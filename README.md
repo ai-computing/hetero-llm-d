@@ -417,13 +417,13 @@ bash -n scripts/*.sh manifests/epp/make-epp.sh       # 셸 스크립트 문법 �
 | `LLMD_PROM_ADDR` | `scripts/capture-lmd-top.sh`, lmd-top `LMD_PROM` |
 | `LLMD_MODEL_STORE_SMB` | `manifests/model-store.yaml` (`scripts/render-manifest.sh manifests/model-store.yaml \| kubectl apply -f -`) |
 
-### ai-rm protocol v0.1 (rm-core `v0.1.0`)
+### ai-rm protocol v0.1 (rm-core `v0.1.1`)
 
-이 클러스터는 [rm-core PROTOCOL v0.1](https://github.com/ai-computing/rm-core/blob/v0.1.0/PROTOCOL.md)이 돌 자리를 제공한다. 상세와 형식은 [`deploy/airm/README.md`](deploy/airm/README.md).
+이 클러스터는 [rm-core PROTOCOL v0.1](https://github.com/ai-computing/rm-core/blob/v0.1.1/PROTOCOL.md)이 돌 자리를 제공한다. 상세와 형식은 [`deploy/airm/README.md`](deploy/airm/README.md).
 
 | 항목 | 위치 |
 |---|---|
-| `AcceleratorProfile` CRD (`airm.ai-computing.io/v1alpha1`) | `scripts/airm-install.sh`가 rm-core 태그 `v0.1.0`에서 받아 sha256 확인 후 적용(사본 없음) |
+| `AcceleratorProfile` CRD (`airm.ai-computing.io/v1alpha1`) | `scripts/airm-install.sh`가 rm-core 태그 `v0.1.1`에서 받아 sha256 확인 후 적용(사본 없음) |
 | `airm_*` 지표 수집 | `deploy/airm/scrape-airm.yaml` — `airm.ai-computing.io/scrape: "true"` 어노테이션 pod의 `/metrics`(기본 포트 9400) |
 | `airm_*` 대시보드 | `monitoring/grafana-dashboards/airm.json` (ConfigMap `grafana-dashboard-airm`) |
 | 배치 결정 전달 지점 | ConfigMap `llm-serving/airm-placement` (v0.1은 빈 값, EPP scorer 자리만 문서화) |
