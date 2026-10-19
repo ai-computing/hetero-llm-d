@@ -1,0 +1,41 @@
+# Strategic-merge patch for an EPP Deployment running the `precise-prefix` profile: adds a
+# CPU-only vLLM render sidecar so the token-producer gets the pool model's real token IDs
+# (http://localhost:8200/v1/{completions,chat/completions}/render). No accelerator, no weights
+# beyond the tokenizer files. Image pinned to the one llm-d-router e194457dc507 tests with.
+#
+#   kubectl -n llm-serving patch deploy <name>-epp --patch-file manifests/epp/precise-prefix-render-sidecar.yaml
+#
+# make-epp.sh applies it (with the model substituted) when EPP_PROFILE=precise-prefix.
+# Gated models (meta-llama/*) need Secret llm-serving/hf-token with key HF_TOKEN.
+spec:
+  template:
+    spec:
+      containers:
+      - name: vllm-render
+        image: docker.io/vllm/vllm-openai-cpu:v0.21.0
+        imagePullPolicy: IfNotPresent
+        command: ["vllm", "launch", "render"]
+        args: ["meta-llama/Llama-3.1-8B-Instruct", "--port=8200"]
+        env:
+        - name: HF_HOME
+          value: /hf-cache
+        - name: HF_TOKEN
+          valueFrom:
+            secretKeyRef: {name: hf-token, key: HF_TOKEN, optional: true}
+        ports:
+        - {name: render-http, containerPort: 8200}
+        startupProbe:
+          httpGet: {path: /health, port: 8200}
+          periodSeconds: 2
+          failureThreshold: 300
+        readinessProbe:
+          httpGet: {path: /health, port: 8200}
+          periodSeconds: 5
+        resources:
+          requests: {cpu: "1", memory: 2Gi}
+          limits: {memory: 4Gi}
+        volumeMounts:
+        - {name: hf-cache, mountPath: /hf-cache}
+      volumes:
+      - name: hf-cache
+        emptyDir: {}

@@ -19,6 +19,7 @@
 <p>
   <a href="#-빠른-시작"><b>빠른 시작</b></a> ·
   <a href="#-ai-rm-연동"><b>ai-rm</b></a> ·
+  <a href="#-캐시-인지-라우팅과-오토스케일"><b>라우팅·스케일</b></a> ·
   <a href="#-아키텍처"><b>아키텍처</b></a> ·
   <a href="#-문서"><b>문서</b></a> ·
   <a href="STATUS.md"><b>현황</b></a>
@@ -234,12 +235,15 @@ NodePort는 모든 노드에서 같은 포트로 열립니다. Rancher RBAC, Loa
 | `airm_*` 지표 수집 | `deploy/airm/scrape-airm.yaml`: `airm.ai-computing.io/scrape: "true"` 어노테이션 pod의 `/metrics`(기본 포트 9400)를 수집하는 ScrapeConfig |
 | `airm_*` 대시보드 | `monitoring/grafana-dashboards/airm.json` (ConfigMap `grafana-dashboard-airm`) |
 | 배치 결정 전달 지점 | `deploy/airm/airm-placement.yaml`: ConfigMap `llm-serving/airm-placement`, 빈 상태로 설치 |
+| 배치 반영 훅 | `scripts/airm-placement.py`, `scripts/airm-install.sh … placement`가 실행: `decisions.json`으로 node affinity와 KEDA 상한을 건다 |
 | umbrella chart 공통 값 | `deploy/helm/cluster-values.yaml` |
 
 ```bash
 scripts/airm-install.sh dry-run              # 서버 dry-run: CRD + ScrapeConfig + ConfigMap + 대시보드
 scripts/airm-install.sh apply crd            # CRD 설치
 scripts/airm-install.sh apply manifests      # 수집 설정·airm-placement·대시보드
+scripts/airm-install.sh dry-run placement    # rm-controller 결정이 Deployment에 무엇을 바꿀지 확인
+scripts/airm-install.sh apply placement      # 반영 (옮겨지는 pod는 재시작된다. `all`에 포함되지 않음)
 # 되돌리기 (CRD를 지우면 모든 AcceleratorProfile 객체도 함께 지워진다)
 scripts/airm-install.sh delete manifests
 scripts/airm-install.sh delete crd
@@ -250,6 +254,15 @@ scripts/airm-install.sh delete crd
 정책 이름, `{pool, workload, acceleratorIds, kvTransport, reason}` 항목의 `decisions` 목록을 담습니다. 가속기는 주소가 아니라
 id로만 가리킵니다. `decisions`가 비어 있으면(설치 직후 상태) ConfigMap이 없는 것처럼 동작합니다. 전체 형식, 필드 표,
 EPP scorer 자리(문서로만 정의, 미구현이며 v0.1은 운영 중인 EPP 설정을 바꾸지 않음)는 [deploy/airm/README.md](deploy/airm/README.md)에 있습니다.
+
+**배치 반영 훅.** 서빙 Deployment에 `airm.ai-computing.io/pool=<InferencePool>` 라벨을 달면 대상이 되고, `llm-d.ai/role`
+라벨(`prefill`, `decode`, 없으면 serve)로 결정을 고릅니다. `scripts/airm-install.sh apply placement`는 결정의 노드
+(`acceleratorIds`의 `<node>/<vendor>:<index>`)**와** rm-controller가 거른 노드 요약 라벨 `airm.ai-computing.io/<vendor>.<model>`을
+required node affinity로 걸고, KEDA `maxReplicaCount`를 배치된 카드 수로 낮추고, 문서의 `generation`을 기록해 한 번만
+반영합니다. 문서가 비었거나, 풀에 결정이 없거나, 카드가 비어 있으면(맞는 자리가 없음) 아무것도 바꾸지 않습니다. 카드 번호는
+여전히 device plugin이 고릅니다. Helm 설치에서는 같은 결정을 값으로 넘깁니다:
+`helm upgrade rngd-pd … --set-json "nodeAffinity=$(scripts/airm-placement.py affinity --decisions cm.json --pool llama8b-pd-pool)"`
+(역할 공통 값이라 노드만 고정).
 
 <details>
 <summary><b>다른 ai-rm 구성요소가 붙는 자리</b></summary>
@@ -265,6 +278,63 @@ EPP scorer 자리(문서로만 정의, 미구현이며 v0.1은 운영 중인 EPP
 
 여기서 추적하는 KPI: 이종자원수(A100·ATOM·RNGD·GB10·CPU를 한 Gateway로 서빙), 전력효율(DCGM·IPMI wall 전력으로 tok/J,
 `scripts/hetero-sweep.py`), SLO(EPP 지표 TTFT/TPOT).
+</details>
+
+## 📈 캐시 인지 라우팅과 오토스케일
+
+로드맵 W4(캐시 재사용)와 W5(제어 루프)의 클러스터 쪽입니다. 엔진 쪽은
+[aicomp#45](https://github.com/ai-computing/aicomp/issues/45)(PD 단계의 vLLM 호환 `/metrics`)와
+[aicomp#46](https://github.com/ai-computing/aicomp/issues/46)(KV 블록 이벤트와 prefix 재사용)에서 추적합니다.
+
+**EPP 스케줄링 프로파일**([`manifests/epp/profiles/`](manifests/epp/README.md#scheduling-profiles))은 고정한 llm-d-router
+`e194457dc507` 기준으로 `scripts/check-epp-config.py`가 검사하고, `EPP_PROFILE=<profile> manifests/epp/make-epp.sh <pool> /<path>`로
+설치합니다.
+
+| 프로파일 | 점수 | 엔진 쪽 필요 사항 | 지금 쓰는 곳 |
+|---|---|---|---|
+| `queue-kv` | 대기 큐, KV 캐시 사용률 | `/metrics`(vLLM 또는 furiosa-llm 이름) | NPU 풀, aicomp#45 이후 rngd-pd 경로 |
+| `approx-prefix` | + 근사 prefix affinity(EPP가 보낸 프롬프트를 직접 해시) | 없음 | 모든 풀. 엔진이 prefix를 캐시할 때만 이득 |
+| `precise-prefix` (선택) | + 엔진 KV 블록 이벤트(ZMQ, vLLM 형식) 기반 prefix 적중 | KV 이벤트 + 실제 토큰 ID용 render sidecar | 지금은 A100 vLLM, aicomp#46 이후 Optimus Prime |
+
+근사 prefix 점수는 엔진 지원이 필요 없습니다. EPP가 토크나이저 없는 `estimate` 백엔드로 토큰을 어림하고, 프롬프트를 블록으로
+해시해 어느 endpoint로 보냈는지 기억하므로 지금 모든 풀에서 돕니다. 효과는 엔진에 달렸습니다. A100 vLLM
+(`--enable-prefix-caching`)은 블록을 재사용하지만, `--block-size 512 --max-model-len 512`인 vllm-rbln은 꽉 찬 블록을 재사용할
+수 없고, rngd-pd 경로는 aicomp#46 전까지 매 요청을 처음부터 prefill하므로 부하만 몰립니다. 그래서 프로파일은 prefix 가중치(1)를
+큐·KV(각 2)보다 낮게 둡니다. 이 판단은 고정 소스 기준이며 실측은 아닙니다.
+
+**오토스케일**([`manifests/autoscaling/`](manifests/autoscaling))은 이미 설치된 KEDA 2.19를 씁니다.
+
+| ScaledObject | 대상 | 트리거 | replica | 확장 / 축소 |
+|---|---|---|---|---|
+| `vllm-a100-llama31-8b` | A100 vLLM | pod당 `vllm:num_requests_waiting` 4, TTFT p90 1 s | 1–2 | 120 s마다 1개 / 10분 뒤 5분마다 1개 |
+| `rngd-pd-prefill` | RNGD prefill | pod당 대기 2, TTFT p90 2 s | 1–3 | 120 s마다 1개 / 10분 뒤 5분마다 1개 |
+| `rngd-pd-decode` | ATOM decode | pod당 실행 6(B8), 대기 1, TPOT p90 100 ms | 1–4 | 60 s마다 1개 / 10분 뒤 5분마다 1개 |
+
+vLLM은 이 지표를 지금 내므로 GPU 풀을 먼저 연결했습니다. NPU ScaledObject도 같은 이름을 읽는데, PD 단계는 aicomp#45 이후에야
+이 지표를 냅니다. 그 전에는 쿼리 결과가 비어 `ignoreNullValues`가 0으로 읽고 풀은 최소 replica에 머뭅니다. 그래프를 미리
+컴파일한 cold start는 prefill 62 s, decode 18 s([ai-rm workload traces](https://github.com/ai-computing/ai-rm/blob/master/docs/workload-traces.md))이므로
+확장은 120 s / 60 s마다 한 개씩(새 pod가 Ready가 된 뒤 다음 판단), 축소는 10분을 기다리고, 0으로는 줄이지 않습니다. A100 cold
+start는 이 레포에서 재지 않았습니다. `maxReplicaCount`는 노드당 카드 수이고(shm은 prefill과 decode를 한 호스트에 둔다), 배치 반영
+훅이 배치된 카드 수로 낮춥니다.
+
+<details>
+<summary><b>실클러스터 확인 (운영자용)</b></summary>
+<br>
+
+```bash
+python3 scripts/check-epp-config.py && python3 scripts/test-airm-placement.py
+# 1. 풀에 EPP 프로파일 (먼저 렌더링, 다음 적용)
+EPP_PROFILE=approx-prefix EPP_RENDER_ONLY=1 manifests/epp/make-epp.sh vllm-a100-pool /gpu | kubectl apply --dry-run=server -f -
+EPP_PROFILE=approx-prefix manifests/epp/make-epp.sh vllm-a100-pool /gpu
+kubectl -n llm-serving logs deploy/vllm-a100-epp | grep -iE 'error|plugin'        # strict 설정 로드
+# 2. GPU 풀 오토스케일
+kubectl apply --dry-run=server -f manifests/autoscaling/keda-vllm-a100.yaml
+kubectl apply -f manifests/autoscaling/keda-vllm-a100.yaml
+kubectl -n llm-serving get scaledobject vllm-a100-llama31-8b; kubectl -n llm-serving describe hpa keda-hpa-vllm-a100-llama31-8b
+# 3. 배치 반영 (rm-controller가 결정을 쓰고 Deployment에 airm.ai-computing.io/pool 라벨이 있을 때)
+kubectl -n llm-serving label deploy rngd-pd-prefill rngd-pd-decode airm.ai-computing.io/pool=llama8b-pd-pool
+scripts/airm-install.sh dry-run placement && scripts/airm-install.sh apply placement
+```
 </details>
 
 ## 🏗 아키텍처
@@ -304,7 +374,7 @@ CIDR, huggingface.co·github.com 외부 접근 가능. GB10 노드 두 대도 �
 |---|---|
 | 🧭 **처음 읽기** | [환경 가이드](docs/ENVIRONMENT-GUIDE.md) · [현황과 결과](STATUS.md) |
 | 🧩 **무엇이 어디서 도는지** | [llm-d 기능과 worker별 매트릭스](FEATURES.md) · [NPU 호환성 보고서](NPU-FEATURES.md) · [서빙 플레이북](PLAYBOOK.md) |
-| 🔧 **운영** | [InferencePool별 EPP](manifests/epp/README.md) · [공유 모델 스토어](manifests/README-model-store.md) · [모니터링](monitoring/README.md) · [클러스터 운영 메모](docs/cluster-notes.md) |
+| 🔧 **운영** | [InferencePool별 EPP와 프로파일](manifests/epp/README.md) · [오토스케일](manifests/autoscaling) · [공유 모델 스토어](manifests/README-model-store.md) · [모니터링](monitoring/README.md) · [클러스터 운영 메모](docs/cluster-notes.md) |
 | 🔌 **ai-rm** | [deploy/airm](deploy/airm/README.md) · [`ai-rm.yaml`](ai-rm.yaml) · [ai-rm 허브](https://github.com/ai-computing/ai-rm) |
 | 📊 **실험** | [A100·ATOM·RNGD 혼합 풀](experiments/2026-10-19-hetero-llama8b-mixed-pool.md) · [airm-install 멈춤](experiments/2026-10-19-airm-install-hang.md) |
 
@@ -323,6 +393,8 @@ vLLM 포크, HF Hub `rebellions-sw/*` 컴파일 모델 사용).
 - [x] 한 InferencePool로 Llama-3.1-8B를 A100·ATOM·RNGD에 라우팅([실험](experiments/2026-10-19-hetero-llama8b-mixed-pool.md)). 기본 EPP 점수는 장치 속도를 보지 않아 혼합 풀이 A100 단독보다 느렸다
 - [ ] 용량을 고려하는 이기종 EPP scorer를 같은 부하로 비교
 - [ ] 가속기 간 같은 부하 에너지 비교 (`scripts/hetero-sweep.py`, 지금까지 A100만 측정)
+- [x] EPP 프로파일 `queue-kv`, `approx-prefix`, 선택형 `precise-prefix`, A100 풀과 PD 단계용 KEDA ScaledObject, `airm-placement` 배치 반영 훅 (오프라인 검사 통과, 실클러스터 적용 전)
+- [ ] PD 경로의 precise prefix 라우팅(aicomp#46 필요)과 실지표 기반 NPU 오토스케일(aicomp#45 필요)
 - [ ] `airm-placement`를 읽는 EPP scorer
 
 미해결 문제, 노드 장애, 각 항목의 측정 근거: [STATUS.md](STATUS.md).

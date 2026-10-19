@@ -1,0 +1,150 @@
+# KEDA autoscaling for the NPU prefill/decode pools (ai-rm rngd-pd chart, Helm release `rngd-pd`:
+# Deployments rngd-pd-prefill on RNGD and rngd-pd-decode on ATOM). Rename `rngd-pd-` if the release
+# is named differently.
+#
+# The triggers read the vLLM-compatible names that aicomp#45 adds to each stage's /metrics. Until
+# then the queries return nothing, `ignoreNullValues` turns that into 0 and the pools stay at
+# minReplicaCount: safe to apply now, inert until the metrics exist.
+#
+# Cold start (ai-rm docs/workload-traces.md, graphs pre-compiled): prefill 62 s, decode 18 s.
+#   - scale up one pod at a time, at most every 120 s (prefill) / 60 s (decode), so a new pod is
+#     Ready and absorbing load before the next decision counts its queue again;
+#   - scale down after 10 min of low load, one pod per 5 min: a pod given back costs a full cold
+#     start to get again, ten times the prefill load time;
+#   - min 1: no scale-to-zero (the first request would wait the full cold start).
+# max = cards on one node, because kvTransport shm keeps prefill and decode on one host
+# (3 RNGD, 4 ATOM on the NPU node). `scripts/airm-install.sh apply placement` lowers maxReplicaCount
+# to the cards rm-controller placed for the pool (airm-placement decisions), so KEDA never asks for
+# a pod the placement has no card for.
+#
+#   kubectl apply -f manifests/autoscaling/keda-npu-pd.yaml
+#   kubectl -n llm-serving get scaledobject,hpa
+---
+# Scrape the stage pods' /metrics (port 8000, same as the OpenAI port) once aicomp#45 lands.
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: rngd-pd-stages
+  namespace: monitoring
+  labels: {release: kube-prometheus-stack}
+spec:
+  namespaceSelector:
+    matchNames: [llm-serving]
+  selector:
+    matchExpressions:
+    - {key: llm-d.ai/role, operator: In, values: [prefill, decode]}
+    - {key: app.kubernetes.io/instance, operator: In, values: [rngd-pd]}
+  podMetricsEndpoints:
+  - targetPort: 8000
+    path: /metrics
+    interval: 15s
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: rngd-pd-prefill
+  namespace: llm-serving
+  labels:
+    app.kubernetes.io/part-of: hetero-llm-d
+    llm-d.ai/role: prefill
+    airm.ai-computing.io/accelerator: furiosa.RNGD
+spec:
+  scaleTargetRef:
+    name: rngd-pd-prefill
+  minReplicaCount: 1
+  maxReplicaCount: 3
+  pollingInterval: 15
+  cooldownPeriod: 600
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 0
+          selectPolicy: Max
+          policies:
+          - {type: Pods, value: 1, periodSeconds: 120}
+        scaleDown:
+          stabilizationWindowSeconds: 600
+          selectPolicy: Min
+          policies:
+          - {type: Pods, value: 1, periodSeconds: 300}
+  triggers:
+  # Prefill is compute-bound and runs one prompt at a time: two waiting per replica is a backlog.
+  - type: prometheus
+    name: queue
+    metricType: AverageValue
+    metadata:
+      serverAddress: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
+      query: sum(vllm:num_requests_waiting{namespace="llm-serving",pod=~"rngd-pd-prefill-.*"})
+      threshold: "2"
+      ignoreNullValues: "true"
+  - type: prometheus
+    name: ttft-p90
+    metricType: Value
+    metadata:
+      serverAddress: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
+      query: >-
+        histogram_quantile(0.9, sum by (le) (rate(vllm:time_to_first_token_seconds_bucket{namespace="llm-serving",pod=~"rngd-pd-prefill-.*"}[2m])))
+        > 0 or vector(0)
+      threshold: "2"
+      ignoreNullValues: "true"
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: rngd-pd-decode
+  namespace: llm-serving
+  labels:
+    app.kubernetes.io/part-of: hetero-llm-d
+    llm-d.ai/role: decode
+    airm.ai-computing.io/accelerator: rebellions.ATOM
+spec:
+  scaleTargetRef:
+    name: rngd-pd-decode
+  minReplicaCount: 1
+  maxReplicaCount: 4
+  pollingInterval: 15
+  cooldownPeriod: 600
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 0
+          selectPolicy: Max
+          policies:
+          - {type: Pods, value: 1, periodSeconds: 60}
+        scaleDown:
+          stabilizationWindowSeconds: 600
+          selectPolicy: Min
+          policies:
+          - {type: Pods, value: 1, periodSeconds: 300}
+  triggers:
+  # Decode is memory-bound with a fixed batch (B8 on ATOM): scale when the batch is 3/4 full on
+  # average or anything queues behind it.
+  - type: prometheus
+    name: running
+    metricType: AverageValue
+    metadata:
+      serverAddress: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
+      query: sum(vllm:num_requests_running{namespace="llm-serving",pod=~"rngd-pd-decode-.*"})
+      threshold: "6"
+      ignoreNullValues: "true"
+  - type: prometheus
+    name: queue
+    metricType: AverageValue
+    metadata:
+      serverAddress: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
+      query: sum(vllm:num_requests_waiting{namespace="llm-serving",pod=~"rngd-pd-decode-.*"})
+      threshold: "1"
+      ignoreNullValues: "true"
+  # TPOT p90 against the pool's SLO (rm-controller spec: tpot_p90_ms 100).
+  - type: prometheus
+    name: tpot-p90
+    metricType: Value
+    metadata:
+      serverAddress: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
+      query: >-
+        histogram_quantile(0.9, sum by (le) (rate(vllm:time_per_output_token_seconds_bucket{namespace="llm-serving",pod=~"rngd-pd-decode-.*"}[2m])))
+        > 0 or vector(0)
+      threshold: "0.1"
+      ignoreNullValues: "true"

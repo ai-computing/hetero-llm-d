@@ -1,0 +1,40 @@
+# EPP profile `queue-kv`: load-only scoring for NPU pools (and any pool whose engine has no
+# usable prefix cache). Scores: shortest waiting queue, then most free KV cache.
+#
+# Format: llm-d-router EndpointPickerConfig (llm-d.ai/v1alpha1), checked against the pinned
+# llm-d-router e194457dc507 (scripts/check-epp-config.py). Install into an EPP with
+#   EPP_PROFILE=queue-kv manifests/epp/make-epp.sh <pool> /<path>
+#
+# Engines are told apart by the pod label llm-d.ai/engine-type (core-metrics-extractor):
+#   vllm         vLLM on A100, vllm-rbln on ATOM (built-in vllm:* mapping)
+#   furiosa-llm  Furiosa RNGD (furiosa_llm_* names, mapped below)
+#   (no label)   treated as vllm; the rngd-pd gateway pods fall here and score as "no metrics"
+#                until aicomp#45 exposes vllm:* names on the PD stages
+apiVersion: llm-d.ai/v1alpha1
+kind: EndpointPickerConfig
+plugins:
+- type: queue-scorer
+- type: kv-cache-utilization-scorer
+- type: metrics-data-source
+  parameters:
+    scheme: http
+    path: /metrics
+    insecureSkipVerify: true
+- type: core-metrics-extractor
+  parameters:
+    engineLabelKey: llm-d.ai/engine-type
+    defaultEngine: vllm
+    engineConfigs:
+    - name: furiosa-llm
+      queuedRequestsSpec: furiosa_llm_num_requests_waiting
+      runningRequestsSpec: furiosa_llm_num_requests_running
+      kvUsageSpec: furiosa_llm_kv_cache_usage_percent
+      loraSpec: ""
+      cacheInfoSpec: furiosa_llm_cache_config_info
+schedulingProfiles:
+- name: default
+  plugins:
+  - pluginRef: queue-scorer
+    weight: 2
+  - pluginRef: kv-cache-utilization-scorer
+    weight: 2

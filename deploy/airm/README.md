@@ -54,7 +54,7 @@ annotation, which is why this is a ScrapeConfig; kube-prometheus-stack picks it 
 
 Writer: the ai-rm placement controller (next step), which runs a `Placement` policy
 (`airm.placements` entry point) over `AcceleratorProfile`s and live `airm_*` metrics.
-Readers: the EPP scorer (below) and serving pods. One key, `decisions.json`:
+Readers: the placement hook and serving pods (below), later the EPP scorer. One key, `decisions.json`:
 
 ```json
 {
@@ -90,6 +90,25 @@ Readers: the EPP scorer (below) and serving pods. One key, `decisions.json`:
 Rules: no addresses or credentials (protocol §7); ids only, resolved through `AcceleratorProfile`s.
 A reader that finds no decision for its pool, or an empty `decisions` list (the v0.1 state),
 behaves as if the ConfigMap did not exist.
+
+## Where the Deployments read it (placement hook)
+
+`scripts/airm-placement.py` (stdlib Python) is the reader for scheduling; `scripts/airm-install.sh
+[dry-run|apply] placement` runs it against the cluster and applies its merge patches.
+
+| Input | Rule |
+|---|---|
+| Deployment label `airm.ai-computing.io/pool=<pool>` | opt-in; `<pool>` = `decisions[].pool` |
+| Deployment label `llm-d.ai/role` | `prefill` / `decode` match `workload.kind`; absent = `serve` (any other kind) |
+| `decisions[].acceleratorIds` | nodes = the `<node>` parts → `matchFields metadata.name In [...]` |
+| `decisions[].workload.labels["airm.ai-computing.io/accelerator"]` | `vendor.model` → `matchExpressions airm.ai-computing.io/<vendor>.<model> Exists` (the node summary label rm-controller filtered on) |
+| KEDA ScaledObject whose `scaleTargetRef` is that Deployment | `maxReplicaCount` = placed cards / cards per pod (device-plugin limit) |
+| `generation` | written to annotation `airm.ai-computing.io/placement-generation`; a Deployment already at that generation is skipped |
+
+Nothing changes for an empty `decisions` list, a pool or role without a decision, a decision with
+empty `acceleratorIds` (its `reason` is printed), or a Deployment pinned with `nodeName`. Card indices
+are still chosen by the device plugin; the decision fixes the node and the accelerator kind.
+`apply placement` is never part of `all`, because changing a pod template restarts the pods.
 
 ## Where the EPP reads it (scorer slot)
 

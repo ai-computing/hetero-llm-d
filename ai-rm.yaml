@@ -8,6 +8,8 @@ hardware: [A100, ATOM, RNGD, GB10, CPU]
 install: []                   # 클러스터 부트스트랩은 root 권한 수동 단계(scripts/01~05), README「실행 순서」
 test:
   - python3 scripts/test-model-store-discovery.py
+  - python3 scripts/test-airm-placement.py      # placement hook + EPP config checker
+  - python3 scripts/check-epp-config.py         # EPP profiles vs pinned llm-d-router plugin set
   - bash -n scripts/*.sh manifests/epp/make-epp.sh
   - scripts/airm-install.sh dry-run   # 서버 dry-run (클러스터 접근 필요)
 deploy:
