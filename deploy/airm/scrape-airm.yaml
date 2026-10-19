@@ -1,0 +1,51 @@
+# ai-rm protocol v0.1 §6: scrape every pod annotated airm.ai-computing.io/scrape: "true".
+# PodMonitor selects by label only, so this uses a ScrapeConfig (kubernetes_sd, role pod) that
+# filters on the annotation. kube-prometheus-stack picks it up through scrapeConfigSelector
+# (release: kube-prometheus-stack).
+#
+# Pod annotations:
+#   airm.ai-computing.io/scrape: "true"   required
+#   airm.ai-computing.io/port:   "9400"   optional, default 9400 (charts' airm.metricsPort)
+#   airm.ai-computing.io/path:   "/metrics" optional
+# Series are named airm_<name> by the exporter (rm_core.metrics.prometheus_name); tags from
+# TAG_KEYS pass through unchanged. Target labels added here: namespace, pod, node.
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ScrapeConfig
+metadata:
+  name: airm-pods
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack
+    app.kubernetes.io/part-of: ai-rm
+spec:
+  jobName: airm
+  scrapeInterval: 15s
+  kubernetesSDConfigs:
+    - role: Pod
+  relabelings:
+    - sourceLabels: [__meta_kubernetes_pod_annotation_airm_ai_computing_io_scrape]
+      regex: "true"
+      action: keep
+    - sourceLabels: [__meta_kubernetes_pod_phase]
+      regex: Running
+      action: keep
+    # address = <podIP>:<port annotation or 9400>. Pod SD yields one target per container port;
+    # after the rewrite they share one label set and Prometheus de-duplicates them.
+    - targetLabel: __tmp_airm_port
+      replacement: "9400"
+    - sourceLabels: [__meta_kubernetes_pod_annotation_airm_ai_computing_io_port]
+      regex: "(\\d+)"
+      targetLabel: __tmp_airm_port
+    - sourceLabels: [__meta_kubernetes_pod_ip, __tmp_airm_port]
+      regex: "(.+);(\\d+)"
+      replacement: "$1:$2"
+      targetLabel: __address__
+    - sourceLabels: [__meta_kubernetes_pod_annotation_airm_ai_computing_io_path]
+      regex: "(.+)"
+      targetLabel: __metrics_path__
+    - sourceLabels: [__meta_kubernetes_namespace]
+      targetLabel: namespace
+    - sourceLabels: [__meta_kubernetes_pod_name]
+      targetLabel: pod
+    - sourceLabels: [__meta_kubernetes_pod_node_name]
+      targetLabel: node

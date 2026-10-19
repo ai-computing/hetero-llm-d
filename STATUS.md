@@ -19,6 +19,7 @@
 최신순. 출처를 괄호에 적었다. 레포에 원자료가 없는 수치는 그렇다고 밝혔다.
 
 - **2026-10-19 · 한 InferencePool에 A100·RBLN ATOM·RNGD를 섞어 Llama-3.1-8B를 라우팅했다.** 파드마다 `llm-d.ai/engine-type` 라벨을 달면 EPP가 엔진별 메트릭 매핑(`vllm` / `furiosa-llm`)을 골라 세 벤더 모두에 라우팅한다. 다만 기본 점수(queue·KV·prefix)는 속도를 보지 않는다. 128요청·128토큰·동시성 64에서 3벤더 풀은 37.6초(3.4 req/s)로 A100 단독 5.5초(23.3 req/s)보다 6.6배 느렸다. 느린 RBLN(batch 8)이 받은 요청의 꼬리 지연이 전체 완료 시간을 정했고, 유휴 RNGD는 거의 선택되지 않았다. 고정 프롬프트 40개에서 A100과 RNGD 출력은 38/40 같았고(정답 32/40), 이번 RBLN 아티팩트(PD 실험용, optimum-rbln 0.11.0.post1)는 23/40만 맞았다. 예전 `~/vllm_test` RBLN 아티팩트(0.10.0.post1)는 0.11 런타임이 `LOADING_INVALID_VERSION`으로 거부한다 (`experiments/2026-10-19-hetero-llama8b-mixed-pool.md`, `manifests/hetero-llama8b-mixed.yaml`).
+- **2026-10-19 · ai-rm protocol v0.1 통합 (LLMD-32, PR #1).** rm-core v0.1.0의 `AcceleratorProfile` CRD를 실제 클러스터에 설치했다(`scripts/airm-install.sh apply crd`, 객체는 아직 0개). `airm_*` ScrapeConfig, 빈 `llm-serving/airm-placement`, Grafana `airm.json`은 server dry-run만 통과시켰고 적용하지 않았다. EPP placement scorer 자리는 문서로만 표시했다(`deploy/airm/README.md`).
 - **2026-10-15 · 하드웨어 배치가 문서와 달랐다.** A100 × 2는 etri-001이 아니라 `etri-esc8000-e11`(PCI 99/bd:00.0)에 있다. 현재 구성은 etri-001 = RBLN×4 + RNGD×3, e11 = RNGD×2 + A100×2다. e11 A100은 driver 580.178과 nvidia-container-toolkit 1.19.1로 복구했다. kubelet `evictionHard`는 nodefs/imagefs 5%로 낮췄다 (README.md 작업 트리 diff 「etri-ESC8000-E11」, 이 파일 아래 하드웨어 변경 메모).
 - **2026-10-15 · e11 A100 vLLM v0.11.0 Llama-3.1-8B 미니 sweep 결과다.** 입력 614, 출력 128, 60 s로 돌렸다. 동시성 1/8/32/64에서 각각 84/621/1945/3094 tok/s가 나왔다. 노드 wall 전력은 약 940 → 985 W, tok/J(wall)는 0.09 → 3.15였다. 다만 e11 wall 전력에는 다른 사용자 작업이 섞여 있고, DCGM 스크랩 간격도 거칠다. 그래서 에너지 수치는 잠정치다. 레포에 `experiments/` 기록이나 원본 JSONL은 없다. 매니페스트는 `manifests/vllm-a100-llama31-8b.yaml`, 전력 수집은 `manifests/ipmi-exporter.yaml`(유휴 wall 약 620~670 W/노드)이다.
 - **2026-09-10 · 모델 스토어 인벤토리에 출처 정보가 붙었다.** 인벤토리가 각 산출물을 빌드한 toolchain과 스토어 df를 함께 발행한다. 오프라인 회귀 테스트는 `scripts/test-model-store-discovery.py`다 (`33f7a40`, `f232df7`).
@@ -248,6 +249,18 @@ curl -X POST http://<gateway-host>/v1/chat/completions \
 - Artifacts: experiments/2026-10-19-hetero-llama8b-mixed-pool/run-final-3v-u1-m128-c64.json, experiments/2026-10-19-hetero-llama8b-mixed-pool/run-a100only-u1-m128-c64.json
 - Experiments: experiments/2026-10-19-hetero-llama8b-mixed-pool.md
 - By: claude@gspark-PowerEdge-R7525 · main@d63c2ce-dirty
+### 2026-10-19 09:58+09:00 — LLMD-33 ✅
+
+- Result: PR #1 리뷰 반영(airm/v0.1): rm-core CRD 핀 v0.1.1(extra 필드, sha256 14cde6fa…) + 문서 참조 갱신. dry-run 무한 대기 원인 = CRD curl에 타임아웃 없음(빈 캐시 + 응답 없는 프록시에서 재현); curl --max-time/--retry, kubectl 전부 timeout+--request-timeout 래퍼, /readyz 사전 점검으로 분명한 오류. 검증: dry-run all 1.0 s 통과(CRD configured), 장애 3종 모두 10~60 s 내 rc=1, rm_core.conformance 3/3 PASS, test-model-store-discovery OK, 대시보드 18/18 지표
+- Params: rm_core=v0.1.1
+- Experiments: experiments/2026-10-19-airm-install-hang.md
+- By: claude@gspark-PowerEdge-R7525 · airm/v0.1@48f1a6a-dirty
+
+### 2026-10-19 09:10+09:00 — LLMD-32 ✅
+
+- Result: PR https://github.com/ai-computing/llm-d-setup/pull/1 — rm_core.conformance 3/3 PASS(sim/loopback/greedy; 이 repo는 adapter 없음), CRD acceleratorprofiles.airm.ai-computing.io 실클러스터 설치, ScrapeConfig·airm-placement·대시보드 server dry-run OK, check_sensitive clean
+- Next: PR 머지 후 scripts/airm-install.sh apply manifests로 수집 설정·airm-placement·대시보드 적용
+- By: claude@gspark-PowerEdge-R7525 · airm/v0.1@0a3fa29-dirty
 
 ### 2026-10-16 15:01+09:00 — LLMD-31 ✅
 
