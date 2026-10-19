@@ -1,0 +1,1282 @@
+[
+ {
+  "rid": "be978a77-d227-47d6-af39-eca2fd24533f",
+  "lat": 8.225730180740356,
+  "status": 200,
+  "ok": true,
+  "text": "52*30 = 1560\n\nExplanation:\nTo find the p",
+  "ptok": 204,
+  "ctok": 81,
+  "vendor": "?"
+ },
+ {
+  "rid": "6a3d11aa-0fa6-4e43-b847-caa5030a842b",
+  "lat": 2.40016508102417,
+  "status": 200,
+  "ok": true,
+  "text": "The result is: 7080\n\nTo calculate 85 * 8",
+  "ptok": 129,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "75f29f3f-4278-414b-9cdb-0fecd84335c2",
+  "lat": 6.981070518493652,
+  "status": 200,
+  "ok": true,
+  "text": "2100\n\nExplanation:\nThe given context wor",
+  "ptok": 223,
+  "ctok": 68,
+  "vendor": "?"
+ },
+ {
+  "rid": "3d22c962-bc15-4043-a307-7ddd2953c75d",
+  "lat": 1.694429874420166,
+  "status": 200,
+  "ok": true,
+  "text": "61 * 62 = 3782\n\nTo calculate this, I fol",
+  "ptok": 112,
+  "ctok": 85,
+  "vendor": "a100"
+ },
+ {
+  "rid": "fbc84ece-7e03-4b1d-95bc-b615ce314463",
+  "lat": 4.26544976234436,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 5184.\n\nExplanation:\nTo fin",
+  "ptok": 190,
+  "ctok": 37,
+  "vendor": "?"
+ },
+ {
+  "rid": "d02dd396-7501-4dc2-858e-1f065af9fe09",
+  "lat": 2.4314842224121094,
+  "status": 200,
+  "ok": false,
+  "text": "198\n\nTo calculate 40 * 36, follow these ",
+  "ptok": 122,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "db998edd-bc11-4e87-89b2-e239fdccbec0",
+  "lat": 11.819611549377441,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 864.\n\nExplanation:\nTo find",
+  "ptok": 163,
+  "ctok": 128,
+  "vendor": "?"
+ },
+ {
+  "rid": "85967b64-a55e-4f9c-8f5b-4351dd5abb10",
+  "lat": 1.5177831649780273,
+  "status": 200,
+  "ok": true,
+  "text": "6561\n\nTo calculate 81*81, you can follow",
+  "ptok": 88,
+  "ctok": 75,
+  "vendor": "a100"
+ },
+ {
+  "rid": "1b988d54-9664-421b-9d94-d6764e5808cd",
+  "lat": 11.818792581558228,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 3520.\n\nExplanation:\nTo fin",
+  "ptok": 194,
+  "ctok": 128,
+  "vendor": "?"
+ },
+ {
+  "rid": "d43adae4-6d6c-4e0f-b0ab-92394a711a15",
+  "lat": 2.425558090209961,
+  "status": 200,
+  "ok": true,
+  "text": "19875\n\nTo calculate 89 * 75, follow thes",
+  "ptok": 131,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "ea9a3c44-af1d-4a23-b39d-2ed4d610c766",
+  "lat": 11.814727544784546,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 702.\n\nExplanation:\nTo find",
+  "ptok": 215,
+  "ctok": 128,
+  "vendor": "?"
+ },
+ {
+  "rid": "12f5b2f1-7c58-4777-97f8-07e21d4ed177",
+  "lat": 1.4408071041107178,
+  "status": 200,
+  "ok": true,
+  "text": "54 * 81 = 4374\n\nTo calculate this, I fol",
+  "ptok": 109,
+  "ctok": 70,
+  "vendor": "a100"
+ },
+ {
+  "rid": "1b8de656-471c-48a2-b15c-535656b4affd",
+  "lat": 5.205136775970459,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 3750.\n\nTo solve this, we m",
+  "ptok": 224,
+  "ctok": 47,
+  "vendor": "?"
+ },
+ {
+  "rid": "09e2e7cc-1ae2-49ef-9407-d2103c78ace8",
+  "lat": 2.0422234535217285,
+  "status": 200,
+  "ok": true,
+  "text": "29 * 62 = 1808\n\nTo calculate this, I fol",
+  "ptok": 125,
+  "ctok": 106,
+  "vendor": "a100"
+ },
+ {
+  "rid": "6f9c3386-28a6-4172-886a-1a144c2ae368",
+  "lat": 7.262430906295776,
+  "status": 200,
+  "ok": true,
+  "text": "37 * 40 = 1480\n\nTo multiply 37 and 40, f",
+  "ptok": 226,
+  "ctok": 70,
+  "vendor": "?"
+ },
+ {
+  "rid": "5651b0fe-4649-4414-9df9-8bf824669070",
+  "lat": 2.4925429821014404,
+  "status": 200,
+  "ok": false,
+  "text": "2193\n\nTo calculate 73 * 61, follow these",
+  "ptok": 75,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "69d74d47-3c4b-4582-b97d-82020411cff9",
+  "lat": 1.423241138458252,
+  "status": 200,
+  "ok": true,
+  "text": "29 * 64 = 1856\n\nTo calculate this, I fol",
+  "ptok": 107,
+  "ctok": 70,
+  "vendor": "a100"
+ },
+ {
+  "rid": "e5f29e38-92b9-40e9-b5a4-288ed9acec7b",
+  "lat": 1.9670231342315674,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 1890.\n\nTo calculate 42 * 4",
+  "ptok": 112,
+  "ctok": 102,
+  "vendor": "a100"
+ },
+ {
+  "rid": "e4a83f80-5055-4cfd-a6df-6f7810cbc6c5",
+  "lat": 15.447474479675293,
+  "status": 200,
+  "ok": true,
+  "text": "20*37 = 740\n\nExplanation: Multiplication",
+  "ptok": 213,
+  "ctok": 128,
+  "vendor": "?"
+ },
+ {
+  "rid": "6a57ca44-4ae2-46c4-93d5-092b3d95578a",
+  "lat": 2.4914817810058594,
+  "status": 200,
+  "ok": false,
+  "text": "The result is: 6304\n\nTo calculate 93 * 6",
+  "ptok": 115,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "b78f03c3-a1be-4c50-baee-b1ae7cd7cf57",
+  "lat": 13.40390682220459,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 3822.\n\nTo solve this, we m",
+  "ptok": 221,
+  "ctok": 97,
+  "vendor": "?"
+ },
+ {
+  "rid": "82db76cc-b561-48a9-b04c-d6a02b05a4c2",
+  "lat": 2.1946332454681396,
+  "status": 200,
+  "ok": true,
+  "text": "140\n\nTo calculate 35*40, follow these st",
+  "ptok": 116,
+  "ctok": 114,
+  "vendor": "a100"
+ },
+ {
+  "rid": "38a0e04b-5444-436a-aa11-2bd39a0b2b3f",
+  "lat": 18.016326904296875,
+  "status": 200,
+  "ok": false,
+  "text": "The answer is 3521.\n\nExplanation:\nTo fin",
+  "ptok": 181,
+  "ctok": 128,
+  "vendor": "?"
+ },
+ {
+  "rid": "b0b9b7bf-89d7-4c5f-997d-da81ad392349",
+  "lat": 13.618452072143555,
+  "status": 200,
+  "ok": true,
+  "text": "71*36 = 2556\n\nStep 1: Multiply 71 by 30 ",
+  "ptok": 191,
+  "ctok": 77,
+  "vendor": "?"
+ },
+ {
+  "rid": "4b42f0c4-3fed-479d-8bdb-4f8610a59ccd",
+  "lat": 1.635160207748413,
+  "status": 200,
+  "ok": true,
+  "text": "4564\n\nTo calculate 87 * 92, follow these",
+  "ptok": 82,
+  "ctok": 82,
+  "vendor": "a100"
+ },
+ {
+  "rid": "7a09bf05-9723-4cbe-a44a-ceeac0caf9b5",
+  "lat": 18.44662857055664,
+  "status": 200,
+  "ok": false,
+  "text": "The answer is 2008.\n\nExplanation:\nTo fin",
+  "ptok": 182,
+  "ctok": 120,
+  "vendor": "?"
+ },
+ {
+  "rid": "47c41114-47aa-4a2b-adcc-54ae9ee283cc",
+  "lat": 1.6809985637664795,
+  "status": 200,
+  "ok": true,
+  "text": "72 * 81 = 5832\n\nTo calculate this, I fol",
+  "ptok": 125,
+  "ctok": 85,
+  "vendor": "a100"
+ },
+ {
+  "rid": "c04a0313-e226-45f5-bd6e-4b7141145fca",
+  "lat": 2.4881720542907715,
+  "status": 200,
+  "ok": true,
+  "text": "2100\n\nTo calculate 42*75, follow these s",
+  "ptok": 120,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "76fc1295-eceb-4fea-aa4c-941d35fc00ac",
+  "lat": 23.143683433532715,
+  "status": 200,
+  "ok": true,
+  "text": "97*58 = 5626\n\nStep-by-step explanation:\n",
+  "ptok": 185,
+  "ctok": 128,
+  "vendor": "?"
+ },
+ {
+  "rid": "a4833d4d-0e9a-4ec1-a3a1-4e9a304fb1e2",
+  "lat": 2.2719881534576416,
+  "status": 200,
+  "ok": false,
+  "text": "38432\n\nTo calculate 47 * 96, follow thes",
+  "ptok": 105,
+  "ctok": 119,
+  "vendor": "a100"
+ },
+ {
+  "rid": "e4568378-075e-4ec8-ba53-88f440741a55",
+  "lat": 1.8020966053009033,
+  "status": 200,
+  "ok": true,
+  "text": "5047\n\nTo calculate 17*81, follow these s",
+  "ptok": 89,
+  "ctok": 92,
+  "vendor": "a100"
+ },
+ {
+  "rid": "6359aaa9-2d27-4bc4-96e5-38361ce86e41",
+  "lat": 14.785348415374756,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 1323.\n\nTo solve this, we m",
+  "ptok": 240,
+  "ctok": 30,
+  "vendor": "?"
+ },
+ {
+  "rid": "00db323a-49cc-4dfc-a081-547415d6d3cf",
+  "lat": 20.87074637413025,
+  "status": 200,
+  "ok": true,
+  "text": "92*27 = 2484\n\nExplanation:\nTo find the p",
+  "ptok": 175,
+  "ctok": 103,
+  "vendor": "?"
+ },
+ {
+  "rid": "c8ebd6e1-19c7-4f95-bf4d-adcea39f4b1a",
+  "lat": 2.485093832015991,
+  "status": 200,
+  "ok": true,
+  "text": "The result is: 3421\n\nTo calculate 73 * 4",
+  "ptok": 140,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "a2650dfe-d5ef-47ef-b738-e8d029ab6ed5",
+  "lat": 24.754273891448975,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 4848.\n\nExplanation:\nTo fin",
+  "ptok": 194,
+  "ctok": 128,
+  "vendor": "?"
+ },
+ {
+  "rid": "cb94d4e8-d56c-4429-9aa5-4e367864192f",
+  "lat": 1.5985901355743408,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 4320.\n\nTo calculate 96 * 4",
+  "ptok": 109,
+  "ctok": 81,
+  "vendor": "a100"
+ },
+ {
+  "rid": "a4e283f5-5cd5-437d-811a-5ed398396801",
+  "lat": 1.3598535060882568,
+  "status": 200,
+  "ok": true,
+  "text": "79 * 11 = 869\n\nTo calculate this, I foll",
+  "ptok": 111,
+  "ctok": 66,
+  "vendor": "a100"
+ },
+ {
+  "rid": "b5a0d2c7-eac8-43fb-81ea-fbb8afd48fb4",
+  "lat": 24.46656370162964,
+  "status": 200,
+  "ok": false,
+  "text": "The answer is 4596.\n\nExplanation:\nThe gi",
+  "ptok": 186,
+  "ctok": 128,
+  "vendor": "?"
+ },
+ {
+  "rid": "330d2ef4-79aa-4f0a-ae19-b94688bc8b2a",
+  "lat": 2.4120302200317383,
+  "status": 200,
+  "ok": true,
+  "text": "196\n\nTo calculate 14*14, follow these st",
+  "ptok": 80,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "d9e23752-47f8-441f-9aa0-ce48b2cac03d",
+  "lat": 25.467530012130737,
+  "status": 200,
+  "ok": false,
+  "text": "The answer is 7528.\n\nTo solve this, we m",
+  "ptok": 172,
+  "ctok": 119,
+  "vendor": "?"
+ },
+ {
+  "rid": "fca48a04-855e-40e4-b0bc-7afcf52e9812",
+  "lat": 21.29789662361145,
+  "status": 200,
+  "ok": true,
+  "text": "91\n\nTo find the product of 91 and 91, fo",
+  "ptok": 187,
+  "ctok": 70,
+  "vendor": "?"
+ },
+ {
+  "rid": "4d044ac7-e705-439c-84cb-970b3890c2ef",
+  "lat": 1.6742873191833496,
+  "status": 200,
+  "ok": true,
+  "text": "77 * 23 = 1771\n\nTo calculate this, I fol",
+  "ptok": 105,
+  "ctok": 85,
+  "vendor": "a100"
+ },
+ {
+  "rid": "4ab38b74-e1b0-4a53-943a-a6d846321fb1",
+  "lat": 29.579301118850708,
+  "status": 200,
+  "ok": false,
+  "text": "The answer is 1922.\n\nExplanation:\nTo fin",
+  "ptok": 206,
+  "ctok": 128,
+  "vendor": "?"
+ },
+ {
+  "rid": "d999b4d5-6418-495d-b4e3-de23b28876c5",
+  "lat": 2.4821279048919678,
+  "status": 200,
+  "ok": true,
+  "text": "44100\n\nTo calculate 49 * 90, follow thes",
+  "ptok": 92,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "25a4a610-324f-4e7f-870a-8c6fcf163105",
+  "lat": 25.90377712249756,
+  "status": 200,
+  "ok": true,
+  "text": "30*29 = 870\n\nTo find the product of 30 a",
+  "ptok": 239,
+  "ctok": 50,
+  "vendor": "?"
+ },
+ {
+  "rid": "bed9d710-66ca-4a54-837e-ec77452e1a2c",
+  "lat": 28.779309034347534,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 2778.\n\nTo solve this, we m",
+  "ptok": 198,
+  "ctok": 114,
+  "vendor": "?"
+ },
+ {
+  "rid": "4bfc5d1d-8fd9-408b-b586-b1197a119783",
+  "lat": 1.92393159866333,
+  "status": 200,
+  "ok": true,
+  "text": "1987\n\nTo calculate 39*49, we follow the ",
+  "ptok": 139,
+  "ctok": 100,
+  "vendor": "a100"
+ },
+ {
+  "rid": "2003ff8a-7dc9-47b5-aca6-1b73792f7d58",
+  "lat": 2.4073216915130615,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 2455.\n\nTo calculate 85 * 2",
+  "ptok": 147,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "157c0dfd-a3b5-4698-9e83-30eee8fea257",
+  "lat": 25.033830642700195,
+  "status": 200,
+  "ok": false,
+  "text": "54*71 = 3846\n\nStep-by-step explanation:\n",
+  "ptok": 231,
+  "ctok": 40,
+  "vendor": "?"
+ },
+ {
+  "rid": "39235dbb-ebd6-4e41-b468-f7f901cf0076",
+  "lat": 2.4076359272003174,
+  "status": 200,
+  "ok": true,
+  "text": "256\n\nTo calculate 34 * 64, follow these ",
+  "ptok": 79,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "67503f06-dc5b-4737-ad31-9a29c053127a",
+  "lat": 33.76439714431763,
+  "status": 200,
+  "ok": true,
+  "text": "64 * 84 = 5376\n\nExplanation:\nTo find the",
+  "ptok": 223,
+  "ctok": 128,
+  "vendor": "?"
+ },
+ {
+  "rid": "7756cf07-6683-4efb-acc1-ef7f0cf7e42c",
+  "lat": 2.1511247158050537,
+  "status": 200,
+  "ok": true,
+  "text": "58 * 84 = 4864\n\nTo calculate this, I fol",
+  "ptok": 136,
+  "ctok": 112,
+  "vendor": "a100"
+ },
+ {
+  "rid": "8300b1a1-1141-45e1-a8ff-2c123c9dd62b",
+  "lat": 30.084433794021606,
+  "status": 200,
+  "ok": false,
+  "text": "The answer is 3682.\n\nExplanation:\nTo fin",
+  "ptok": 231,
+  "ctok": 62,
+  "vendor": "?"
+ },
+ {
+  "rid": "abcdec2c-c524-44c7-9799-f9a83535bcf1",
+  "lat": 2.4061591625213623,
+  "status": 200,
+  "ok": true,
+  "text": "486\n\nTo calculate 21*14, follow these st",
+  "ptok": 81,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "f96620a9-9064-4e02-9720-dd935b9a866f",
+  "lat": 33.97456932067871,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 2207.\n\nTo get this answer,",
+  "ptok": 209,
+  "ctok": 115,
+  "vendor": "?"
+ },
+ {
+  "rid": "6c2e41eb-4bb4-4a60-b2b3-2cdc28e7a385",
+  "lat": 28.406586170196533,
+  "status": 200,
+  "ok": true,
+  "text": "70*35 = 2450\n\nStep-by-step explanation:\n",
+  "ptok": 229,
+  "ctok": 40,
+  "vendor": "?"
+ },
+ {
+  "rid": "2123029e-6487-4d1a-b56f-9fc24074c1a4",
+  "lat": 1.60459303855896,
+  "status": 200,
+  "ok": true,
+  "text": "41 * 23 = 943\n\nTo calculate this, I foll",
+  "ptok": 107,
+  "ctok": 81,
+  "vendor": "a100"
+ },
+ {
+  "rid": "b4d1380a-f106-4cb3-a0af-7d9ef63b2459",
+  "lat": 2.475743532180786,
+  "status": 200,
+  "ok": true,
+  "text": "1986\n\nTo calculate 46 * 33, follow these",
+  "ptok": 92,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "97b2efae-a508-4647-bebd-71cab22568f1",
+  "lat": 2.474864959716797,
+  "status": 200,
+  "ok": true,
+  "text": "2100\n\nTo calculate 42 * 34, follow these",
+  "ptok": 123,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "55199272-db3c-4582-ae73-7b1a04422259",
+  "lat": 28.689927577972412,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 528.\n\nExplanation:\nTo find",
+  "ptok": 190,
+  "ctok": 38,
+  "vendor": "?"
+ },
+ {
+  "rid": "46bcd41a-347c-4021-8d9c-d6ece9f04de8",
+  "lat": 31.08950185775757,
+  "status": 200,
+  "ok": false,
+  "text": "54*62 = 3336\n\nStep-by-step explanation:\n",
+  "ptok": 186,
+  "ctok": 67,
+  "vendor": "?"
+ },
+ {
+  "rid": "91c757c6-3ad9-4f8a-abb9-978cf5a84a4f",
+  "lat": 37.568692207336426,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 1792.\n\nTo get this answer,",
+  "ptok": 195,
+  "ctok": 128,
+  "vendor": "?"
+ },
+ {
+  "rid": "ab2ead9a-1e8e-4194-b397-73e20074a503",
+  "lat": 2.0765156745910645,
+  "status": 200,
+  "ok": true,
+  "text": "84 * 47 = 3932\n\nTo calculate this, I fol",
+  "ptok": 100,
+  "ctok": 109,
+  "vendor": "a100"
+ },
+ {
+  "rid": "8a7d887f-92a1-4168-9117-d39fb1b58cca",
+  "lat": 1.9897637367248535,
+  "status": 200,
+  "ok": true,
+  "text": "The result is: 1271\n\nTo calculate 31 * 4",
+  "ptok": 102,
+  "ctok": 103,
+  "vendor": "a100"
+ },
+ {
+  "rid": "c9120dfb-3d62-49bc-956b-3aad91602e6d",
+  "lat": 1.538184642791748,
+  "status": 200,
+  "ok": true,
+  "text": "77 * 23 = 1771\n\nTo calculate this, I fol",
+  "ptok": 142,
+  "ctok": 85,
+  "vendor": "a100"
+ },
+ {
+  "rid": "604c6e11-20bf-40a4-9520-397829adfd04",
+  "lat": 1.7709240913391113,
+  "status": 200,
+  "ok": true,
+  "text": "70*56 = 3920\n\nTo calculate 70*56, follow",
+  "ptok": 80,
+  "ctok": 100,
+  "vendor": "a100"
+ },
+ {
+  "rid": "4d9d6806-0bbc-4915-9857-1a8a1dcd277f",
+  "lat": 1.295753002166748,
+  "status": 200,
+  "ok": true,
+  "text": "58 * 75 = 4350\n\nTo calculate this, I fol",
+  "ptok": 111,
+  "ctok": 70,
+  "vendor": "a100"
+ },
+ {
+  "rid": "75a0eab0-cfb4-49e7-97af-b8c9e6a7c25e",
+  "lat": 2.2277913093566895,
+  "status": 200,
+  "ok": true,
+  "text": "48\n\nTo calculate 12*11, follow these ste",
+  "ptok": 103,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "116038c2-2945-4476-8f51-b2787e6e09a8",
+  "lat": 1.2851676940917969,
+  "status": 200,
+  "ok": true,
+  "text": "18 * 94 = 1692\n\nTo calculate this, I fol",
+  "ptok": 75,
+  "ctok": 70,
+  "vendor": "a100"
+ },
+ {
+  "rid": "ef2a1a49-3ce9-4e83-970f-146916cce87a",
+  "lat": 2.2541251182556152,
+  "status": 200,
+  "ok": true,
+  "text": "48\n\nTo calculate 32*15, follow these ste",
+  "ptok": 100,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "de9a2a74-486c-4057-8bfb-6db62b9d3395",
+  "lat": 1.5026683807373047,
+  "status": 200,
+  "ok": true,
+  "text": "49 * 64 = 3136\n\nTo calculate this, I fol",
+  "ptok": 132,
+  "ctok": 85,
+  "vendor": "a100"
+ },
+ {
+  "rid": "e3e74e22-6b01-4907-a2fb-4ac966099d3b",
+  "lat": 2.258382797241211,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 1240.\n\nTo calculate 30 * 4",
+  "ptok": 143,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "4b00cd13-7870-40e5-88c3-7cc668672cc1",
+  "lat": 2.2584595680236816,
+  "status": 200,
+  "ok": true,
+  "text": "2107\n\nTo calculate 39*47, follow these s",
+  "ptok": 83,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "4bee8b08-842b-4bd6-80cf-41be10c985ea",
+  "lat": 1.8237333297729492,
+  "status": 200,
+  "ok": true,
+  "text": "The result is: 6650\n\nTo calculate 95 * 7",
+  "ptok": 98,
+  "ctok": 103,
+  "vendor": "a100"
+ },
+ {
+  "rid": "ebdd7c0a-a265-48b4-a8d3-8c0602fad79b",
+  "lat": 1.4570016860961914,
+  "status": 200,
+  "ok": true,
+  "text": "The result is: 3320\n\nTo calculate 83 * 4",
+  "ptok": 124,
+  "ctok": 82,
+  "vendor": "a100"
+ },
+ {
+  "rid": "73b8e5c6-2931-4109-bf6d-2a2bb4537dd3",
+  "lat": 1.7852754592895508,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 3080.\n\nTo calculate 56 * 5",
+  "ptok": 111,
+  "ctok": 102,
+  "vendor": "a100"
+ },
+ {
+  "rid": "0c113898-a47e-4910-9601-7fbaee5b7761",
+  "lat": 2.2259721755981445,
+  "status": 200,
+  "ok": false,
+  "text": "486\n\nTo calculate 16*18, follow these st",
+  "ptok": 96,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "5dbbb7ae-6d47-4e6d-a7af-0c48bef9a968",
+  "lat": 2.235240936279297,
+  "status": 200,
+  "ok": true,
+  "text": "The result is: 6771\n\nTo calculate 93 * 7",
+  "ptok": 108,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "d755ab23-ee41-4e10-9919-aa4a6a7c1bca",
+  "lat": 1.563838243484497,
+  "status": 200,
+  "ok": true,
+  "text": "288\n\nTo calculate 18 * 16, follow these ",
+  "ptok": 85,
+  "ctok": 90,
+  "vendor": "a100"
+ },
+ {
+  "rid": "c6de0e5c-8a4d-4447-ab24-005489f6b726",
+  "lat": 1.235445499420166,
+  "status": 200,
+  "ok": true,
+  "text": "31 * 28 = 868\n\nTo calculate this, I foll",
+  "ptok": 114,
+  "ctok": 69,
+  "vendor": "a100"
+ },
+ {
+  "rid": "128e951f-161a-4d39-9114-60e25319cec5",
+  "lat": 1.2766916751861572,
+  "status": 200,
+  "ok": false,
+  "text": "The answer is 7169.\n\nTo calculate 79 * 9",
+  "ptok": 159,
+  "ctok": 72,
+  "vendor": "a100"
+ },
+ {
+  "rid": "7c1ba60d-06a9-4fd0-aa6f-747acf0e5844",
+  "lat": 2.2302029132843018,
+  "status": 200,
+  "ok": true,
+  "text": "48\n\nTo calculate 16*12, follow these ste",
+  "ptok": 135,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "7ac219af-4a0a-4458-8d7e-70d18711746d",
+  "lat": 2.234832763671875,
+  "status": 200,
+  "ok": true,
+  "text": "3786\n\nTo calculate 14*54, follow these s",
+  "ptok": 87,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "1183f1f0-4ce6-4787-a689-6ae7aa56b6d5",
+  "lat": 2.252736806869507,
+  "status": 200,
+  "ok": true,
+  "text": "2474\n\nTo calculate 53 * 78, follow these",
+  "ptok": 90,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "de932515-9b9b-4e40-a629-deec23b1573b",
+  "lat": 2.288532018661499,
+  "status": 200,
+  "ok": true,
+  "text": "21078\n\nTo calculate 42 * 69, follow thes",
+  "ptok": 128,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "0c7c0382-bb1c-48db-9c80-99d466a8b15e",
+  "lat": 1.8243553638458252,
+  "status": 200,
+  "ok": true,
+  "text": "83 * 49 = 4067\n\nTo calculate this, I fol",
+  "ptok": 91,
+  "ctok": 101,
+  "vendor": "a100"
+ },
+ {
+  "rid": "2cc06b42-deb4-4033-91c9-d5a09ca5d6c1",
+  "lat": 1.3745737075805664,
+  "status": 200,
+  "ok": true,
+  "text": "19 * 73 = 1387\n\nTo calculate this, I fol",
+  "ptok": 102,
+  "ctok": 75,
+  "vendor": "a100"
+ },
+ {
+  "rid": "480d4f6b-a09e-4389-a16f-fb714d001bad",
+  "lat": 1.8238022327423096,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 1575.\n\nTo calculate 35*45,",
+  "ptok": 118,
+  "ctok": 101,
+  "vendor": "a100"
+ },
+ {
+  "rid": "b751c5f4-54a5-4e2f-adf2-f9bc727532aa",
+  "lat": 1.8688561916351318,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 8360.\n\nTo calculate 95 * 8",
+  "ptok": 122,
+  "ctok": 102,
+  "vendor": "a100"
+ },
+ {
+  "rid": "ed6aa0b3-519f-42af-949a-1066c9d2a354",
+  "lat": 1.212447166442871,
+  "status": 200,
+  "ok": true,
+  "text": "52 * 14 = 728\n\nTo calculate this, I foll",
+  "ptok": 86,
+  "ctok": 66,
+  "vendor": "a100"
+ },
+ {
+  "rid": "ada55418-ad9f-454f-b7bf-af8729aab898",
+  "lat": 0.16056275367736816,
+  "status": 200,
+  "ok": false,
+  "text": "576",
+  "ptok": 97,
+  "ctok": 2,
+  "vendor": "a100"
+ },
+ {
+  "rid": "d6f34c02-005a-435f-9cd2-6c3bff2f8188",
+  "lat": 2.278420925140381,
+  "status": 200,
+  "ok": true,
+  "text": "2102\n\nTo calculate 42 * 31, follow these",
+  "ptok": 102,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "3b0fc737-e7b6-489b-9dbb-5e3ccd39a908",
+  "lat": 2.0041182041168213,
+  "status": 200,
+  "ok": true,
+  "text": "54 * 93 = 5002\n\nTo calculate this, I fol",
+  "ptok": 135,
+  "ctok": 112,
+  "vendor": "a100"
+ },
+ {
+  "rid": "07f999c6-43a4-40fd-812e-7b56467cafa5",
+  "lat": 2.277308464050293,
+  "status": 200,
+  "ok": true,
+  "text": "41846\n\nTo calculate 94 * 69, follow thes",
+  "ptok": 127,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "f89b9c66-0722-48fb-8de7-53dba90a7fc2",
+  "lat": 2.2778143882751465,
+  "status": 200,
+  "ok": true,
+  "text": "23490\n\nTo calculate 78 * 45, follow thes",
+  "ptok": 127,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "78445b5d-3457-4655-ab3a-56a9e8bd7369",
+  "lat": 2.261115550994873,
+  "status": 200,
+  "ok": true,
+  "text": "2100\n\nTo calculate 77 * 30, follow these",
+  "ptok": 75,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "d68bd77a-80b6-4285-81f1-fd516d76af4d",
+  "lat": 1.4736289978027344,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 4158.\n\nTo calculate 77 * 5",
+  "ptok": 148,
+  "ctok": 81,
+  "vendor": "a100"
+ },
+ {
+  "rid": "9f4f7241-527f-4c9a-a0b4-b4490fac58af",
+  "lat": 1.1740658283233643,
+  "status": 200,
+  "ok": true,
+  "text": "19 * 67 = 1273\n\nTo calculate this, I fol",
+  "ptok": 112,
+  "ctok": 70,
+  "vendor": "a100"
+ },
+ {
+  "rid": "85555d7d-ae2c-45e6-8a2f-a53401a48ee3",
+  "lat": 1.8539361953735352,
+  "status": 200,
+  "ok": true,
+  "text": "91 * 29 = 2649\n\nTo calculate this, I fol",
+  "ptok": 103,
+  "ctok": 108,
+  "vendor": "a100"
+ },
+ {
+  "rid": "c17b7f89-851b-406d-b2fe-1cbba238e2ac",
+  "lat": 2.160027265548706,
+  "status": 200,
+  "ok": false,
+  "text": "The result is: 7406\n\nTo calculate 79 * 9",
+  "ptok": 109,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "0951883b-fe8b-4733-be9d-188bb28d68ad",
+  "lat": 2.160538673400879,
+  "status": 200,
+  "ok": true,
+  "text": "1848\n\nTo calculate 92 * 26, follow these",
+  "ptok": 78,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "ee953bc9-cc2a-425a-94fc-4b297783fcee",
+  "lat": 2.1460907459259033,
+  "status": 200,
+  "ok": true,
+  "text": "9409\n\nTo calculate 97*97, we can use the",
+  "ptok": 141,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "680c2c22-22a7-488e-946a-03c4636d3ad7",
+  "lat": 2.135894536972046,
+  "status": 200,
+  "ok": true,
+  "text": "48\n\nTo calculate 94 * 78, follow these s",
+  "ptok": 118,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "be838b80-3ba4-4dfe-abc7-365ccceb8188",
+  "lat": 2.12325119972229,
+  "status": 200,
+  "ok": true,
+  "text": "3278\n\nTo calculate 82 * 69, follow these",
+  "ptok": 83,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "ce0872dd-412c-4ac6-942c-28bc9a81a0b1",
+  "lat": 2.1138651371002197,
+  "status": 200,
+  "ok": true,
+  "text": "3024\n\nTo calculate 84 * 56, follow these",
+  "ptok": 77,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "888bfb10-e3a2-45a4-9410-a5a35e10363c",
+  "lat": 2.1044869422912598,
+  "status": 200,
+  "ok": true,
+  "text": "2028\n\nTo calculate 30 * 44, follow these",
+  "ptok": 85,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "a6d42a23-50f0-438c-a1f8-12dcec354e4d",
+  "lat": 1.6465637683868408,
+  "status": 200,
+  "ok": true,
+  "text": "83*79 = 6533\n\nTo calculate this, I follo",
+  "ptok": 82,
+  "ctok": 97,
+  "vendor": "a100"
+ },
+ {
+  "rid": "4b0476fb-fa02-471b-a083-838fd85a7579",
+  "lat": 1.6233527660369873,
+  "status": 200,
+  "ok": true,
+  "text": "41 * 79 = 3241\n\nTo calculate this, I fol",
+  "ptok": 123,
+  "ctok": 96,
+  "vendor": "a100"
+ },
+ {
+  "rid": "849894e7-2d36-4fe3-8b1d-72ef21244991",
+  "lat": 2.071223497390747,
+  "status": 200,
+  "ok": false,
+  "text": "4761\n\nTo calculate 63*63, follow these s",
+  "ptok": 79,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "90cbfdfe-45ca-4366-90b3-996af1d9db27",
+  "lat": 2.051084041595459,
+  "status": 200,
+  "ok": true,
+  "text": "1980\n\nTo calculate 37 * 36, follow these",
+  "ptok": 92,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "14ff77d0-2ecd-4e55-be9d-f5fb19c4b649",
+  "lat": 1.2537620067596436,
+  "status": 200,
+  "ok": true,
+  "text": "44 * 99 = 4356\n\nTo calculate this, I fol",
+  "ptok": 105,
+  "ctok": 72,
+  "vendor": "a100"
+ },
+ {
+  "rid": "829dbe9e-f147-4284-8e47-aa1b4127a1f2",
+  "lat": 2.030184030532837,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 8235.\n\nTo calculate 95 * 8",
+  "ptok": 150,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "ba261d8b-8650-473e-8253-bd12d040ee08",
+  "lat": 1.6337268352508545,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 1204.\n\nTo calculate 28 * 4",
+  "ptok": 127,
+  "ctok": 100,
+  "vendor": "a100"
+ },
+ {
+  "rid": "9ae20449-e35a-47b6-8019-e8374b56d2fe",
+  "lat": 2.00217342376709,
+  "status": 200,
+  "ok": true,
+  "text": "2475\n\nTo calculate 79 * 55, follow these",
+  "ptok": 85,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "7e498455-700a-446f-800e-ba8d3116e6e4",
+  "lat": 1.344275951385498,
+  "status": 200,
+  "ok": true,
+  "text": "71*36 = 2556\n\nTo calculate 71*36, we fol",
+  "ptok": 132,
+  "ctok": 81,
+  "vendor": "a100"
+ },
+ {
+  "rid": "bb4a8026-89b6-4407-9f67-80eab1881222",
+  "lat": 1.6038861274719238,
+  "status": 200,
+  "ok": true,
+  "text": "93*33 = 3069\n\nTo calculate this, I follo",
+  "ptok": 147,
+  "ctok": 98,
+  "vendor": "a100"
+ },
+ {
+  "rid": "394686f2-d788-4b3d-9498-012192068e34",
+  "lat": 1.8321454524993896,
+  "status": 200,
+  "ok": true,
+  "text": "729\n\nTo calculate 11*69, follow these st",
+  "ptok": 131,
+  "ctok": 117,
+  "vendor": "a100"
+ },
+ {
+  "rid": "bd95e04c-b986-4ae3-b165-aab73e4d2b5d",
+  "lat": 1.9283192157745361,
+  "status": 200,
+  "ok": true,
+  "text": "2175\n\nTo calculate 89 * 35, follow these",
+  "ptok": 86,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "82a3dd80-7554-4999-b9b2-f34f069baf70",
+  "lat": 0.7908773422241211,
+  "status": 200,
+  "ok": true,
+  "text": "13 * 89 = 1157\n\nTo calculate this, I fol",
+  "ptok": 140,
+  "ctok": 44,
+  "vendor": "a100"
+ },
+ {
+  "rid": "f250d210-6d65-462b-b01c-e2e9852c6876",
+  "lat": 1.3951656818389893,
+  "status": 200,
+  "ok": true,
+  "text": "198\n\nTo calculate 12*22, follow these st",
+  "ptok": 120,
+  "ctok": 86,
+  "vendor": "a100"
+ },
+ {
+  "rid": "20b0eda6-78f7-46b1-9ca2-0a5b6574fa7d",
+  "lat": 1.9393537044525146,
+  "status": 200,
+  "ok": true,
+  "text": "48\n\nTo calculate 40*11, follow these ste",
+  "ptok": 111,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "58e316e5-b6fb-41e0-b6b8-7ef076fe0c4c",
+  "lat": 1.9424378871917725,
+  "status": 200,
+  "ok": true,
+  "text": "1128\n\nTo calculate 14*82, follow these s",
+  "ptok": 139,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "c8284bb5-f943-4b9f-b390-18c84e77c733",
+  "lat": 1.4819657802581787,
+  "status": 200,
+  "ok": true,
+  "text": "96*98 = 9408\n\nTo calculate 96*98, we mul",
+  "ptok": 83,
+  "ctok": 95,
+  "vendor": "a100"
+ },
+ {
+  "rid": "eff209df-ea95-4b15-8d5c-ed5fc1d88fa8",
+  "lat": 1.2530601024627686,
+  "status": 200,
+  "ok": true,
+  "text": "23 * 31 = 713\n\nTo calculate this, I foll",
+  "ptok": 115,
+  "ctok": 81,
+  "vendor": "a100"
+ },
+ {
+  "rid": "77fcef43-5587-4271-8c3c-eef5877d86ba",
+  "lat": 1.5096311569213867,
+  "status": 200,
+  "ok": true,
+  "text": "The answer is 1786.\n\nTo calculate 38 * 4",
+  "ptok": 144,
+  "ctok": 102,
+  "vendor": "a100"
+ },
+ {
+  "rid": "f0df598a-3fb2-4d4b-971a-96095b819a17",
+  "lat": 1.8348941802978516,
+  "status": 200,
+  "ok": true,
+  "text": "41820\n\nTo calculate 46 * 90, follow thes",
+  "ptok": 76,
+  "ctok": 128,
+  "vendor": "a100"
+ },
+ {
+  "rid": "a38f239b-cf9d-476b-a131-a517197b95b2",
+  "lat": 1.224430799484253,
+  "status": 200,
+  "ok": true,
+  "text": "95*44 = 4180\n\nTo calculate this, I follo",
+  "ptok": 88,
+  "ctok": 82,
+  "vendor": "a100"
+ },
+ {
+  "rid": "89458fbc-c708-456b-9dc4-404e8c9478e4",
+  "lat": 1.4031856060028076,
+  "status": 200,
+  "ok": true,
+  "text": "4560\n\nTo calculate 57*80, follow these s",
+  "ptok": 142,
+  "ctok": 97,
+  "vendor": "a100"
+ }
+]

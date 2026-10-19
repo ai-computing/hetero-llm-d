@@ -1,12 +1,12 @@
 # 클러스터 현황 스냅샷
 
 <!-- research-hub:header:begin (maintained by .research/report.py; keep the "- **Key**: value" format) -->
-- **State**: idle
-- **Updated**: 2026-10-19 09:58+09:00
+- **State**: active
+- **Updated**: 2026-10-19 11:26+09:00
 - **Agent**: claude@gspark-PowerEdge-R7525
-- **Task**: LLMD-33 (done)
-- **Last result**: PR #1 리뷰 반영(airm/v0.1): rm-core CRD 핀 v0.1.1(extra 필드, sha256 14cde6fa…) + 문서 참조 갱신. dry-run 무한 대기 원인 = CRD curl에 타임아웃 없음(빈 캐시 + 응답 없는 프록시에서 재현); curl --max-time/--retry, kubectl 전부 timeout+--request-timeout 래퍼, /readyz 사전 점검으로 분명한 오류. 검증: dry-run all 1.0 s 통과(CRD configured), 장애 3종 모두 10~60 s 내 rc=1, rm_core.conformance 3/3 PASS, test-model-store-discovery OK, 대시보드 18/18 지표
-- **Next**: -
+- **Task**: 이종 혼합 풀 라우팅 검증 (Llama-8B A100·ATOM·RNGD)
+- **Last result**: 한 InferencePool에 A100·RBLN·RNGD 3벤더 라우팅 동작(engine-type 라벨로 메트릭 매핑). 기본 EPP 점수는 속도 무시: 3벤더 unique-prefix c64 128tok 37.6s(3.4 req/s) vs A100 단독 5.5s(23.3 req/s) — RBLN 꼬리지연이 전체 결정, 유휴 RNGD는 거의 미선택. 출력 일치: A100·RNGD 38/40 동일(정답 32/40), RBLN(PD실험 아티팩트) 23/40
+- **Next**: capacity-aware heterogeneous scorer(LMDTOP-22) 이미지 빌드 후 같은 부하로 비교
 - **Blockers**: none
 <!-- research-hub:header:end -->
 
@@ -18,6 +18,7 @@
 
 최신순. 출처를 괄호에 적었다. 레포에 원자료가 없는 수치는 그렇다고 밝혔다.
 
+- **2026-10-19 · 한 InferencePool에 A100·RBLN ATOM·RNGD를 섞어 Llama-3.1-8B를 라우팅했다.** 파드마다 `llm-d.ai/engine-type` 라벨을 달면 EPP가 엔진별 메트릭 매핑(`vllm` / `furiosa-llm`)을 골라 세 벤더 모두에 라우팅한다. 다만 기본 점수(queue·KV·prefix)는 속도를 보지 않는다. 128요청·128토큰·동시성 64에서 3벤더 풀은 37.6초(3.4 req/s)로 A100 단독 5.5초(23.3 req/s)보다 6.6배 느렸다. 느린 RBLN(batch 8)이 받은 요청의 꼬리 지연이 전체 완료 시간을 정했고, 유휴 RNGD는 거의 선택되지 않았다. 고정 프롬프트 40개에서 A100과 RNGD 출력은 38/40 같았고(정답 32/40), 이번 RBLN 아티팩트(PD 실험용, optimum-rbln 0.11.0.post1)는 23/40만 맞았다. 예전 `~/vllm_test` RBLN 아티팩트(0.10.0.post1)는 0.11 런타임이 `LOADING_INVALID_VERSION`으로 거부한다 (`experiments/2026-10-19-hetero-llama8b-mixed-pool.md`, `manifests/hetero-llama8b-mixed.yaml`).
 - **2026-10-19 · ai-rm protocol v0.1 통합 (LLMD-32, PR #1).** rm-core v0.1.0의 `AcceleratorProfile` CRD를 실제 클러스터에 설치했다(`scripts/airm-install.sh apply crd`, 객체는 아직 0개). `airm_*` ScrapeConfig, 빈 `llm-serving/airm-placement`, Grafana `airm.json`은 server dry-run만 통과시켰고 적용하지 않았다. EPP placement scorer 자리는 문서로만 표시했다(`deploy/airm/README.md`).
 - **2026-10-15 · 하드웨어 배치가 문서와 달랐다.** A100 × 2는 etri-001이 아니라 `etri-esc8000-e11`(PCI 99/bd:00.0)에 있다. 현재 구성은 etri-001 = RBLN×4 + RNGD×3, e11 = RNGD×2 + A100×2다. e11 A100은 driver 580.178과 nvidia-container-toolkit 1.19.1로 복구했다. kubelet `evictionHard`는 nodefs/imagefs 5%로 낮췄다 (README.md 작업 트리 diff 「etri-ESC8000-E11」, 이 파일 아래 하드웨어 변경 메모).
 - **2026-10-15 · e11 A100 vLLM v0.11.0 Llama-3.1-8B 미니 sweep 결과다.** 입력 614, 출력 128, 60 s로 돌렸다. 동시성 1/8/32/64에서 각각 84/621/1945/3094 tok/s가 나왔다. 노드 wall 전력은 약 940 → 985 W, tok/J(wall)는 0.09 → 3.15였다. 다만 e11 wall 전력에는 다른 사용자 작업이 섞여 있고, DCGM 스크랩 간격도 거칠다. 그래서 에너지 수치는 잠정치다. 레포에 `experiments/` 기록이나 원본 JSONL은 없다. 매니페스트는 `manifests/vllm-a100-llama31-8b.yaml`, 전력 수집은 `manifests/ipmi-exporter.yaml`(유휴 wall 약 620~670 W/노드)이다.
@@ -239,6 +240,15 @@ curl -X POST http://<gateway-host>/v1/chat/completions \
 
 <!-- research-hub:log (report.py inserts new entries below this line, newest first) -->
 
+### 2026-10-19 11:26+09:00 — 이종 혼합 풀 라우팅 검증 (Llama-8B A100·ATOM·RNGD)
+
+- Result: 한 InferencePool에 A100·RBLN·RNGD 3벤더 라우팅 동작(engine-type 라벨로 메트릭 매핑). 기본 EPP 점수는 속도 무시: 3벤더 unique-prefix c64 128tok 37.6s(3.4 req/s) vs A100 단독 5.5s(23.3 req/s) — RBLN 꼬리지연이 전체 결정, 유휴 RNGD는 거의 미선택. 출력 일치: A100·RNGD 38/40 동일(정답 32/40), RBLN(PD실험 아티팩트) 23/40
+- Next: capacity-aware heterogeneous scorer(LMDTOP-22) 이미지 빌드 후 같은 부하로 비교
+- New todos: contrib heterogeneous-capacity EPP 이미지 빌드·혼합 풀 재측정; 벤더 풀 편입 전 고정 프롬프트 출력 일치(parity) 게이트; RBLN Llama-8B 정식 아티팩트로 정확도 재확인(현재 23/40)
+- Params: conc=64, max_tokens=128, requests=128, furiosa_llm=2026.3.0, vllm_a100=v0.11.0, vllm_rbln=0.11.0
+- Artifacts: experiments/2026-10-19-hetero-llama8b-mixed-pool/run-final-3v-u1-m128-c64.json, experiments/2026-10-19-hetero-llama8b-mixed-pool/run-a100only-u1-m128-c64.json
+- Experiments: experiments/2026-10-19-hetero-llama8b-mixed-pool.md
+- By: claude@gspark-PowerEdge-R7525 · main@d63c2ce-dirty
 ### 2026-10-19 09:58+09:00 — LLMD-33 ✅
 
 - Result: PR #1 리뷰 반영(airm/v0.1): rm-core CRD 핀 v0.1.1(extra 필드, sha256 14cde6fa…) + 문서 참조 갱신. dry-run 무한 대기 원인 = CRD curl에 타임아웃 없음(빈 캐시 + 응답 없는 프록시에서 재현); curl --max-time/--retry, kubectl 전부 timeout+--request-timeout 래퍼, /readyz 사전 점검으로 분명한 오류. 검증: dry-run all 1.0 s 통과(CRD configured), 장애 3종 모두 10~60 s 내 rc=1, rm_core.conformance 3/3 PASS, test-model-store-discovery OK, 대시보드 18/18 지표
