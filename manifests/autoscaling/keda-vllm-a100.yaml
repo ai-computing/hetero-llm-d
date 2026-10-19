@@ -7,8 +7,11 @@
 #   TTFT   p90 time-to-first-token over 2 min vs a 1 s target    (Value: replicas * p90 / 1 s)
 # min 1: no scale-to-zero, a cold vLLM start costs the first users their TTFT.
 # max 2: the node has two A100s and each replica takes one.
-# The A100 cold start is not measured in this repo (readinessProbe allows 600 s); the scale-up step
-# below (one pod per 120 s) assumes it is under two minutes. Measure it on the first scale-up:
+# A100 cold start, measured 2026-10-19 (experiments/2026-10-19-w4w5-gpu): pod start -> Ready 110-111 s
+# for a pod starting alone, 120-121 s when both replicas start together; half of it is torch.compile
+# (no persistent compile cache) and CUDA graph capture. The scale-up step below (one pod per 120 s)
+# fits, with little margin. Live run: load start -> HPA rescale 1 -> 2 in 21 s, new pod Ready 110 s
+# later. Re-measure after changing the image or engine args:
 #   kubectl -n llm-serving get pod -l app=vllm-a100-llama31-8b -o json | jq -r '.items[] |
 #     [.metadata.name, .status.startTime, (.status.conditions[] | select(.type=="Ready") | .lastTransitionTime)] | @tsv'
 #
