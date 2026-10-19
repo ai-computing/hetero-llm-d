@@ -301,6 +301,7 @@ the pinned llm-d-router `e194457dc507` by `scripts/check-epp-config.py`, install
 |---|---|---|---|
 | `queue-kv` | waiting queue, KV-cache utilization | `/metrics` (vLLM or furiosa-llm names) | NPU pools; the rngd-pd path once aicomp#45 lands |
 | `approx-prefix` | + approximate prefix affinity (EPP-side hashing of routed prompts) | none | any pool; pays off only where the engine caches prefixes |
+| `approx-prefix-gpu` | `approx-prefix` with prefix weight 3 | none | the A100 vLLM pool (measured: weight 1 loses the affinity under load) |
 | `precise-prefix` (opt-in) | + prefix hits from the engines' KV-block events (ZMQ, vLLM format) | KV events + a render sidecar for real token IDs | A100 vLLM today; Optimus Prime after aicomp#46 |
 
 Approximate prefix scoring needs no engine support: the EPP tokenizes with its tokenizer-free `estimate` backend,
@@ -308,7 +309,14 @@ hashes the prompt into blocks and remembers which endpoint got them, so it runs 
 depends on the engine: the A100 vLLM pool (`--enable-prefix-caching`) reuses the blocks; vllm-rbln with
 `--block-size 512 --max-model-len 512` can never reuse a full block; the rngd-pd path prefills every request from
 scratch until aicomp#46, so there it only concentrates load. The profile therefore weights prefix (1) below queue and
-KV (2 each). This is from the pinned source, not a live measurement.
+KV (2 each).
+
+Measured on the A100 pool with two replicas ([experiment](experiments/2026-10-19-w4w5-gpu/README.md)): prefix affinity
+works (20/20 requests of one prefix on one pod; 8 prefixes sequentially: vLLM hit ratio 0.864 vs 0.742 for `queue-kv`),
+but at weight 1 the load scores outvote it once requests are concurrent. Under KV-cache pressure (220 prefixes of 2.9k
+tokens, more than one pod's 446k-token cache) the hit ratio was 0.574 against 0.560 for `queue-kv`; with prefix weight 3
+(`approx-prefix-gpu`) it was 0.639, TTFT p50 -20 %, wall time -16 %. `precise-prefix` matched that (0.630) only after two
+fixes to the engine side: the KV-event topic must be `kv@<pod-ip>:<port>@<model>` and the engine block size 64.
 
 **Autoscaling** ([`manifests/autoscaling/`](manifests/autoscaling)) uses the KEDA 2.19 already installed:
 
@@ -323,8 +331,9 @@ the PD stages expose only after aicomp#45; until then the queries are empty, `ig
 stay at their minimum. Cold start with pre-compiled graphs is prefill 62 s and decode 18 s
 ([ai-rm workload traces](https://github.com/ai-computing/ai-rm/blob/master/docs/workload-traces.md)), so scale-up adds
 one pod per 120 s / 60 s (the new pod is Ready before the next step), scale-down waits 10 minutes, and no pool scales to
-zero. The A100 cold start is not measured here. `maxReplicaCount` is cards per node (shm keeps prefill and decode on
-one host) and is lowered to the placed cards by the placement hook.
+zero. The A100 vLLM cold start, measured live, is 110-111 s from pod start to Ready (120-121 s when both replicas start
+at once; torch.compile and CUDA graph capture are half of it); under load the HPA went 1 → 2 within 21 s.
+`maxReplicaCount` is cards per node (shm keeps prefill and decode on one host) and is lowered to the placed cards by the placement hook.
 
 <details>
 <summary><b>Live-cluster check (for the operator)</b></summary>
@@ -333,8 +342,8 @@ one host) and is lowered to the placed cards by the placement hook.
 ```bash
 python3 scripts/check-epp-config.py && python3 scripts/test-airm-placement.py
 # 1. EPP profile on a pool (render first, then apply)
-EPP_PROFILE=approx-prefix EPP_RENDER_ONLY=1 manifests/epp/make-epp.sh vllm-a100-pool /gpu | kubectl apply --dry-run=server -f -
-EPP_PROFILE=approx-prefix manifests/epp/make-epp.sh vllm-a100-pool /gpu
+EPP_PROFILE=approx-prefix-gpu EPP_RENDER_ONLY=1 manifests/epp/make-epp.sh vllm-a100-pool /gpu | kubectl apply --dry-run=server -f -
+EPP_PROFILE=approx-prefix-gpu manifests/epp/make-epp.sh vllm-a100-pool /gpu
 kubectl -n llm-serving logs deploy/vllm-a100-epp | grep -iE 'error|plugin'        # strict config load
 # 2. Autoscaling on the GPU pool
 kubectl apply --dry-run=server -f manifests/autoscaling/keda-vllm-a100.yaml
@@ -403,6 +412,7 @@ vLLM fork, using compiled models from HF Hub `rebellions-sw/*`).
 - [ ] Capacity-aware heterogeneous EPP scorer, compared under the same load
 - [ ] Same-load energy comparison across accelerators (`scripts/hetero-sweep.py`; only A100 points measured so far)
 - [x] EPP profiles `queue-kv`, `approx-prefix`, opt-in `precise-prefix`; KEDA ScaledObjects for the A100 pool and the PD stages; placement hook from `airm-placement` (offline checks; live rollout pending)
+- [x] W4/W5 live on the A100 pool ([experiment](experiments/2026-10-19-w4w5-gpu/README.md)): prefix routing (`approx-prefix-gpu`, `precise-prefix` with fixed event contract), KEDA 1 → 2 → 1, A100 cold start 110 s
 - [ ] Precise prefix routing on the PD path (needs aicomp#46) and NPU autoscaling on live metrics (needs aicomp#45)
 - [ ] EPP scorer that reads `airm-placement`
 

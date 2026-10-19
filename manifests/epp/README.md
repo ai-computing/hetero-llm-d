@@ -62,6 +62,7 @@ strictly, so an unknown plugin type or parameter key would stop it at start-up.
 |---|---|---|
 | `queue-kv.yaml` | queue-scorer (2), kv-cache-utilization-scorer (2) | `/metrics`; pods labelled `llm-d.ai/engine-type` (`vllm` default, `furiosa-llm` mapped) |
 | `approx-prefix.yaml` | + approx-prefix-cache-producer → prefix-cache-scorer (1) | nothing more |
+| `approx-prefix-gpu.yaml` | same, prefix-cache-scorer (3) | nothing more; for engines that reuse prefixes (A100 vLLM) |
 | `precise-prefix.yaml` | token-producer (vLLM render) → precise-prefix-cache-producer → prefix-cache-scorer (3), queue (2), KV (2) | engine KV events; render sidecar (`precise-prefix-render-sidecar.yaml`, patched in by `make-epp.sh`) |
 
 **Approximate prefix scoring works without engine support.** The producer gets token IDs from the
@@ -74,16 +75,31 @@ vLLM pool (`--enable-prefix-caching`); no for vllm-rbln compiled with `--block-s
 `--max-model-len 512` (no full block is ever shared); none on the rngd-pd path until aicomp#46 adds
 prefix reuse, where affinity only concentrates load. Hence prefix weight 1 against 2 + 2 for load.
 
+Measured on the A100 pool with two replicas ([experiment](../../experiments/2026-10-19-w4w5-gpu/README.md)):
+affinity works (one shared prefix, sequential: 20/20 requests on one pod, `queue-kv` 10/10), but
+with weight 1 the load scores outvote it once requests run concurrently. Under KV-cache pressure
+(220 prefixes of 2.9k tokens, more than one pod's 446k-token cache) the vLLM prefix hit ratio was
+0.56-0.59 with weight 1 against 0.55-0.57 for `queue-kv`; `approx-prefix-gpu` (weight 3) reached
+0.63-0.65 and cut TTFT p50 by 20 % and wall time by 16 %. Use `approx-prefix-gpu` on the A100 pool.
+
 **Precise prefix scoring (opt-in)** follows the engines' own caches. Contract for an engine
 (what Optimus Prime needs to publish for aicomp#46, as vLLM does with
-`--kv-events-config '{"enable_kv_cache_events":true,"publisher":"zmq","endpoint":"tcp://*:5557","topic":"kv@$(POD_IP)@<model>"}'`):
+`--block-size=64 --kv-events-config '{"enable_kv_cache_events":true,"publisher":"zmq","endpoint":"tcp://*:5557","topic":"kv@$(POD_IP):8000@<model>"}'`):
 
-- a ZMQ PUB socket on the pod at port 5557 (+ data-parallel rank), topic `kv@<pod-ip>@<model>`; the
-  model name from the topic goes into the block key, so it must be the served model name requests use;
+- a ZMQ PUB socket on the pod at port 5557 (+ data-parallel rank), topic `kv@<pod-ip>:<serving-port>@<model>`.
+  The `<pod-ip>:<port>` part is the key the index stores blocks under, and lookups filter on the
+  endpoint's `address:port`, so a topic without the port (`kv@<pod-ip>@<model>`, as first written
+  here) delivers events that never match. The model name goes into the block key, so it must be the
+  served model name requests use;
 - vLLM KV-event batches (msgpack): `BlockStored` with the block's `token_ids` (plus `extra_keys` for
   `cache_salt` / multimodal inputs), `BlockRemoved`, `AllBlocksCleared`;
-- the EPP rehashes `token_ids` itself (`tokenProcessorConfig.blockSizeTokens`), so the engine's block
-  size and hash function do not have to match; the engine's hashes are only opaque keys.
+- the EPP rehashes `token_ids` itself (`tokenProcessorConfig.blockSizeTokens`), so the engine's hash
+  function does not matter (its hashes are only opaque keys). The block size does, in practice: with
+  vLLM's default 16 (and chunked prefill in 2048-token steps) the index predicted 0 cached tokens
+  under concurrent load and ~12 % sequentially, and it counted stores skipped as
+  `unresolved_sub_canonical_parent` (an event whose parent block ends inside a 64-token block); with
+  `--block-size=64` it predicted 85-89 % of prompt tokens for shared prefixes. We did not trace the
+  16-token path further. Publish blocks of `blockSizeTokens` (64).
 
 The EPP subscribes per endpoint when it sees the pod (`endpoint-notification-source` →
 precise-prefix-cache-producer). An endpoint that publishes nothing scores 0 on prefix and is still

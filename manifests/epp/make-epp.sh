@@ -3,7 +3,7 @@
 # cloning the working gemma4-rbln-epp reference. One EPP per pool (llm-d pattern).
 #
 # Usage:
-#   [EPP_PROFILE=<profile>] [EPP_MODEL=<hf-id>] [EPP_RENDER_ONLY=1] ./make-epp.sh <pool-name> <route-path> [namespace]
+#   [EPP_PROFILE=<profile>] [EPP_MODEL=<hf-id>] [EPP_RENDER_ONLY=1] [EPP_ROLLOUT_TIMEOUT=600s] ./make-epp.sh <pool-name> <route-path> [namespace]
 # Example:
 #   ./make-epp.sh koni-pool /koni llm-serving
 #   EPP_PROFILE=queue-kv ./make-epp.sh llama8b-pd-pool /pd
@@ -14,6 +14,7 @@
 #   (unset)         the reference's own config (queue, kv, prefix, no-hit-lru)
 #   queue-kv        queue + KV utilization only (NPU pools)
 #   approx-prefix   + approximate prefix affinity, no engine support needed
+#   approx-prefix-gpu  approx-prefix with prefix weight 3, for engines that reuse prefixes (A100 vLLM)
 #   precise-prefix  + prefix scoring from engine KV events (opt-in; also adds the render sidecar)
 #
 # Prereqs (per model):
@@ -99,7 +100,10 @@ if [[ -n "$SIDECAR" ]]; then
   kubectl -n "$NS" patch "deploy/${NAME}" --patch-file "$SIDECAR"
 fi
 kubectl -n "$NS" rollout resume "deploy/${NAME}" 2>/dev/null || true   # reference is paused
-kubectl -n "$NS" rollout status "deploy/${NAME}" --timeout=120s
+# The EPP terminates with a 130 s grace period (Recreate), and precise-prefix also pulls the ~1.2 GB
+# render image and loads the tokenizer: its first rollout took > 120 s on the A100 pool.
+ROLLOUT_TIMEOUT="${EPP_ROLLOUT_TIMEOUT:-$([[ -n "$SIDECAR" ]] && echo 600s || echo 120s)}"
+kubectl -n "$NS" rollout status "deploy/${NAME}" --timeout="$ROLLOUT_TIMEOUT"
 
 echo ">> pointing InferencePool $POOL endpointPickerRef -> $NAME"
 kubectl -n "$NS" patch inferencepool "$POOL" --type=json \
