@@ -17,7 +17,7 @@
 
 - A: 빈 CRD 캐시 + `https_proxy`를 응답 없는 리스너로 (curl 경로)
 - B: kubeconfig의 server를 응답 없는 리스너로 (kubectl 경로)
-- C: kubeconfig server가 no route (10.255.255.1)
+- C: kubeconfig server가 no route (192.0.2.1, TEST-NET-1)
 
 ## Command
 
