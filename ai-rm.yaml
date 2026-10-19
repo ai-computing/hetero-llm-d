@@ -1,4 +1,4 @@
-name: llm-d-setup
+name: hetero-llm-d
 protocol: "0.1"
 layer: l4-cluster
 kind: cluster
