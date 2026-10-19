@@ -294,13 +294,21 @@ required node affinity로 걸고, KEDA `maxReplicaCount`를 배치된 카드 수
 |---|---|---|---|
 | `queue-kv` | 대기 큐, KV 캐시 사용률 | `/metrics`(vLLM 또는 furiosa-llm 이름) | NPU 풀, aicomp#45 이후 rngd-pd 경로 |
 | `approx-prefix` | + 근사 prefix affinity(EPP가 보낸 프롬프트를 직접 해시) | 없음 | 모든 풀. 엔진이 prefix를 캐시할 때만 이득 |
+| `approx-prefix-gpu` | `approx-prefix`에서 prefix 가중치만 3 | 없음 | A100 vLLM 풀 (실측: 가중치 1은 부하가 걸리면 affinity를 잃음) |
 | `precise-prefix` (선택) | + 엔진 KV 블록 이벤트(ZMQ, vLLM 형식) 기반 prefix 적중 | KV 이벤트 + 실제 토큰 ID용 render sidecar | 지금은 A100 vLLM, aicomp#46 이후 Optimus Prime |
 
 근사 prefix 점수는 엔진 지원이 필요 없습니다. EPP가 토크나이저 없는 `estimate` 백엔드로 토큰을 어림하고, 프롬프트를 블록으로
 해시해 어느 endpoint로 보냈는지 기억하므로 지금 모든 풀에서 돕니다. 효과는 엔진에 달렸습니다. A100 vLLM
 (`--enable-prefix-caching`)은 블록을 재사용하지만, `--block-size 512 --max-model-len 512`인 vllm-rbln은 꽉 찬 블록을 재사용할
 수 없고, rngd-pd 경로는 aicomp#46 전까지 매 요청을 처음부터 prefill하므로 부하만 몰립니다. 그래서 프로파일은 prefix 가중치(1)를
-큐·KV(각 2)보다 낮게 둡니다. 이 판단은 고정 소스 기준이며 실측은 아닙니다.
+큐·KV(각 2)보다 낮게 둡니다.
+
+A100 풀 replica 2개에서 실측했습니다([실험](experiments/2026-10-19-w4w5-gpu/README.md)). prefix affinity 자체는 동작합니다(같은
+prefix 20요청이 모두 한 pod로, prefix 8개 순차 요청에서 vLLM 적중률 0.864 대 `queue-kv` 0.742). 하지만 가중치 1이면 요청이
+동시에 들어올 때 부하 점수가 affinity를 이깁니다. KV 캐시 압박(2.9k 토큰 prefix 220개, pod 하나의 캐시 446k 토큰보다 큼)에서
+적중률은 0.574로 `queue-kv` 0.560과 같았고, prefix 가중치 3(`approx-prefix-gpu`)은 0.639, TTFT p50 -20 %, 전체 시간 -16 %였습니다.
+`precise-prefix`는 엔진 쪽 두 가지를 고친 뒤에야 같은 수준(0.630)이 됐습니다. KV 이벤트 토픽은 `kv@<pod-ip>:<port>@<model>`,
+엔진 블록 크기는 64여야 합니다.
 
 **오토스케일**([`manifests/autoscaling/`](manifests/autoscaling))은 이미 설치된 KEDA 2.19를 씁니다.
 
@@ -313,8 +321,9 @@ required node affinity로 걸고, KEDA `maxReplicaCount`를 배치된 카드 수
 vLLM은 이 지표를 지금 내므로 GPU 풀을 먼저 연결했습니다. NPU ScaledObject도 같은 이름을 읽는데, PD 단계는 aicomp#45 이후에야
 이 지표를 냅니다. 그 전에는 쿼리 결과가 비어 `ignoreNullValues`가 0으로 읽고 풀은 최소 replica에 머뭅니다. 그래프를 미리
 컴파일한 cold start는 prefill 62 s, decode 18 s([ai-rm workload traces](https://github.com/ai-computing/ai-rm/blob/master/docs/workload-traces.md))이므로
-확장은 120 s / 60 s마다 한 개씩(새 pod가 Ready가 된 뒤 다음 판단), 축소는 10분을 기다리고, 0으로는 줄이지 않습니다. A100 cold
-start는 이 레포에서 재지 않았습니다. `maxReplicaCount`는 노드당 카드 수이고(shm은 prefill과 decode를 한 호스트에 둔다), 배치 반영
+확장은 120 s / 60 s마다 한 개씩(새 pod가 Ready가 된 뒤 다음 판단), 축소는 10분을 기다리고, 0으로는 줄이지 않습니다. A100 vLLM
+cold start는 실측으로 pod 시작부터 Ready까지 110-111 s(replica 2개가 동시에 뜨면 120-121 s, 절반이 torch.compile과 CUDA graph
+캡처)이고, 부하가 걸리자 HPA가 21 s 만에 1 → 2로 늘렸습니다. `maxReplicaCount`는 노드당 카드 수이고(shm은 prefill과 decode를 한 호스트에 둔다), 배치 반영
 훅이 배치된 카드 수로 낮춥니다.
 
 <details>
@@ -324,8 +333,8 @@ start는 이 레포에서 재지 않았습니다. `maxReplicaCount`는 노드당
 ```bash
 python3 scripts/check-epp-config.py && python3 scripts/test-airm-placement.py
 # 1. 풀에 EPP 프로파일 (먼저 렌더링, 다음 적용)
-EPP_PROFILE=approx-prefix EPP_RENDER_ONLY=1 manifests/epp/make-epp.sh vllm-a100-pool /gpu | kubectl apply --dry-run=server -f -
-EPP_PROFILE=approx-prefix manifests/epp/make-epp.sh vllm-a100-pool /gpu
+EPP_PROFILE=approx-prefix-gpu EPP_RENDER_ONLY=1 manifests/epp/make-epp.sh vllm-a100-pool /gpu | kubectl apply --dry-run=server -f -
+EPP_PROFILE=approx-prefix-gpu manifests/epp/make-epp.sh vllm-a100-pool /gpu
 kubectl -n llm-serving logs deploy/vllm-a100-epp | grep -iE 'error|plugin'        # strict 설정 로드
 # 2. GPU 풀 오토스케일
 kubectl apply --dry-run=server -f manifests/autoscaling/keda-vllm-a100.yaml
@@ -394,6 +403,7 @@ vLLM 포크, HF Hub `rebellions-sw/*` 컴파일 모델 사용).
 - [ ] 용량을 고려하는 이기종 EPP scorer를 같은 부하로 비교
 - [ ] 가속기 간 같은 부하 에너지 비교 (`scripts/hetero-sweep.py`, 지금까지 A100만 측정)
 - [x] EPP 프로파일 `queue-kv`, `approx-prefix`, 선택형 `precise-prefix`, A100 풀과 PD 단계용 KEDA ScaledObject, `airm-placement` 배치 반영 훅 (오프라인 검사 통과, 실클러스터 적용 전)
+- [x] A100 풀에서 W4/W5 실측([실험](experiments/2026-10-19-w4w5-gpu/README.md)): prefix 라우팅(`approx-prefix-gpu`, 이벤트 계약을 고친 `precise-prefix`), KEDA 1 → 2 → 1, A100 cold start 110 s
 - [ ] PD 경로의 precise prefix 라우팅(aicomp#46 필요)과 실지표 기반 NPU 오토스케일(aicomp#45 필요)
 - [ ] `airm-placement`를 읽는 EPP scorer
 

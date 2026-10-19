@@ -1,0 +1,96 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"keda.sh/v1alpha1","kind":"ScaledObject","metadata":{"annotations":{},"labels":{"airm.ai-computing.io/accelerator":"nvidia.A100","app.kubernetes.io/part-of":"hetero-llm-d"},"name":"vllm-a100-llama31-8b","namespace":"llm-serving"},"spec":{"advanced":{"horizontalPodAutoscalerConfig":{"behavior":{"scaleDown":{"policies":[{"periodSeconds":300,"type":"Pods","value":1}],"selectPolicy":"Min","stabilizationWindowSeconds":600},"scaleUp":{"policies":[{"periodSeconds":120,"type":"Pods","value":1}],"selectPolicy":"Max","stabilizationWindowSeconds":0}}}},"cooldownPeriod":600,"maxReplicaCount":2,"minReplicaCount":1,"pollingInterval":15,"scaleTargetRef":{"name":"vllm-a100-llama31-8b"},"triggers":[{"metadata":{"ignoreNullValues":"true","query":"sum(vllm:num_requests_waiting{namespace=\"llm-serving\",service=\"vllm-a100-llama31-8b\"})","serverAddress":"http://kube-prometheus-stack-prometheus.monitoring.svc:9090","threshold":"4"},"metricType":"AverageValue","name":"queue","type":"prometheus"},{"metadata":{"ignoreNullValues":"true","query":"histogram_quantile(0.9, sum by (le) (rate(vllm:time_to_first_token_seconds_bucket{namespace=\"llm-serving\",service=\"vllm-a100-llama31-8b\"}[2m]))) \u003e 0 or vector(0)","serverAddress":"http://kube-prometheus-stack-prometheus.monitoring.svc:9090","threshold":"1"},"metricType":"Value","name":"ttft-p90","type":"prometheus"}]}}
+  creationTimestamp: "2026-10-19T11:02:44Z"
+  finalizers:
+  - finalizer.keda.sh
+  generation: 2
+  labels:
+    airm.ai-computing.io/accelerator: nvidia.A100
+    app.kubernetes.io/part-of: hetero-llm-d
+    scaledobject.keda.sh/name: vllm-a100-llama31-8b
+  name: vllm-a100-llama31-8b
+  namespace: llm-serving
+  resourceVersion: "105201188"
+  uid: f55c110c-9dce-4e13-8f7d-100270ae1538
+spec:
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleDown:
+          policies:
+          - periodSeconds: 300
+            type: Pods
+            value: 1
+          selectPolicy: Min
+          stabilizationWindowSeconds: 600
+        scaleUp:
+          policies:
+          - periodSeconds: 120
+            type: Pods
+            value: 1
+          selectPolicy: Max
+          stabilizationWindowSeconds: 0
+    scalingModifiers: {}
+  cooldownPeriod: 600
+  maxReplicaCount: 2
+  minReplicaCount: 1
+  pollingInterval: 15
+  scaleTargetRef:
+    name: vllm-a100-llama31-8b
+  triggers:
+  - metadata:
+      ignoreNullValues: "true"
+      query: sum(vllm:num_requests_waiting{namespace="llm-serving",service="vllm-a100-llama31-8b"})
+      serverAddress: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
+      threshold: "4"
+    metricType: AverageValue
+    name: queue
+    type: prometheus
+  - metadata:
+      ignoreNullValues: "true"
+      query: histogram_quantile(0.9, sum by (le) (rate(vllm:time_to_first_token_seconds_bucket{namespace="llm-serving",service="vllm-a100-llama31-8b"}[2m])))
+        > 0 or vector(0)
+      serverAddress: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
+      threshold: "1"
+    metricType: Value
+    name: ttft-p90
+    type: prometheus
+status:
+  authenticationsTypes: ""
+  conditions:
+  - message: ScaledObject is defined correctly and is ready for scaling
+    reason: ScaledObjectReady
+    status: "True"
+    type: Ready
+  - message: Scaling is not performed because triggers are not active
+    reason: ScalerNotActive
+    status: "False"
+    type: Active
+  - message: No fallbacks are active on this scaled object
+    reason: NoFallbackFound
+    status: "False"
+    type: Fallback
+  - status: "False"
+    type: Paused
+  externalMetricNames:
+  - s0-prometheus
+  - s1-prometheus
+  hpaName: keda-hpa-vllm-a100-llama31-8b
+  lastActiveTime: "2026-10-19T11:11:29Z"
+  originalReplicaCount: 1
+  scaleTargetGVKR:
+    group: apps
+    kind: Deployment
+    resource: deployments
+    version: v1
+  scaleTargetKind: apps/v1.Deployment
+  triggersActivity:
+    s0-prometheus:
+      isActive: false
+    s1-prometheus:
+      isActive: false
+  triggersTypes: prometheus
