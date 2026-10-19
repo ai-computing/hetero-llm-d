@@ -1,6 +1,6 @@
 <div align="center">
 
-<h1>llm-d-setup</h1>
+<h1>hetero-llm-d</h1>
 
 <h3>GPU·NPU·CPU 노드를 하나로 묶는 Kubernetes + llm-d 클러스터</h3>
 
@@ -28,7 +28,7 @@
 
 ---
 
-**llm-d-setup**은 NVIDIA A100, Rebellions ATOM(RBLN-CA22), Furiosa RNGD, CPU 노드를 하나의 Kubernetes 1.31
+**hetero-llm-d**(이전 이름 `llm-d-setup`)는 NVIDIA A100, Rebellions ATOM(RBLN-CA22), Furiosa RNGD, CPU 노드를 하나의 Kubernetes 1.31
 클러스터로 묶고 llm-d(Gateway → InferencePool → EPP)로 서빙하기 위한 부트스트랩 스크립트, 매니페스트, 운영 메모를
 담고 있습니다. 공유 모델 스토어와 Prometheus/Grafana 모니터링도 포함합니다. [ai-rm](https://github.com/ai-computing/ai-rm)의
 **L4 클러스터·배치** 구성요소로, 다른 ai-rm 구성요소가 올라가는 클러스터이자 protocol v0.1 구성 요소들이 만나는 자리입니다.
@@ -74,7 +74,7 @@ kube-prometheus-stack에 DCGM·Furiosa·RBLN·vLLM·EPP·IPMI wall 전력 export
 사이트 값을 설정하고, 클러스터나 가속기 없이 도는 검사를 실행합니다.
 
 ```bash
-git clone https://github.com/ai-computing/llm-d-setup.git && cd llm-d-setup
+git clone https://github.com/ai-computing/hetero-llm-d.git ~/llm-d-setup && cd ~/llm-d-setup   # 스크립트와 문서가 이 경로를 씀
 cp cluster.example.env cluster.local.env          # untracked, 사이트 값을 채운다
 python3 scripts/test-model-store-discovery.py      # 모델 스토어 discovery 오프라인 회귀 테스트
 bash -n scripts/*.sh manifests/epp/make-epp.sh     # 셸 스크립트 문법 검사

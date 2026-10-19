@@ -1,6 +1,6 @@
 <div align="center">
 
-<h1>llm-d-setup</h1>
+<h1>hetero-llm-d</h1>
 
 <h3>One Kubernetes + llm-d cluster for GPU, NPU and CPU nodes</h3>
 
@@ -28,7 +28,7 @@
 
 ---
 
-**llm-d-setup** holds the bootstrap scripts, manifests and operating notes that join NVIDIA A100, Rebellions
+**hetero-llm-d** (formerly `llm-d-setup`) holds the bootstrap scripts, manifests and operating notes that join NVIDIA A100, Rebellions
 ATOM (RBLN-CA22), Furiosa RNGD and CPU nodes into one Kubernetes 1.31 cluster, served through llm-d
 (Gateway → InferencePool → EPP) with a shared model store and Prometheus/Grafana monitoring. It is the
 **L4 cluster & placement** component of [ai-rm](https://github.com/ai-computing/ai-rm): the cluster the
@@ -76,7 +76,7 @@ kube-prometheus-stack with DCGM, Furiosa, RBLN, vLLM, EPP and IPMI wall-power ex
 Configure the site and run the checks that need no cluster or accelerator:
 
 ```bash
-git clone https://github.com/ai-computing/llm-d-setup.git && cd llm-d-setup
+git clone https://github.com/ai-computing/hetero-llm-d.git ~/llm-d-setup && cd ~/llm-d-setup   # scripts and notes use this path
 cp cluster.example.env cluster.local.env          # untracked; fill in site values
 python3 scripts/test-model-store-discovery.py      # offline regression test for model-store discovery
 bash -n scripts/*.sh manifests/epp/make-epp.sh     # shell syntax check
