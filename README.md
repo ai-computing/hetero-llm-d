@@ -19,6 +19,7 @@
 <p>
   <a href="#-quick-start"><b>Quick start</b></a> ·
   <a href="#-ai-rm-integration"><b>ai-rm</b></a> ·
+  <a href="#-cache-aware-routing-and-autoscaling"><b>Routing &amp; scaling</b></a> ·
   <a href="#-architecture"><b>Architecture</b></a> ·
   <a href="#-documentation"><b>Docs</b></a> ·
   <a href="STATUS.md"><b>Status</b></a>
@@ -238,12 +239,15 @@ The cluster side of [rm-core PROTOCOL v0.1](https://github.com/ai-computing/rm-c
 | `airm_*` metrics scrape | `deploy/airm/scrape-airm.yaml`: ScrapeConfig for pods annotated `airm.ai-computing.io/scrape: "true"` (`/metrics`, default port 9400) |
 | `airm_*` dashboard | `monitoring/grafana-dashboards/airm.json` (ConfigMap `grafana-dashboard-airm`) |
 | Placement hand-off | `deploy/airm/airm-placement.yaml`: ConfigMap `llm-serving/airm-placement`, installed empty |
+| Placement hook | `scripts/airm-placement.py`, run by `scripts/airm-install.sh … placement`: node affinity + KEDA cap from `decisions.json` |
 | Umbrella chart cluster values | `deploy/helm/cluster-values.yaml` |
 
 ```bash
 scripts/airm-install.sh dry-run              # server dry-run: CRD + ScrapeConfig + ConfigMap + dashboard
 scripts/airm-install.sh apply crd            # install the CRD
 scripts/airm-install.sh apply manifests      # scrape config, airm-placement, dashboard
+scripts/airm-install.sh dry-run placement    # what the rm-controller decisions would change on the Deployments
+scripts/airm-install.sh apply placement      # pin them (restarts the pods it moves; never part of `all`)
 # rollback (deleting the CRD also deletes every AcceleratorProfile object)
 scripts/airm-install.sh delete manifests
 scripts/airm-install.sh delete crd
@@ -256,6 +260,16 @@ the `placement` policy name and a `decisions` list of `{pool, workload, accelera
 Accelerators are referenced by id only, never by address. An empty `decisions` list (the installed state) means
 "behave as if the ConfigMap did not exist". The full format, field table and the EPP scorer slot (documented, not
 yet implemented; v0.1 changes no live EPP config) are in [deploy/airm/README.md](deploy/airm/README.md).
+
+**Placement hook.** A serving Deployment opts in with the label `airm.ai-computing.io/pool=<InferencePool>`; its
+`llm-d.ai/role` label (`prefill`, `decode`, absent = serve) picks the decision. `scripts/airm-install.sh apply placement`
+then sets required node affinity to the decision's nodes (from `acceleratorIds`, `<node>/<vendor>:<index>`) **and** the
+node summary label `airm.ai-computing.io/<vendor>.<model>` that rm-controller filtered on, caps the Deployment's KEDA
+`maxReplicaCount` at the placed cards, and records the document `generation` so it is applied once. An empty document,
+a pool without a decision, or a decision with no cards (nothing fits) changes nothing. Which card index a pod gets
+stays with the device plugin. For a Helm install the same decision is a value:
+`helm upgrade rngd-pd … --set-json "nodeAffinity=$(scripts/airm-placement.py affinity --decisions cm.json --pool llama8b-pd-pool)"`
+(one value for all roles, so it pins nodes only).
 
 <details>
 <summary><b>Where other ai-rm components attach</b></summary>
@@ -271,6 +285,65 @@ yet implemented; v0.1 changes no live EPP config) are in [deploy/airm/README.md]
 
 KPIs tracked here: heterogeneous resources (A100 · ATOM · RNGD · GB10 · CPU behind one Gateway), power efficiency
 (tok/J from DCGM and IPMI wall power, `scripts/hetero-sweep.py`) and SLO (EPP TTFT/TPOT metrics).
+</details>
+
+## 📈 Cache-aware routing and autoscaling
+
+Roadmap gaps W4 (cache reuse) and W5 (control loop), cluster side. The engine side is tracked in
+[aicomp#45](https://github.com/ai-computing/aicomp/issues/45) (vLLM-compatible `/metrics` on the PD stages) and
+[aicomp#46](https://github.com/ai-computing/aicomp/issues/46) (KV-block events and prefix reuse).
+
+**EPP scheduling profiles** ([`manifests/epp/profiles/`](manifests/epp/README.md#scheduling-profiles)), checked against
+the pinned llm-d-router `e194457dc507` by `scripts/check-epp-config.py`, installed with
+`EPP_PROFILE=<profile> manifests/epp/make-epp.sh <pool> /<path>`:
+
+| Profile | Scores | Engine support needed | Use now on |
+|---|---|---|---|
+| `queue-kv` | waiting queue, KV-cache utilization | `/metrics` (vLLM or furiosa-llm names) | NPU pools; the rngd-pd path once aicomp#45 lands |
+| `approx-prefix` | + approximate prefix affinity (EPP-side hashing of routed prompts) | none | any pool; pays off only where the engine caches prefixes |
+| `precise-prefix` (opt-in) | + prefix hits from the engines' KV-block events (ZMQ, vLLM format) | KV events + a render sidecar for real token IDs | A100 vLLM today; Optimus Prime after aicomp#46 |
+
+Approximate prefix scoring needs no engine support: the EPP tokenizes with its tokenizer-free `estimate` backend,
+hashes the prompt into blocks and remembers which endpoint got them, so it runs on every pool now. Whether it helps
+depends on the engine: the A100 vLLM pool (`--enable-prefix-caching`) reuses the blocks; vllm-rbln with
+`--block-size 512 --max-model-len 512` can never reuse a full block; the rngd-pd path prefills every request from
+scratch until aicomp#46, so there it only concentrates load. The profile therefore weights prefix (1) below queue and
+KV (2 each). This is from the pinned source, not a live measurement.
+
+**Autoscaling** ([`manifests/autoscaling/`](manifests/autoscaling)) uses the KEDA 2.19 already installed:
+
+| ScaledObject | Target | Triggers | Replicas | Scale up / down |
+|---|---|---|---|---|
+| `vllm-a100-llama31-8b` | A100 vLLM | `vllm:num_requests_waiting` / 4 per pod; TTFT p90 vs 1 s | 1–2 | 1 pod / 120 s; after 10 min, 1 pod / 5 min |
+| `rngd-pd-prefill` | RNGD prefill | waiting / 2 per pod; TTFT p90 vs 2 s | 1–3 | 1 pod / 120 s; after 10 min, 1 pod / 5 min |
+| `rngd-pd-decode` | ATOM decode | running / 6 per pod (B8), waiting / 1; TPOT p90 vs 100 ms | 1–4 | 1 pod / 60 s; after 10 min, 1 pod / 5 min |
+
+The GPU pool is wired first because vLLM exposes these metrics today. The NPU ScaledObjects read the same names, which
+the PD stages expose only after aicomp#45; until then the queries are empty, `ignoreNullValues` reads 0 and the pools
+stay at their minimum. Cold start with pre-compiled graphs is prefill 62 s and decode 18 s
+([ai-rm workload traces](https://github.com/ai-computing/ai-rm/blob/master/docs/workload-traces.md)), so scale-up adds
+one pod per 120 s / 60 s (the new pod is Ready before the next step), scale-down waits 10 minutes, and no pool scales to
+zero. The A100 cold start is not measured here. `maxReplicaCount` is cards per node (shm keeps prefill and decode on
+one host) and is lowered to the placed cards by the placement hook.
+
+<details>
+<summary><b>Live-cluster check (for the operator)</b></summary>
+<br>
+
+```bash
+python3 scripts/check-epp-config.py && python3 scripts/test-airm-placement.py
+# 1. EPP profile on a pool (render first, then apply)
+EPP_PROFILE=approx-prefix EPP_RENDER_ONLY=1 manifests/epp/make-epp.sh vllm-a100-pool /gpu | kubectl apply --dry-run=server -f -
+EPP_PROFILE=approx-prefix manifests/epp/make-epp.sh vllm-a100-pool /gpu
+kubectl -n llm-serving logs deploy/vllm-a100-epp | grep -iE 'error|plugin'        # strict config load
+# 2. Autoscaling on the GPU pool
+kubectl apply --dry-run=server -f manifests/autoscaling/keda-vllm-a100.yaml
+kubectl apply -f manifests/autoscaling/keda-vllm-a100.yaml
+kubectl -n llm-serving get scaledobject vllm-a100-llama31-8b; kubectl -n llm-serving describe hpa keda-hpa-vllm-a100-llama31-8b
+# 3. Placement (after rm-controller wrote decisions and the Deployments carry airm.ai-computing.io/pool)
+kubectl -n llm-serving label deploy rngd-pd-prefill rngd-pd-decode airm.ai-computing.io/pool=llama8b-pd-pool
+scripts/airm-install.sh dry-run placement && scripts/airm-install.sh apply placement
+```
 </details>
 
 ## 🏗 Architecture
@@ -310,7 +383,7 @@ configured (`cluster.example.env`); see [STATUS.md](STATUS.md) for which nodes a
 |---|---|
 | 🧭 **Get oriented** | [Environment guide](docs/ENVIRONMENT-GUIDE.md) · [Status and findings](STATUS.md) |
 | 🧩 **What runs where** | [llm-d features and per-worker matrix](FEATURES.md) · [NPU compatibility report](NPU-FEATURES.md) · [Serving playbook](PLAYBOOK.md) |
-| 🔧 **Operate** | [EPP per InferencePool](manifests/epp/README.md) · [Shared model store](manifests/README-model-store.md) · [Monitoring](monitoring/README.md) · [Cluster notes](docs/cluster-notes.md) |
+| 🔧 **Operate** | [EPP per InferencePool and profiles](manifests/epp/README.md) · [Autoscaling](manifests/autoscaling) · [Shared model store](manifests/README-model-store.md) · [Monitoring](monitoring/README.md) · [Cluster notes](docs/cluster-notes.md) |
 | 🔌 **ai-rm** | [deploy/airm](deploy/airm/README.md) · [`ai-rm.yaml`](ai-rm.yaml) · [ai-rm hub](https://github.com/ai-computing/ai-rm) |
 | 📊 **Experiments** | [Mixed A100 · ATOM · RNGD pool](experiments/2026-10-19-hetero-llama8b-mixed-pool.md) · [airm-install hang](experiments/2026-10-19-airm-install-hang.md) |
 
@@ -329,6 +402,8 @@ vLLM fork, using compiled models from HF Hub `rebellions-sw/*`).
 - [x] One InferencePool routing Llama-3.1-8B across A100, ATOM and RNGD ([experiment](experiments/2026-10-19-hetero-llama8b-mixed-pool.md)); the default EPP scores ignore device speed, so the mixed pool was slower than A100 alone
 - [ ] Capacity-aware heterogeneous EPP scorer, compared under the same load
 - [ ] Same-load energy comparison across accelerators (`scripts/hetero-sweep.py`; only A100 points measured so far)
+- [x] EPP profiles `queue-kv`, `approx-prefix`, opt-in `precise-prefix`; KEDA ScaledObjects for the A100 pool and the PD stages; placement hook from `airm-placement` (offline checks; live rollout pending)
+- [ ] Precise prefix routing on the PD path (needs aicomp#46) and NPU autoscaling on live metrics (needs aicomp#45)
 - [ ] EPP scorer that reads `airm-placement`
 
 Open issues, node outages and the measurements behind each item: [STATUS.md](STATUS.md).
