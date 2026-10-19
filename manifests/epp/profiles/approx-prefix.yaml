@@ -1,0 +1,57 @@
+# EPP profile `approx-prefix`: queue + KV load scoring plus APPROXIMATE prefix-cache affinity.
+#
+# Needs no engine support. The EPP itself tokenizes the prompt (tokenizer-free `estimate`
+# backend, ~4 bytes/token), hashes it into blocks and remembers which endpoint it routed each
+# block to (per-endpoint LRU). The next request sharing that prefix scores higher on the same
+# endpoint. No KV events, no tokenizer service, no engine change.
+#
+# What it buys depends on the engine behind the endpoint:
+#   - engine with a prefix cache (vLLM --enable-prefix-caching, A100 pool): fewer prefill tokens,
+#     lower TTFT for shared prefixes;
+#   - engine with a prefix cache but block >= prompt (vllm-rbln --block-size 512 with
+#     --max-model-len 512): no full block is ever reused, so no gain;
+#   - engine without a prefix cache (the rngd-pd PD path until aicomp#46): only affinity; requests
+#     are not faster and load concentrates, which is why prefix weight stays below queue + KV here.
+# autoTune reads block size / block count from the engine's cache-config metric when present
+# (vllm:cache_config_info, furiosa_llm_cache_config_info); otherwise it uses blockSizeTokens
+# (clamped up to 64 by the EPP) and lruCapacityPerServer below.
+#
+# Install: EPP_PROFILE=approx-prefix manifests/epp/make-epp.sh <pool> /<path>
+apiVersion: llm-d.ai/v1alpha1
+kind: EndpointPickerConfig
+plugins:
+- type: queue-scorer
+- type: kv-cache-utilization-scorer
+- type: approx-prefix-cache-producer
+  parameters:
+    autoTune: true
+    blockSizeTokens: 64
+    lruCapacityPerServer: 31250
+- type: prefix-cache-scorer
+  parameters:
+    prefixMatchInfoProducerName: approx-prefix-cache-producer
+- type: metrics-data-source
+  parameters:
+    scheme: http
+    path: /metrics
+    insecureSkipVerify: true
+- type: core-metrics-extractor
+  parameters:
+    engineLabelKey: llm-d.ai/engine-type
+    defaultEngine: vllm
+    engineConfigs:
+    - name: furiosa-llm
+      queuedRequestsSpec: furiosa_llm_num_requests_waiting
+      runningRequestsSpec: furiosa_llm_num_requests_running
+      kvUsageSpec: furiosa_llm_kv_cache_usage_percent
+      loraSpec: ""
+      cacheInfoSpec: furiosa_llm_cache_config_info
+schedulingProfiles:
+- name: default
+  plugins:
+  - pluginRef: queue-scorer
+    weight: 2
+  - pluginRef: kv-cache-utilization-scorer
+    weight: 2
+  - pluginRef: prefix-cache-scorer
+    weight: 1

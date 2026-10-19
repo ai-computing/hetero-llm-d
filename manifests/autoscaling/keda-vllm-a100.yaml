@@ -1,0 +1,64 @@
+# KEDA autoscaling for the A100 vLLM pool (manifests/vllm-a100-llama31-8b.yaml). Wired first because
+# vLLM exposes the metrics today, so the loop can be tested before the NPU stages do (aicomp#45).
+#
+# KEDA 2.19 is installed (helm release `keda`); it drives an HPA named keda-hpa-<name>.
+# Triggers (desired replicas = the larger of the two):
+#   queue  sum(vllm:num_requests_waiting) / 4 per replica       (AverageValue)
+#   TTFT   p90 time-to-first-token over 2 min vs a 1 s target    (Value: replicas * p90 / 1 s)
+# min 1: no scale-to-zero, a cold vLLM start costs the first users their TTFT.
+# max 2: the node has two A100s and each replica takes one.
+# The A100 cold start is not measured in this repo (readinessProbe allows 600 s); the scale-up step
+# below (one pod per 120 s) assumes it is under two minutes. Measure it on the first scale-up:
+#   kubectl -n llm-serving get pod -l app=vllm-a100-llama31-8b -o json | jq -r '.items[] |
+#     [.metadata.name, .status.startTime, (.status.conditions[] | select(.type=="Ready") | .lastTransitionTime)] | @tsv'
+#
+#   kubectl apply -f manifests/autoscaling/keda-vllm-a100.yaml
+#   kubectl -n llm-serving get scaledobject,hpa
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: vllm-a100-llama31-8b
+  namespace: llm-serving
+  labels:
+    app.kubernetes.io/part-of: hetero-llm-d
+    airm.ai-computing.io/accelerator: nvidia.A100
+spec:
+  scaleTargetRef:
+    name: vllm-a100-llama31-8b
+  minReplicaCount: 1
+  maxReplicaCount: 2
+  pollingInterval: 15
+  cooldownPeriod: 600            # only used for scale to zero; kept equal to the scale-down window
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 0
+          selectPolicy: Max
+          policies:
+          - {type: Pods, value: 1, periodSeconds: 120}
+        scaleDown:
+          stabilizationWindowSeconds: 600
+          selectPolicy: Min
+          policies:
+          - {type: Pods, value: 1, periodSeconds: 300}
+  triggers:
+  - type: prometheus
+    name: queue
+    metricType: AverageValue
+    metadata:
+      serverAddress: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
+      query: sum(vllm:num_requests_waiting{namespace="llm-serving",service="vllm-a100-llama31-8b"})
+      threshold: "4"
+      ignoreNullValues: "true"
+  - type: prometheus
+    name: ttft-p90
+    metricType: Value
+    metadata:
+      serverAddress: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
+      # `> 0 or vector(0)`: no traffic gives NaN, which must read as "no pressure", not an error.
+      query: >-
+        histogram_quantile(0.9, sum by (le) (rate(vllm:time_to_first_token_seconds_bucket{namespace="llm-serving",service="vllm-a100-llama31-8b"}[2m])))
+        > 0 or vector(0)
+      threshold: "1"
+      ignoreNullValues: "true"
