@@ -1,0 +1,2 @@
+2026-10-19T11:04:15Z	2026-10-19T11:04:15Z	SuccessfulRescale	New size: 2; reason: external metric s0-prometheus(&LabelSelector{MatchLabels:map[string]string{scaledobject.keda.sh/name: vllm-a100-llama31-8b,},MatchExpressions:[]LabelSelectorRequirement{},}) above target
+2026-10-19T11:21:31Z	2026-10-19T11:21:31Z	SuccessfulRescale	New size: 1; reason: All metrics below target

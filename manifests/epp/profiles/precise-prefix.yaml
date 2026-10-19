@@ -7,9 +7,15 @@
 #
 # Requirements, all three:
 #   1. Engines publish events. vLLM (A100 pool) does today:
-#        --enable-prefix-caching
-#        --kv-events-config '{"enable_kv_cache_events":true,"publisher":"zmq","endpoint":"tcp://*:5557","topic":"kv@$(POD_IP)@<model>"}'
+#        --enable-prefix-caching --block-size=64
+#        --kv-events-config '{"enable_kv_cache_events":true,"publisher":"zmq","endpoint":"tcp://*:5557","topic":"kv@$(POD_IP):8000@<model>"}'
 #      plus containerPort 5557 and env POD_IP (status.podIP). <model> = the served model name.
+#      The topic must carry the serving port (`<pod-ip>:<port>`): the index stores blocks under
+#      that string and lookups filter on the endpoint's `address:port`; with `kv@<pod-ip>@...`
+#      events arrive but nothing ever matches. The engine block size must equal blockSizeTokens
+#      below (64): with vLLM's default 16 and chunked prefill the index matched nothing under
+#      concurrent load (stores skipped as unresolved_sub_canonical_parent). Both measured on the
+#      A100 pool, experiments/2026-10-19-w4w5-gpu.
 #      Optimus Prime PD stages will after aicomp#46. vllm-rbln and furiosa-llm are not verified
 #      to publish them (keep `approx-prefix` there until checked).
 #   2. Real token IDs in the EPP: the `estimate` tokenizer cannot match engine tokens. The

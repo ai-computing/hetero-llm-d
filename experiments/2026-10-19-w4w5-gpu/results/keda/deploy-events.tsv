@@ -1,0 +1,14 @@
+2026-10-19T10:33:26Z	2026-10-19T10:33:26Z	ScalingReplicaSet	Scaled down replica set vllm-a100-llama31-8b-c7dfddc69 to 0 from 2
+2026-10-19T10:33:28Z	2026-10-19T10:33:28Z	ScalingReplicaSet	Scaled up replica set vllm-a100-llama31-8b-85cfcbb6c8 to 2
+2026-10-19T10:48:03Z	2026-10-19T10:48:03Z	ScalingReplicaSet	Scaled down replica set vllm-a100-llama31-8b-85cfcbb6c8 to 0 from 2
+2026-10-19T10:48:05Z	2026-10-19T10:48:05Z	ScalingReplicaSet	Scaled up replica set vllm-a100-llama31-8b-667bc85956 to 2
+2026-10-19T10:54:10Z	2026-10-19T10:54:10Z	ScalingReplicaSet	Scaled down replica set vllm-a100-llama31-8b-667bc85956 to 0 from 2
+2026-10-19T10:54:12Z	2026-10-19T10:54:12Z	ScalingReplicaSet	Scaled up replica set vllm-a100-llama31-8b-6b8f9959bd to 2
+2026-10-19T11:00:31Z	2026-10-19T11:00:31Z	ScalingReplicaSet	Scaled down replica set vllm-a100-llama31-8b-6b8f9959bd to 1 from 2
+2026-10-19T11:00:31Z	2026-10-19T11:00:31Z	ScalingReplicaSet	Scaled down replica set vllm-a100-llama31-8b-6b8f9959bd to 0 from 1
+2026-10-19T11:00:45Z	2026-10-19T11:00:45Z	ScalingReplicaSet	Scaled up replica set vllm-a100-llama31-8b-c7dfddc69 to 1 from 0
+2026-10-19T11:02:44Z	2026-10-19T11:02:44Z	KEDAScalersStarted	Scaler prometheus is built
+2026-10-19T11:02:44Z	2026-10-19T11:02:44Z	KEDAScalersStarted	Started scalers watch
+2026-10-19T11:02:44Z	2026-10-19T11:02:44Z	ScaledObjectReady	ScaledObject is ready for scaling
+2026-10-19T11:04:15Z	2026-10-19T11:04:15Z	ScalingReplicaSet	Scaled up replica set vllm-a100-llama31-8b-c7dfddc69 to 2 from 1
+2026-10-19T11:21:31Z	2026-10-19T11:21:31Z	ScalingReplicaSet	Scaled down replica set vllm-a100-llama31-8b-c7dfddc69 to 1 from 2

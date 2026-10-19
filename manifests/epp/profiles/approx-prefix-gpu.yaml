@@ -1,0 +1,49 @@
+# EPP profile `approx-prefix-gpu`: `approx-prefix` with prefix weight 3 instead of 1, for pools
+# whose engine reuses cached prefixes (A100 vLLM with --enable-prefix-caching).
+#
+# Measured on the A100 pool, 2 replicas (experiments/2026-10-19-w4w5-gpu): with weight 1 the
+# queue (2) and KV (2) scores outvote prefix affinity as soon as requests run concurrently, and
+# under KV-cache pressure the vLLM prefix hit ratio is that of `queue-kv` (0.56-0.59 vs 0.55-0.57).
+# Weight 3 keeps the affinity: hit ratio 0.63-0.65, TTFT p50 -20 %, wall time -16 % for the same
+# 1100 requests. Keep `approx-prefix` (weight 1) on engines without prefix reuse (NPU pools today),
+# where affinity would only concentrate load.
+#
+# Install: EPP_PROFILE=approx-prefix-gpu manifests/epp/make-epp.sh <pool> /<path>
+apiVersion: llm-d.ai/v1alpha1
+kind: EndpointPickerConfig
+plugins:
+- type: queue-scorer
+- type: kv-cache-utilization-scorer
+- type: approx-prefix-cache-producer
+  parameters:
+    autoTune: true
+    blockSizeTokens: 64
+    lruCapacityPerServer: 31250
+- type: prefix-cache-scorer
+  parameters:
+    prefixMatchInfoProducerName: approx-prefix-cache-producer
+- type: metrics-data-source
+  parameters:
+    scheme: http
+    path: /metrics
+    insecureSkipVerify: true
+- type: core-metrics-extractor
+  parameters:
+    engineLabelKey: llm-d.ai/engine-type
+    defaultEngine: vllm
+    engineConfigs:
+    - name: furiosa-llm
+      queuedRequestsSpec: furiosa_llm_num_requests_waiting
+      runningRequestsSpec: furiosa_llm_num_requests_running
+      kvUsageSpec: furiosa_llm_kv_cache_usage_percent
+      loraSpec: ""
+      cacheInfoSpec: furiosa_llm_cache_config_info
+schedulingProfiles:
+- name: default
+  plugins:
+  - pluginRef: queue-scorer
+    weight: 2
+  - pluginRef: kv-cache-utilization-scorer
+    weight: 2
+  - pluginRef: prefix-cache-scorer
+    weight: 3

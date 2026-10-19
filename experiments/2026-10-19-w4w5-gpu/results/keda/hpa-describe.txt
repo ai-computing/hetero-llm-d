@@ -1,0 +1,39 @@
+Name:                                      keda-hpa-vllm-a100-llama31-8b
+Namespace:                                 llm-serving
+Labels:                                    airm.ai-computing.io/accelerator=nvidia.A100
+                                           app.kubernetes.io/managed-by=keda-operator
+                                           app.kubernetes.io/name=keda-hpa-vllm-a100-llama31-8b
+                                           app.kubernetes.io/part-of=hetero-llm-d
+                                           app.kubernetes.io/version=2.19.0
+                                           scaledobject.keda.sh/name=vllm-a100-llama31-8b
+Annotations:                               <none>
+CreationTimestamp:                         Mon, 19 Oct 2026 20:02:44 +0900
+Reference:                                 Deployment/vllm-a100-llama31-8b
+Metrics:                                   ( current / target )
+  "s0-prometheus" (target average value):  0 / 4
+  "s1-prometheus" (target value):          0 / 1
+Min replicas:                              1
+Max replicas:                              2
+Behavior:
+  Scale Up:
+    Stabilization Window: 0 seconds
+    Select Policy: Max
+    Policies:
+      - Type: Pods  Value: 1  Period: 120 seconds
+  Scale Down:
+    Stabilization Window: 600 seconds
+    Select Policy: Min
+    Policies:
+      - Type: Pods  Value: 1  Period: 300 seconds
+Deployment pods:    1 current / 1 desired
+Conditions:
+  Type            Status  Reason            Message
+  ----            ------  ------            -------
+  AbleToScale     True    ReadyForNewScale  recommended size matches current size
+  ScalingActive   True    ValidMetricFound  the HPA was able to successfully calculate a replica count from external metric s1-prometheus(&LabelSelector{MatchLabels:map[string]string{scaledobject.keda.sh/name: vllm-a100-llama31-8b,},MatchExpressions:[]LabelSelectorRequirement{},})
+  ScalingLimited  True    TooFewReplicas    the desired replica count is less than the minimum replica count
+Events:
+  Type    Reason             Age   From                       Message
+  ----    ------             ----  ----                       -------
+  Normal  SuccessfulRescale  17m   horizontal-pod-autoscaler  New size: 2; reason: external metric s0-prometheus(&LabelSelector{MatchLabels:map[string]string{scaledobject.keda.sh/name: vllm-a100-llama31-8b,},MatchExpressions:[]LabelSelectorRequirement{},}) above target
+  Normal  SuccessfulRescale  33s   horizontal-pod-autoscaler  New size: 1; reason: All metrics below target
