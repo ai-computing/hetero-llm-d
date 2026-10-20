@@ -2,9 +2,9 @@
 
 - **Date**: 2026-10-19
 - **Task**: 이종 NPU 혼합 풀 라우팅 테스트 (lmd-top LMDTOP-22 heterogeneous routing의 사전 검증)
-- **Host / device**: A100 80GB ×1 on etri-esc8000-e11 (vLLM v0.11.0, via nodeName — e11 stays cordoned);
-  RBLN-CA22 (ATOM) ×1 on etri-001 (host vllm-rbln 0.11.0 / rebel-compiler 0.11.0, driver 3.0.0);
-  Furiosa RNGD ×1 on etri-001 (furiosa-llm 2026.3.0 image, firmware 2026.4.0, FXB tag `v2026.3`).
+- **Host / device**: A100 80GB ×1 on npu-node-2 (vLLM v0.11.0, via nodeName — e11 stays cordoned);
+  RBLN-CA22 (ATOM) ×1 on npu-node-1 (host vllm-rbln 0.11.0 / rebel-compiler 0.11.0, driver 3.0.0);
+  Furiosa RNGD ×1 on npu-node-1 (furiosa-llm 2026.3.0 image, firmware 2026.4.0, FXB tag `v2026.3`).
   EPP: llm-d-router endpoint picker `@sha256:c0d60804…` (queue 2, kv-cache-utilization 2, prefix-cache 3).
 - **Commit**: llm-d-setup `d63c2ce` (+ this record, uncommitted); lmd-top `49ecebc`
 
@@ -34,7 +34,7 @@ one InferencePool, a dedicated EPP and an HTTPRoute (`/hetero/llama8b/*` → `/v
 ## Command
 
 ```bash
-kubectl apply -f manifests/hetero-llama8b-mixed.yaml
+scripts/render-manifest.sh manifests/hetero-llama8b-mixed.yaml | kubectl apply -f -   # LLMD_* from cluster.local.env
 GW=http://<gateway> UNIQUE_PREFIX=0 MAXTOK=128 python3 hetero_load.py 128 64 out.json
 POD_A100=… POD_RBLN=… POD_RNGD=… python3 parity.py
 ```
@@ -84,6 +84,6 @@ Raw: `experiments/2026-10-19-hetero-llama8b-mixed-pool/` (load and parity script
   is measurably less accurate. Before a vendor joins a pool, a fixed-prompt parity check should pass.
 - Not covered: the capacity-aware policy itself (needs the contrib EPP image built), energy (the
   IPMI exporter was not sampled), and a production-quality RBLN Llama-8B artifact.
-- Side findings: etri-001 disk is back at 90% (user PD experiments, ~350 GB in 3 days), and kubelet
+- Side findings: npu-node-1 disk is back at 90% (user PD experiments, ~350 GB in 3 days), and kubelet
   image GC had removed the furiosa-llm image, whose 783 MB re-pull failed repeatedly with
   `connection reset by peer` from Docker Hub's CDN before succeeding (~25 min).

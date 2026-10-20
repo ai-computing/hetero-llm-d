@@ -113,7 +113,7 @@ nt(s,'공동연구 제안이며 역할 분담이나 시스템 제공을 확약�
 let s=pg('부록 A  현황','설치된 자원과 현재 가동 상태','2026-09-08 기존 읽기 전용 조회 기준 · 등록 자원과 즉시 사용 가능한 자원은 다릅니다.');
 node(s,'클러스터','등록 노드 8대\nGPU 2 · ATOM 4 · RNGD 6',.65,2.75,5.80,1.80,C.gray);node(s,'운영 상태','Gateway · EPP · proxy 가동\n모델 워커 replica 0',6.88,2.75,5.80,1.80,C.gray);
 node(s,'확인된 구현 범위','컴파일·배포 관리 · 통합 관측\n실제 KV 이송 · 역할 조합 실험',.65,4.94,5.80,1.63);node(s,'별도 검증·연구 대상','장시간 운영 · 최신 통합 비교\n직접 전송 · 자동 정책 제어',6.88,4.94,5.80,1.63,C.vp);
-nt(s,'기존 조회: GPU GB10 2서버각1; etri-001 ATOM4 RNGD2 GPU0; ESC8000 RNGD4 SchedulingDisabled; cpu-3NotReady. Gateway Programmed=True. 모델워커0/0이며 gateway 가동을 추론 성공과 혼동하지 않습니다. NAS·공유저장소는 환경 가이드 기록이며 이번 새로 검증하지 않았습니다.','2026-09-08 kubectl 조회; docs/ENVIRONMENT-GUIDE.md; PD disaggregation_HISTORY.md §12');
+nt(s,'기존 조회: GPU GB10 2서버각1; npu-node-1 ATOM4 RNGD2 GPU0; ESC8000 RNGD4 SchedulingDisabled; cpu-3NotReady. Gateway Programmed=True. 모델워커0/0이며 gateway 가동을 추론 성공과 혼동하지 않습니다. NAS·공유저장소는 환경 가이드 기록이며 이번 새로 검증하지 않았습니다.','2026-09-08 kubectl 조회; docs/ENVIRONMENT-GUIDE.md; PD disaggregation_HISTORY.md §12');
 }
 {
 let s=pg('부록 B  자료와 해석 범위','분석 수치와 구현 상태의 근거','상세 조건과 원문 위치는 각 슬라이드의 발표자 노트에 포함했습니다.');

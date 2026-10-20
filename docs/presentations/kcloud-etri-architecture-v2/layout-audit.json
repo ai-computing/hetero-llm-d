@@ -462,7 +462,7 @@
     "w": 2.5100000000000002,
     "h": 0.38,
     "type": "text",
-    "text": "dgx-spark0\ngx10-4744"
+    "text": "gb10-node-1\ngb10-node-2"
   },
   {
     "slide": 2,
@@ -488,7 +488,7 @@
     "w": 2.5100000000000002,
     "h": 0.35,
     "type": "text",
-    "text": "etri-001"
+    "text": "npu-node-1"
   },
   {
     "slide": 2,

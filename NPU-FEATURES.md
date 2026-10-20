@@ -10,7 +10,7 @@
 |---|---|
 | RBLN 한국어 모델 | EXAONE-3.5 → **KISTI-KONI/KONI-Llama3.1-8B-Instruct-20241024** TP=4 (한국어 응답 정상) |
 | Furiosa Llama-3.1-8B 서빙 | **한국어 garbage 토큰 발생** 검증 (`profile...rejecting practicallyAKE 텐~`). 사용자 down. KONI/EXAONE 재컴파일로 대체 가능 |
-| Furiosa RNGD × 2 (etri-001) | chat 대신 **Qwen3-Embedding-8B** (RAG embedding, dim 4096) 운영. dim 1024 BGE-M3 대비 품질 ↑ |
+| Furiosa RNGD × 2 (npu-node-1) | chat 대신 **Qwen3-Embedding-8B** (RAG embedding, dim 4096) 운영. dim 1024 BGE-M3 대비 품질 ↑ |
 | A100 + ds4 (DwarfStar) | DeepSeek V4 Flash 671B를 97GB hybrid Q4K/IQ2XXS imatrix GGUF로 단일 GPU mmap. inline reasoning + tool calling 둘 다 동작 |
 | llm-d EPP | v1.5.0 → **v0.7 image** (`no-hit-lru-scorer` 신규 plugin 포함) |
 | 메트릭 | DCGM exporter + vllm-rbln-koni + vllm-a100 ServiceMonitor + furiosa-metrics-exporter PodMonitor 풀-스택 |

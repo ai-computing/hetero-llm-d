@@ -146,7 +146,7 @@ Furiosa 공식 가이드 https://developer.furiosa.ai/latest/en/cloud_native_too
 ```bash
 helm install furiosa-modelservice furiosa/llm-d-modelservice \
   -n llm-serving \
-  -f manifests/furiosa-llm-modelservice-values.yaml
+  -f <(scripts/render-manifest.sh manifests/furiosa-llm-modelservice-values.yaml)
 ```
 
 `values.yaml` 예시:

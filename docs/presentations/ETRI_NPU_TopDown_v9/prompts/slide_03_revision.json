@@ -5,7 +5,7 @@
   "out": "slide_03.png",
   "input_images": [
     {
-      "path": "/home/gspark/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
+      "path": "/home/<user>/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
       "role": "approved style only"
     }
   ],

@@ -95,8 +95,8 @@ arrow(sl,2.19,3.34,2.19,3.73,C.muted,true,false);
 arrow(sl,10.90,3.34,10.90,3.73,C.muted,true,false);
 arrow(sl,1.98,3.73,11.34,3.73,C.line,false,false);
 const groups=[
- {x:.55,w:2.87,name:'GPU 서버 ×2',hw:'GB10 ×2',sub:'dgx-spark0\ngx10-4744',foot:'GPU 서빙',col:C.teal,fill:C.pale},
- {x:3.67,w:2.87,name:'etri-001',hw:'ATOM ×4\nRNGD ×2',sub:'NPU 주력 워커',foot:'A100: K8s 등록 0',col:C.teal,fill:C.pale},
+ {x:.55,w:2.87,name:'GPU 서버 ×2',hw:'GB10 ×2',sub:'gb10-node-1\ngb10-node-2',foot:'GPU 서빙',col:C.teal,fill:C.pale},
+ {x:3.67,w:2.87,name:'npu-node-1',hw:'ATOM ×4\nRNGD ×2',sub:'NPU 주력 워커',foot:'A100: K8s 등록 0',col:C.teal,fill:C.pale},
  {x:6.79,w:2.87,name:'ESC8000',hw:'RNGD ×4',sub:'Furiosa 워커',foot:'신규 스케줄 제한',col:C.amber,fill:C.amberPale},
  {x:9.91,w:2.87,name:'CPU 서버 ×3',hw:'CPU pool',sub:'cpu-1 / cpu-2 / cpu-3',foot:'cpu-3: NotReady',col:C.amber,fill:C.bg}
 ];
@@ -111,7 +111,7 @@ groups.forEach(g=>{
 tag(sl,'등록 자원',.57,6.65,1.12);
 txt(sl,'GPU 2 · ATOM 4 · RNGD 6',1.87,6.63,4.18,.35,16,C.teal,true);
 txt(sl,'관리·라우팅 가동 / 모델 워커 replica 0',7.1,6.63,5.67,.35,13,C.muted,false,'right');
-sl.addNotes(`이 장은 물리/관리 환경입니다. 사용자 요청에 따라 2026-09-08 kubectl get nodes, deployments, gateway, httproute를 읽기 전용으로 조회했습니다. 등록 노드 8대: R7525 control-plane 1대, GB10 GPU 서버 2대, etri-001 1대, ESC8000 1대, CPU 3대입니다. Kubernetes allocatable 기준 GPU 2개(GB10 각1), ATOM 4개(etri-001), RNGD 6개(etri-001 2, ESC8000 4)입니다. ESC8000은 Ready,SchedulingDisabled, cpu-3은 NotReady이며 따라서 등록된 모든 자원이 지금 새 작업을 받을 수 있다는 뜻은 아닙니다. A100 물리 카드 보유 기록은 있지만 현재 etri-001의 nvidia.com/gpu는 0입니다.\nIP: control-plane 198.51.100.105; etri-001 .183; ESC8000 .126; CPU .178/.179/.186; GB10 198.51.100.66/.155. Gateway 198.51.100.233 Programmed=True. NAS 198.51.100.114 및 Prometheus 구성은 docs/ENVIRONMENT-GUIDE.md의 구성 기록이며 이번에 NAS 읽기/쓰기 검증은 하지 않았습니다.\n현재 EPP들, ds4-inject-proxy 2/2, hetero-pd-gateway 1/1은 가동하며 모델 워커 배포는 0/0입니다. Ready gateway만으로 모델 요청 성공을 주장하지 않습니다. 구성도를 단순화해 공통 네트워크 연결을 표현했으며 Gateway가 디바이스에 직접 요청한다는 의미는 아닙니다. 이전 문서의 RNGD 8장 수치보다 현재 조회값을 우선했습니다.`);
+sl.addNotes(`이 장은 물리/관리 환경입니다. 사용자 요청에 따라 2026-09-08 kubectl get nodes, deployments, gateway, httproute를 읽기 전용으로 조회했습니다. 등록 노드 8대: R7525 control-plane 1대, GB10 GPU 서버 2대, npu-node-1 1대, ESC8000 1대, CPU 3대입니다. Kubernetes allocatable 기준 GPU 2개(GB10 각1), ATOM 4개(npu-node-1), RNGD 6개(npu-node-1 2, ESC8000 4)입니다. ESC8000은 Ready,SchedulingDisabled, cpu-3은 NotReady이며 따라서 등록된 모든 자원이 지금 새 작업을 받을 수 있다는 뜻은 아닙니다. A100 물리 카드 보유 기록은 있지만 현재 npu-node-1의 nvidia.com/gpu는 0입니다.\nIP: control-plane 198.51.100.105; npu-node-1 .183; ESC8000 .126; CPU .178/.179/.186; GB10 198.51.100.66/.155. Gateway 198.51.100.233 Programmed=True. NAS 198.51.100.114 및 Prometheus 구성은 docs/ENVIRONMENT-GUIDE.md의 구성 기록이며 이번에 NAS 읽기/쓰기 검증은 하지 않았습니다.\n현재 EPP들, ds4-inject-proxy 2/2, hetero-pd-gateway 1/1은 가동하며 모델 워커 배포는 0/0입니다. Ready gateway만으로 모델 요청 성공을 주장하지 않습니다. 구성도를 단순화해 공통 네트워크 연결을 표현했으며 Gateway가 디바이스에 직접 요청한다는 의미는 아닙니다. 이전 문서의 RNGD 8장 수치보다 현재 조회값을 우선했습니다.`);
 }
 
 // 3. Request path beside the animated UI; dashed observation edges, native shapes.

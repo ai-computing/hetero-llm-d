@@ -8,23 +8,23 @@
     <tspan x="22" dy="20">● SERVING 2/20  req/s –  err –  TTFT –  E2E –  │ accel 1/12 busy  VRAM 2%  ⚡ 347W  ⚠4 alert (A)</tspan>
     <tspan x="22" dy="20">⇥  0:Overview   1:Traffic   2:Serving   3:Infra   4:Deploy   5:Events   6:Setup    ◂  Nodes  · Devices · Topology ▸</tspan>
     <tspan x="22" dy="20">╭ Nodes · ⏎ detail  —  Σall 8node · 7ready · CPU NaN% · mem 71/2954G · disk 5.6/9.8T ────────────────────────────────────────────────────────────────╮</tspan>
-    <tspan x="22" dy="20">│▎● gx10-4744            ········ cpu  1%  mem    8/ 129GB  disk  52%  load 0.2                                                                      │</tspan>
+    <tspan x="22" dy="20">│▎● gb10-node-2          ········ cpu  1%  mem    8/ 129GB  disk  52%  load 0.2                                                                      │</tspan>
     <tspan x="22" dy="20">│   └─ ● GB10 gpu0   ········   0%    8/129GB∪   44°C    6W                                                                                          │</tspan>
-    <tspan x="22" dy="20">│ ● gspark-poweredge-r7… ········ cpu  4%  mem   15/ 401GB  disk  13%  load 5.2                                                                      │</tspan>
+    <tspan x="22" dy="20">│ ● control-node         ········ cpu  4%  mem   15/ 401GB  disk  13%  load 5.2                                                                      │</tspan>
     <tspan x="22" dy="20">│   └─ (no accelerators)                                                                                                                             │</tspan>
-    <tspan x="22" dy="20">│ ⊘ etri-esc8000-e11     ········ cpu   –  mem       –     disk      –    load –                                                                     │</tspan>
+    <tspan x="22" dy="20">│ ⊘ npu-node-2           ········ cpu   –  mem       –     disk      –    load –                                                                     │</tspan>
     <tspan x="22" dy="20">│   ├─ ● RNGD npu0   ········   0%    0/ 51GB    35°C   38W                                                                                          │</tspan>
     <tspan x="22" dy="20">│   ├─ ● RNGD npu1   ········   0%    0/ 51GB    35°C   38W                                                                                          │</tspan>
     <tspan x="22" dy="20">│   ├─ ● RNGD npu2   ········   0%    0/ 51GB    35°C   39W                                                                                          │</tspan>
     <tspan x="22" dy="20">│   └─ ● RNGD npu3   ········   0%    0/ 51GB    34°C   39W                                                                                          │</tspan>
-    <tspan x="22" dy="20">│ ● etri-001             ········ cpu  0%  mem   26/1623GB  disk  74%  load 0.3                                                                      │</tspan>
+    <tspan x="22" dy="20">│ ● npu-node-1           ········ cpu  0%  mem   26/1623GB  disk  74%  load 0.3                                                                      │</tspan>
     <tspan x="22" dy="20">│   ├─ ● RBLN rbln0  ········   0%    0/ 17GB    39°C   19W                                                                                          │</tspan>
     <tspan x="22" dy="20">│   ├─ ● RBLN rbln1  ········   0%    0/ 17GB    36°C   19W                                                                                          │</tspan>
     <tspan x="22" dy="20">│   ├─ ● RBLN rbln2  ········   0%    0/ 17GB    36°C   19W                                                                                          │</tspan>
     <tspan x="22" dy="20">│   ├─ ● RBLN rbln3  ········   0%    0/ 17GB    38°C   18W                                                                                          │</tspan>
     <tspan x="22" dy="20">│   ├─ ● RNGD npu0   ········   0%    0/ 51GB    40°C   38W                                                                                          │</tspan>
     <tspan x="22" dy="20">│   └─ ● RNGD npu1   ········   0%    0/ 51GB    39°C   38W                                                                                          │</tspan>
-    <tspan x="22" dy="20">│ ⚠ dgx-spark0           ········ cpu   –  mem       –     disk      –    load –                                                                     │</tspan>
+    <tspan x="22" dy="20">│ ⚠ gb10-node-1          ········ cpu   –  mem       –     disk      –    load –                                                                     │</tspan>
     <tspan x="22" dy="20">│   └─ ● GB10 gpu0   ●●●●●●●·  93%    0/  0GB∪   65°C   37W                                                                                          │</tspan>
     <tspan x="22" dy="20">│ ✗ cpu-3                ········ cpu   –  mem       –     disk      –    load –                                                                     │</tspan>
     <tspan x="22" dy="20">│   └─ (no accelerators)                                                                                                                             │</tspan>

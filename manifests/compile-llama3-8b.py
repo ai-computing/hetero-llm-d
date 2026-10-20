@@ -1,6 +1,6 @@
 """
 Compile meta-llama/Meta-Llama-3-8B-Instruct for RBLN-CA22 x4 (TP=4).
-Run on etri-001 inside ~/vllm_test/venv (vllm_rbln 0.10.2.post1).
+Run on npu-node-1 inside ~/vllm_test/venv (vllm_rbln 0.10.2.post1).
 
   source ~/vllm_test/venv/bin/activate
   python ~/llm-d-setup/manifests/compile-llama3-8b.py 2>&1 | tee ~/compile-llama3-8b.log

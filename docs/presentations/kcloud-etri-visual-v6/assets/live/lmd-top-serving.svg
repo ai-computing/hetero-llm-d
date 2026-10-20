@@ -9,7 +9,7 @@
     <tspan x="22" dy="20">⇥  0:Overview   1:Traffic   2:Serving   3:Infra   4:Deploy   5:Events   6:Setup    ◂  Serving  · Perf · Pods ▸</tspan>
     <tspan x="22" dy="20">╭ ▸ Serving · running deployments · x stop · s scale · r restart · o sort · ⏎ actions · 1/20 ────────────────────────────────────────────────────────╮</tspan>
     <tspan x="22" dy="20">│ STATUS▼     MODEL                                                                    ENGINE       TARGET               REP    NODE           t/s   │</tspan>
-    <tspan x="22" dy="20">│▎⚠ Degraded  hetero-pd-gateway                                                        custom       –                    1/1    etri-001       –     │</tspan>
+    <tspan x="22" dy="20">│▎⚠ Degraded  hetero-pd-gateway                                                        custom       –                    1/1    npu-node-1     –     │</tspan>
     <tspan x="22" dy="20">│ ● Serving   ds4-inject-proxy                                                         custom       –                    2/2    cpu-1          –     │</tspan>
     <tspan x="22" dy="20">│ ○ Scaled-0  ds4-deepseek-v4-flash                                                    custom       –                    0/0    ?              –     │</tspan>
     <tspan x="22" dy="20">│ ○ Scaled-0  ds4-v4flash-gb10                                                         custom       –                    0/0    ?              –     │</tspan>

@@ -3,7 +3,7 @@ LGAI-EXAONE/EXAONE-4.0-1.2B 를 RBLN-CA22 × 4 로 컴파일 시도.
 - optimum-rbln의 RBLNExaoneForCausalLM (3.5용) 클래스가 4.0과 호환되는지 검증
 - 1.2B 작은 모델이라 컴파일도 빠름 (~10-20분)
 
-Run on etri-001 venv:
+Run on npu-node-1 venv:
   /usr/bin/python3.10 ~/compile-exaone4-1b2.py 2>&1 | tee ~/compile-exaone4.log
 
 Output: ~/rbln-EXAONE-4.0-1.2B-tp4-bs1-s8192/

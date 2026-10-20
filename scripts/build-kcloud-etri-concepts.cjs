@@ -132,7 +132,7 @@ n(s,'클러스터 구성','등록 노드 8대\nGPU 2 · ATOM 4 · RNGD 6',.65,2.
 n(s,'현재 운영 상태','관리·라우팅 구성 가동\n모델 워커 replica 0',6.88,2.68,5.81,1.75,C.gray);
 n(s,'구현·측정 기록','통합 서빙 · 관측 도구\n실제 KV 이송 · 이종 NPU 실험',.65,4.80,5.81,1.75);
 n(s,'추가 검증이 필요한 부분','최신 설정 통합 비교 · 장시간 운영\n전송·배치 개선 · 자동 제어 정책',6.88,4.80,5.81,1.75,C.vp);
-note(s,'2026-09-08 이전 턴의 read-only kubectl 조회: 8노드. GB10 각1 GPU 두 서버, etri-001 ATOM4/RNGD2/nvidiaGPU0, ESC8000 RNGD4 SchedulingDisabled, cpu-3 NotReady. 등록 자원 수는 즉시 스케줄 가능한 자원 수와 다릅니다. Gateway Programmed=True, EPP/hetero-pd-gateway/ds4-inject-proxy 가동, 모델 workers 0/0. 동작 중인 Gateway만으로 추론 성공을 주장하지 않습니다. 새로 제공된 PD 문서는 다른 서버의 작업 기록 요약이며 원격 원시 코드/결과를 이 PPT 제작에서 재검증하지 않았습니다. 실험 수치와 상세 한계는 원문과 발표 노트 참조.','2026-09-08 kubectl 조회; docs/ENVIRONMENT-GUIDE.md; lmd-top/CHANGELOG.md; PD disaggregation_HISTORY.md §§11,12');
+note(s,'2026-09-08 이전 턴의 read-only kubectl 조회: 8노드. GB10 각1 GPU 두 서버, npu-node-1 ATOM4/RNGD2/nvidiaGPU0, ESC8000 RNGD4 SchedulingDisabled, cpu-3 NotReady. 등록 자원 수는 즉시 스케줄 가능한 자원 수와 다릅니다. Gateway Programmed=True, EPP/hetero-pd-gateway/ds4-inject-proxy 가동, 모델 workers 0/0. 동작 중인 Gateway만으로 추론 성공을 주장하지 않습니다. 새로 제공된 PD 문서는 다른 서버의 작업 기록 요약이며 원격 원시 코드/결과를 이 PPT 제작에서 재검증하지 않았습니다. 실험 수치와 상세 한계는 원문과 발표 노트 참조.','2026-09-08 kubectl 조회; docs/ENVIRONMENT-GUIDE.md; lmd-top/CHANGELOG.md; PD disaggregation_HISTORY.md §§11,12');
 }
 for(const q of checks){if(q.x<0||q.y<0||q.x+q.w>13.334||q.y+q.h>7.5)throw Error(JSON.stringify(q));}
 const file=path.join(out,'K-Cloud_ETRI_개념중심_기술소개_v3.pptx');

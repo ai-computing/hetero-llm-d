@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Worker stage 1: prepare etri-001 (Ubuntu 22.04) to join the k8s cluster.
+# Worker stage 1: prepare npu-node-1 (Ubuntu 22.04) to join the k8s cluster.
 # Run with: sudo bash /tmp/llmd-worker-stage1.sh
 # After this, run the `kubeadm join ...` command printed by control-plane stage2.
 set -euo pipefail

@@ -15,7 +15,7 @@
     "size": "16:9",
     "quality": "built-in default",
     "prompt_source": "approved sample slide 1: ETRI whole-stack conceptual map",
-    "approved_sample_path": "/home/gspark/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
+    "approved_sample_path": "/home/<user>/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
     "input_context_preparation": "view_image all local inputs then referenced_image_paths in image_gen__imagegen",
     "handoff_rule": "Use same built-in image backend; return blocker if unavailable. No local rendering or overlays."
   },
