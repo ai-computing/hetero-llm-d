@@ -34,7 +34,7 @@ one InferencePool, a dedicated EPP and an HTTPRoute (`/hetero/llama8b/*` → `/v
 ## Command
 
 ```bash
-kubectl apply -f manifests/hetero-llama8b-mixed.yaml
+scripts/render-manifest.sh manifests/hetero-llama8b-mixed.yaml | kubectl apply -f -   # LLMD_* from cluster.local.env
 GW=http://<gateway> UNIQUE_PREFIX=0 MAXTOK=128 python3 hetero_load.py 128 64 out.json
 POD_A100=… POD_RBLN=… POD_RNGD=… python3 parity.py
 ```

@@ -21,6 +21,9 @@ import uuid
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATUS = os.path.join(ROOT, "STATUS.md")
 EVENTS = os.path.join(ROOT, ".research", "events.jsonl")
+# Optional, untracked: one "real -> alias" per line. Host names and paths written to STATUS.md and
+# events.jsonl are replaced by their aliases, so tracked files never carry internal names.
+ALIASES = os.path.join(ROOT, ".research", "aliases.local")
 
 HEADER_BEGIN = "<!-- research-hub:header:begin"
 HEADER_END = "<!-- research-hub:header:end -->"
@@ -42,6 +45,25 @@ def detect_agent():
     if any(k.startswith("CODEX_") for k in os.environ):
         return "codex"
     return os.environ.get("RESEARCH_AGENT", "human")
+
+
+def load_aliases(path=ALIASES):
+    pairs = []
+    try:
+        with open(path, encoding="utf-8") as f:
+            for line in f:
+                line = line.split("#", 1)[0].strip()
+                real, sep, alias = line.partition("->")
+                if sep and real.strip():
+                    pairs.append((real.strip(), alias.strip()))
+    except (IOError, OSError):
+        return None
+    if not pairs:
+        return None
+    pairs.sort(key=lambda kv: -len(kv[0]))  # longest first
+    table = dict((k.lower(), v) for k, v in pairs)
+    pattern = re.compile("|".join(re.escape(k) for k, _ in pairs), re.I)
+    return lambda text: pattern.sub(lambda m: table[m.group(0).lower()], text)
 
 
 def one_line(text):
@@ -137,10 +159,14 @@ def main():
         commit += "-dirty"
     branch = git("rev-parse", "--abbrev-ref", "HEAD")
 
+    alias = load_aliases()
+    if alias:
+        host = alias(host)
+
     with open(STATUS, encoding="utf-8") as f:
         text = f.read()
 
-    text = update_header(text, {
+    header = {
         "State": state,
         "Updated": stamp,
         "Agent": "%s@%s" % (agent, host),
@@ -148,7 +174,10 @@ def main():
         "Last result": one_line(args.result),
         "Next": one_line(args.next) or "-",
         "Blockers": one_line(args.blocker) or "none",
-    })
+    }
+    if alias:
+        header = dict((k, alias(v)) for k, v in header.items())
+    text = update_header(text, header)
 
     lines = ["### %s — %s%s" % (stamp, one_line(args.task), " ✅" if args.done else ""), ""]
     lines.append("- Result: %s" % one_line(args.result))
@@ -169,7 +198,8 @@ def main():
     if args.note:
         lines.append("- Note: %s" % one_line(args.note))
     lines.append("- By: %s@%s%s" % (agent, host, (" · %s@%s" % (branch, commit)) if commit else ""))
-    text = insert_log(text, "\n".join(lines) + "\n")
+    entry = "\n".join(lines) + "\n"
+    text = insert_log(text, alias(entry) if alias else entry)
 
     with open(STATUS, "w", encoding="utf-8") as f:
         f.write(text)
@@ -198,7 +228,8 @@ def main():
     }
     os.makedirs(os.path.dirname(EVENTS), exist_ok=True)
     with open(EVENTS, "a", encoding="utf-8") as f:
-        f.write(json.dumps(event, ensure_ascii=False) + "\n")
+        line = json.dumps(event, ensure_ascii=False)
+        f.write((alias(line) if alias else line) + "\n")
 
     print("reported: [%s] %s -> %s" % (state, args.task, args.result))
     return 0

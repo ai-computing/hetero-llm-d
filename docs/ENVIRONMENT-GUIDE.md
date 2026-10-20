@@ -91,7 +91,7 @@ NVIDIA GPU는 weight만 올리면 바로 서빙할 수 있어 새 모델 PoC에 
            │
      ┌─────┴──────┬──────────┬──────────┐
      ▼            ▼          ▼          ▼
-  GB10×2     npu-node-1    esc8000     CPU×3
+  GB10×2     npu-node-1  npu-node-2  CPU×3
   .175.*     RBLN+RNGD   RNGD×2+A100×2 EPP·proxy
                  │
                  ▼
@@ -109,7 +109,7 @@ NVIDIA GPU는 weight만 올리면 바로 서빙할 수 있어 새 모델 PoC에 
 
 주 사내망은 `<site-subnet>`입니다. control-plane(R7525 `.105`), etri·CPU 워커, Gateway `.233`이 여기 있습니다. GB10 두 대(`gb10-node-1`, `gb10-node-2`)는 `<gb10-subnet>`에 있고, 모델·문서 저장소 NAS는 `<nas-host>`입니다. Pod/Service CIDR은 `<pod-cidr>` / `<svc-cidr>`(Cilium)입니다.
 
-역할만 짧게 말하면 — **R7525**는 관리·API·UI, **npu-node-1**은 RBLN×4와 RNGD×3을 가진 NPU 주력 노드, **esc8000**은 RNGD×2와 A100 80GB×2를 가진 노드(A100은 2026-10-15 npu-node-1에서 옮겨진 것을 확인하고 K8s에 `nvidia.com/gpu: 2`로 복구), **GB10 두 대**는 GPU 서빙, **cpu-1/2/3**은 EPP·proxy·ollama를 올리는 CPU 풀입니다.
+역할만 짧게 말하면 — **R7525**는 관리·API·UI, **npu-node-1**은 RBLN×4와 RNGD×3을 가진 NPU 주력 노드, **npu-node-2**는 RNGD×2와 A100 80GB×2를 가진 노드(A100은 2026-10-15 npu-node-1에서 옮겨진 것을 확인하고 K8s에 `nvidia.com/gpu: 2`로 복구), **GB10 두 대**는 GPU 서빙, **cpu-1/2/3**은 EPP·proxy·ollama를 올리는 CPU 풀입니다.
 
 ### 지금 열려 있는 path
 
@@ -199,7 +199,7 @@ lmd-top --doctor
 
 ## 5. 지금 알아둘 한계
 
-모델 서버는 대부분 꺼져 있고 플랫폼만 hot입니다. A100 ×2는 esc8000(e11)에 있으며 `runtimeClassName: nvidia` + `nodeSelector: kubernetes.io/hostname=npu-node-2`로 씁니다. LoadBalancer IP는 IT가 할당해 준 `.233`만 쓰고, 임의 IP를 올리면 안 됩니다.
+모델 서버는 대부분 꺼져 있고 플랫폼만 hot입니다. A100 ×2는 npu-node-2에 있으며 `runtimeClassName: nvidia` + `nodeSelector: kubernetes.io/hostname=npu-node-2`로 씁니다. LoadBalancer IP는 IT가 할당해 준 `.233`만 쓰고, 임의 IP를 올리면 안 됩니다.
 
 더 읽기: [PLAYBOOK](../PLAYBOOK.md) · [STATUS](../STATUS.md) · [lmd-top README](../lmd-top/README.ko.md) · https://llm-d.ai/docs
 

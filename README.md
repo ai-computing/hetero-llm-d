@@ -93,6 +93,8 @@ explained in [`cluster.example.env`](cluster.example.env).
 | `LLMD_GATEWAY_HOST` | `manifests/epp/make-epp.sh` health test (override with `GW_ADDR`) |
 | `LLMD_PROM_ADDR` | `scripts/capture-lmd-top.sh`, lmd-top `LMD_PROM` |
 | `LLMD_MODEL_STORE_SMB` | `manifests/model-store.yaml` (`scripts/render-manifest.sh manifests/model-store.yaml \| kubectl apply -f -`) |
+| `LLMD_NODE_NPU1`, `LLMD_NODE_NPU2`, `LLMD_HOME` | node pinning and home-directory hostPaths in `manifests/` (`compile-job`, `ds4-deepseek-v4-flash`, `hetero-llama8b-mixed`, `ipmi-exporter`, `vllm-a100-llama31-8b`, `vllm-exaone`, `vllm-rbln-deployment`, `vllm-v4flash`, both `furiosa-*-modelservice-values`); apply them through `scripts/render-manifest.sh` (helm: `-f <(scripts/render-manifest.sh …)`). `scripts/hetero-sweep.py` reads the node names |
+| `LLMD_KUBE_USER` (optional) | `scripts/02-cp-init-cluster.sh`: account that gets a kubeconfig (default: the sudo user) |
 
 <details>
 <summary><b>Bootstrap the cluster (root, manual)</b></summary>

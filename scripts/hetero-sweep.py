@@ -15,6 +15,7 @@
 """
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
@@ -27,18 +28,36 @@ MODEL = "meta-llama/Llama-3.1-8B-Instruct"
 PROMPT = " ".join(["energy"] * 240)
 OUT_TOK = 128
 
+def site(var):
+    """Site value (node names): environment first, then the untracked cluster.local.env."""
+    if os.environ.get(var):
+        return os.environ[var]
+    env = os.environ.get("LLMD_ENV_FILE") or os.path.join(os.path.dirname(__file__), "..", "cluster.local.env")
+    try:
+        with open(env, encoding="utf-8") as f:
+            for line in f:
+                k, sep, v = line.strip().partition("=")
+                if sep and k == var:
+                    return v
+    except OSError:
+        pass
+    return None  # IPMI wall power is then left out; it is only a reference value
+
+
+NODE_NPU1, NODE_NPU2 = site("LLMD_NODE_NPU1"), site("LLMD_NODE_NPU2")
+
 # name -> (endpoint pod 접두사, 요청 필드, 배정 카드 pod 정규식, IPMI 노드, 기본 동시성)
 CONFIGS = {
     "a100-vllm": ("vllm-a100-llama31-8b", {"model": MODEL, "ignore_eos": True, "min_tokens": OUT_TOK},
-                  r"^vllm-a100-llama31-8b-", "npu-node-2", [1, 4, 8, 16, 32, 64]),
+                  r"^vllm-a100-llama31-8b-", NODE_NPU2, [1, 4, 8, 16, 32, 64]),
     "rngd-solo-B8": ("hetero-pd-gateway", {"model": "llama8b-solo"},
-                     r"^sw-rngd-solo-", "npu-node-1", [1, 4, 8, 16]),
+                     r"^sw-rngd-solo-", NODE_NPU1, [1, 4, 8, 16]),
     "atom-pd-B1": ("hetero-pd-gateway", {"model": "llama8b-atom-alone", "batch": 1},
-                   r"^sw-atom-(prefill|decode-b1)-", "npu-node-1", [1, 2]),
+                   r"^sw-atom-(prefill|decode-b1)-", NODE_NPU1, [1, 2]),
     "atom-pd-B2": ("hetero-pd-gateway", {"model": "llama8b-atom-alone", "batch": 2},
-                   r"^sw-atom-(prefill|decode-b2)-", "npu-node-1", [2, 4]),
+                   r"^sw-atom-(prefill|decode-b2)-", NODE_NPU1, [2, 4]),
     "atom-pd-B4": ("hetero-pd-gateway", {"model": "llama8b-atom-alone", "batch": 4},
-                   r"^sw-atom-(prefill|decode-b4)-", "npu-node-1", [4, 8]),
+                   r"^sw-atom-(prefill|decode-b4)-", NODE_NPU1, [4, 8]),
 }
 
 # (namespace, pod 이름 접두사, 포트) — 카드 전력 exporter. 노드마다 하나씩 있으면 전부 읽는다.

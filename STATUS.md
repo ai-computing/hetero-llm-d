@@ -213,8 +213,8 @@ curl -X POST http://<gateway-host>/v1/chat/completions \
 ## 디스크/스토리지
 
 - **StorageClass**: `local-path` (기본 SC, rancher.io/local-path-provisioner)
-- **HF cache**: npu-node-1 `/home/user/.cache/huggingface`
-- **RBLN compiled 모델**: npu-node-1 `/home/user/rbln-KONI-Llama3.1-8B-Instruct-tp4-bs1-s8192/` (~19 GB)
+- **HF cache**: npu-node-1 `/home/<user>/.cache/huggingface`
+- **RBLN compiled 모델**: npu-node-1 `/home/<user>/rbln-KONI-Llama3.1-8B-Instruct-tp4-bs1-s8192/` (~19 GB)
 - **ds4 GGUF cache**: emptyDir, 매 재시작 시 재다운로드 (97GB + 3GB). 영구화하려면 PVC + hostPath로 이동
 - **Qdrant data**: PVC `qdrant-storage` (local-path)
 - **NAS read-only**: SMB CIFS via `csi-driver-smb`, `ReadOnlyMany` PV (수정/삭제 차단)

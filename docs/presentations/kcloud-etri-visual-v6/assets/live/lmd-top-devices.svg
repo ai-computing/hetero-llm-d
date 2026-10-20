@@ -9,18 +9,18 @@
     <tspan x="22" dy="20">⇥  0:Overview   1:Traffic   2:Serving   3:Infra   4:Deploy   5:Events   6:Setup    ◂ Nodes ·  Devices  · Topology ▸</tspan>
     <tspan x="22" dy="20">╭ Accelerators · ⏎ timeline  —  Σall 12dev · 0busy · util 8% · VRAM 8/502G · 347W · 1/12 ────────────────────────────────────────────────────────────╮</tspan>
     <tspan x="22" dy="20">│ KIND     ID     NODE           UTIL▼           MEM               TEMP   PWR   TREND(util)   MODEL/POD                                              │</tspan>
-    <tspan x="22" dy="20">│▎● GB10   gpu0   gb10-node-1     ●●●●●●●●·  93%  ······· 0/0GB∪    65°C   37W              █                                                         │</tspan>
-    <tspan x="22" dy="20">│ ● RNGD   npu0   npu-node-1       ·········   0%  ······· 0/51GB    40°C   38W              ▁                                                         │</tspan>
-    <tspan x="22" dy="20">│ ● RNGD   npu1   npu-node-1       ·········   0%  ······· 0/51GB    39°C   38W              ▁                                                         │</tspan>
-    <tspan x="22" dy="20">│ ● RBLN   rbln0  npu-node-1       ·········   0%  ······· 0/17GB    39°C   19W              ▁                                                         │</tspan>
-    <tspan x="22" dy="20">│ ● RBLN   rbln1  npu-node-1       ·········   0%  ······· 0/17GB    36°C   19W              ▁                                                         │</tspan>
-    <tspan x="22" dy="20">│ ● RBLN   rbln2  npu-node-1       ·········   0%  ······· 0/17GB    36°C   19W              ▁                                                         │</tspan>
-    <tspan x="22" dy="20">│ ● RBLN   rbln3  npu-node-1       ·········   0%  ······· 0/17GB    38°C   18W              ▁                                                         │</tspan>
-    <tspan x="22" dy="20">│ ● RNGD   npu0   npu-node-2-… ·········   0%  ······· 0/51GB    35°C   38W              ▁                                                         │</tspan>
-    <tspan x="22" dy="20">│ ● RNGD   npu1   npu-node-2-… ·········   0%  ······· 0/51GB    35°C   38W              ▁                                                         │</tspan>
-    <tspan x="22" dy="20">│ ● RNGD   npu2   npu-node-2-… ·········   0%  ······· 0/51GB    35°C   39W              ▁                                                         │</tspan>
-    <tspan x="22" dy="20">│ ● RNGD   npu3   npu-node-2-… ·········   0%  ······· 0/51GB    34°C   39W              ▁                                                         │</tspan>
-    <tspan x="22" dy="20">│ ● GB10   gpu0   gb10-node-2      ·········   0%  ······· 8/129GB∪  44°C   6W               ▁                                                         │</tspan>
+    <tspan x="22" dy="20">│▎● GB10   gpu0   gb10-node-1    ●●●●●●●●·  93%  ······· 0/0GB∪    65°C   37W              █                                                         │</tspan>
+    <tspan x="22" dy="20">│ ● RNGD   npu0   npu-node-1     ·········   0%  ······· 0/51GB    40°C   38W              ▁                                                         │</tspan>
+    <tspan x="22" dy="20">│ ● RNGD   npu1   npu-node-1     ·········   0%  ······· 0/51GB    39°C   38W              ▁                                                         │</tspan>
+    <tspan x="22" dy="20">│ ● RBLN   rbln0  npu-node-1     ·········   0%  ······· 0/17GB    39°C   19W              ▁                                                         │</tspan>
+    <tspan x="22" dy="20">│ ● RBLN   rbln1  npu-node-1     ·········   0%  ······· 0/17GB    36°C   19W              ▁                                                         │</tspan>
+    <tspan x="22" dy="20">│ ● RBLN   rbln2  npu-node-1     ·········   0%  ······· 0/17GB    36°C   19W              ▁                                                         │</tspan>
+    <tspan x="22" dy="20">│ ● RBLN   rbln3  npu-node-1     ·········   0%  ······· 0/17GB    38°C   18W              ▁                                                         │</tspan>
+    <tspan x="22" dy="20">│ ● RNGD   npu0   npu-node-2     ·········   0%  ······· 0/51GB    35°C   38W              ▁                                                         │</tspan>
+    <tspan x="22" dy="20">│ ● RNGD   npu1   npu-node-2     ·········   0%  ······· 0/51GB    35°C   38W              ▁                                                         │</tspan>
+    <tspan x="22" dy="20">│ ● RNGD   npu2   npu-node-2     ·········   0%  ······· 0/51GB    35°C   39W              ▁                                                         │</tspan>
+    <tspan x="22" dy="20">│ ● RNGD   npu3   npu-node-2     ·········   0%  ······· 0/51GB    34°C   39W              ▁                                                         │</tspan>
+    <tspan x="22" dy="20">│ ● GB10   gpu0   gb10-node-2    ·········   0%  ······· 8/129GB∪  44°C   6W               ▁                                                         │</tspan>
     <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>
     <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>
     <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>

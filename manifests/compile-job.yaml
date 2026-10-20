@@ -8,7 +8,7 @@
 #     (현재 cpu-1/cpu-3 만 SMB 확인됨 — RBLN 노드가 마운트 불가면, 로컬 컴파일 후 별도 복사 단계 필요).
 #   - COMPILE_SCRIPT: 아래 ConfigMap 에 넣을 스크립트(manifests/compile-*.py 중 하나).
 #
-# 실행:  kubectl -n llm-serving apply -f manifests/compile-job.yaml
+# 실행:  scripts/render-manifest.sh manifests/compile-job.yaml | kubectl -n llm-serving apply -f -
 #        (한 모델 컴파일 후 스토어에 저장 → 10분 내 model-inventory 갱신 → lmd-top Deploy 반영)
 apiVersion: v1
 kind: ConfigMap
@@ -29,7 +29,7 @@ spec:
     spec:
       restartPolicy: Never
       nodeSelector:
-        kubernetes.io/hostname: npu-node-1   # TODO: RBLN 드라이버 + SMB 마운트 가능한 노드
+        kubernetes.io/hostname: ${LLMD_NODE_NPU1}   # TODO: RBLN 드라이버 + SMB 마운트 가능한 노드
       # runtimeClassName: rbln             # (필요 시 RBLN 런타임클래스)
       volumes:
         - { name: store, persistentVolumeClaim: { claimName: model-store } }

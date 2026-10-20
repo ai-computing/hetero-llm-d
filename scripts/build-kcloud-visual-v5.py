@@ -10,7 +10,7 @@ import subprocess
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'docs/presentations/kcloud-etri-visual-v5'
 OUT.mkdir(parents=True,exist_ok=True)
-TEMPLATE=Path('/home/user/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-simple-light-mode/assets/reference.pptx')
+TEMPLATE=Path.home()/'.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-simple-light-mode/assets/reference.pptx'
 INK='202027'; MUTED='72727D'; PURPLE='7560D5'; PALE='F2EFFB'; GRAY='F4F4F6'; GREEN='48816A'
 assets=OUT/'assets'; assets.mkdir(exist_ok=True)
 js="""const React=require('react'),R=require('react-dom/server'),I=require('react-icons/lu'),sharp=require('sharp');const path=process.argv[1];(async()=>{for(const name of ['LuCpu','LuServer','LuBoxes','LuFolderOpen','LuSlidersHorizontal','LuGauge','LuWorkflow','LuPackageCheck','LuRocket','LuActivity','LuNetwork','LuMemoryStick','LuArrowRight','LuDatabase']){let svg=R.renderToStaticMarkup(React.createElement(I[name],{size:320,color:'#7560D5',strokeWidth:1.35}));await sharp(Buffer.from(svg)).png().toFile(path+'/'+name+'.png')}})();"""

@@ -10,7 +10,7 @@
     "size": "16:9",
     "quality": "built-in default",
     "prompt_source": "approved sample slide 1: ETRI whole-stack conceptual map",
-    "approved_sample_path": "/home/user/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
+    "approved_sample_path": "/home/<user>/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
     "input_context_preparation": "view_image all local inputs then referenced_image_paths in image_gen__imagegen",
     "handoff_rule": "Use same built-in image backend; return blocker if unavailable. No local rendering or overlays."
   },
@@ -24,7 +24,7 @@
       "out": "origin_image/slide_01.png",
       "input_images": [
         {
-          "path": "/home/user/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v10/origin_image/slide_01.png",
+          "path": "/home/<user>/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v10/origin_image/slide_01.png",
           "role": "Approved style only: blue/white Korean technical presentation. Vary layout, do not repeat full stack."
         }
       ],
@@ -45,7 +45,7 @@
       "out": "origin_image/slide_02.png",
       "input_images": [
         {
-          "path": "/home/user/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v10/origin_image/slide_01.png",
+          "path": "/home/<user>/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v10/origin_image/slide_01.png",
           "role": "Approved style only: blue/white Korean technical presentation. Vary layout, do not repeat full stack."
         }
       ],
@@ -66,7 +66,7 @@
       "out": "origin_image/slide_03.png",
       "input_images": [
         {
-          "path": "/home/user/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v10/origin_image/slide_01.png",
+          "path": "/home/<user>/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v10/origin_image/slide_01.png",
           "role": "Approved style only: blue/white Korean technical presentation. Vary layout, do not repeat full stack."
         }
       ],
@@ -82,7 +82,7 @@
       "result": {
         "agent_id": "/root/slide03",
         "backend_used": "built-in image tool",
-        "selected_source": "/home/user/.codex/generated_images/01a0800d-9ac7-7673-b3bb-fe86a1b4c300/exec-c9b5c78e-24f0-4275-9f49-8a3cc32fc0d9.png",
+        "selected_source": "/home/<user>/.codex/generated_images/01a0800d-9ac7-7673-b3bb-fe86a1b4c300/exec-c9b5c78e-24f0-4275-9f49-8a3cc32fc0d9.png",
         "selected_source_sha256": "c026363bf1c84c262cb7507c2a5ff8ee9855caffb1a4077bf95bb47e14cba6a5",
         "final_image": "origin_image/slide_03.png",
         "final_image_sha256": "c026363bf1c84c262cb7507c2a5ff8ee9855caffb1a4077bf95bb47e14cba6a5",
@@ -105,7 +105,7 @@
       "out": "origin_image/slide_04.png",
       "input_images": [
         {
-          "path": "/home/user/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v10/origin_image/slide_01.png",
+          "path": "/home/<user>/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v10/origin_image/slide_01.png",
           "role": "Approved style only: blue/white Korean technical presentation. Vary layout, do not repeat full stack."
         }
       ],
@@ -121,7 +121,7 @@
       "result": {
         "agent_id": "/root/slide04",
         "backend_used": "built-in image tool",
-        "selected_source": "/home/user/.codex/generated_images/01a0800d-c5e9-7de1-9a80-ae928c17588e/exec-34aba766-5046-4bbe-8e77-44472ddaac60.png",
+        "selected_source": "/home/<user>/.codex/generated_images/01a0800d-c5e9-7de1-9a80-ae928c17588e/exec-34aba766-5046-4bbe-8e77-44472ddaac60.png",
         "selected_source_sha256": "510737f087e524540dc7a1900a4acb4fc99ac47a279362e33c52ddf3f6d6d9a3",
         "final_image": "origin_image/slide_04.png",
         "final_image_sha256": "510737f087e524540dc7a1900a4acb4fc99ac47a279362e33c52ddf3f6d6d9a3",
@@ -144,7 +144,7 @@
       "out": "origin_image/slide_05.png",
       "input_images": [
         {
-          "path": "/home/user/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v10/origin_image/slide_01.png",
+          "path": "/home/<user>/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v10/origin_image/slide_01.png",
           "role": "Approved style only: blue/white Korean technical presentation. Vary layout, do not repeat full stack."
         }
       ],
@@ -165,7 +165,7 @@
       "out": "origin_image/slide_07.png",
       "input_images": [
         {
-          "path": "/home/user/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v10/origin_image/slide_01.png",
+          "path": "/home/<user>/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v10/origin_image/slide_01.png",
           "role": "Approved style only: blue/white Korean technical presentation. Vary layout, do not repeat full stack."
         }
       ],

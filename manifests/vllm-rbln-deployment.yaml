@@ -1,4 +1,5 @@
 ---
+# Apply:  scripts/render-manifest.sh manifests/vllm-rbln-deployment.yaml | kubectl apply -f -   (LLMD_* values: cluster.local.env)
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -20,7 +21,7 @@ spec:
       labels: { app: vllm-rbln-koni }
     spec:
       nodeSelector:
-        kubernetes.io/hostname: npu-node-1  # host venv/모델 hostPath 의존
+        kubernetes.io/hostname: ${LLMD_NODE_NPU1}  # host venv/모델 hostPath 의존
       containers:
         - name: server
           image: ubuntu:22.04        # host와 동일 OS/GLIBC ABI 매칭
@@ -89,9 +90,9 @@ spec:
         - name: host-rbln-bin           # rbln-smi/rbln_daemon/rbln-stat 등
           hostPath: { path: /usr/bin, type: Directory }
         - name: model           # KONI-Llama3.1-8B-Instruct RBLN compiled output (TP=4)
-          hostPath: { path: /home/user/rbln-KONI-Llama3.1-8B-Instruct-tp4-bs1-s8192, type: Directory }
+          hostPath: { path: ${LLMD_HOME}/rbln-KONI-Llama3.1-8B-Instruct-tp4-bs1-s8192, type: Directory }
         - name: cache
-          hostPath: { path: /home/user/.cache/huggingface, type: DirectoryOrCreate }
+          hostPath: { path: ${LLMD_HOME}/.cache/huggingface, type: DirectoryOrCreate }
 ---
 apiVersion: v1
 kind: Service

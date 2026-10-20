@@ -32,7 +32,7 @@
     <tspan x="22" dy="20">│KIND     TARGET                                                                              STARTED  STATUS                                        │</tspan>
     <tspan x="22" dy="20">│compile  qwen--qwen3-4b → RBLN rbln-ca22-tp4-s40…                                            1m       Running        ██░░░░░░░░  ···  starting…     │</tspan>
     <tspan x="22" dy="20">│compile  qwen--qwen3-4b → RBLN rbln-ca22-tp4-s81…                                            34m      Failed         rebel-compiler failed during co│</tspan>
-    <tspan x="22" dy="20">│deploy   hetero-pd-gateway ×1 @npu-node-1                                                      5d       ⚠ Degraded 1/1                                │</tspan>
+    <tspan x="22" dy="20">│deploy   hetero-pd-gateway ×1 @npu-node-1                                                    5d       ⚠ Degraded 1/1                                │</tspan>
     <tspan x="22" dy="20">│deploy   ds4-inject-proxy ×2 @cpu-1                                                          12d      ● Serving 2/2                                 │</tspan>
     <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>
     <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>
