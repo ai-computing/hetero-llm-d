@@ -273,7 +273,7 @@ k8s.deploy.<name>.{ready,desired}      k8s.pod.<name>.phase
 
 ## 6. 부록 — 클러스터 실측 (2026-06-30, 솔버/인벤토리 근거)
 
-| 가속기 | k8s 리소스명 | etri-001 allocatable | 노드 라벨 |
+| 가속기 | k8s 리소스명 | npu-node-1 allocatable | 노드 라벨 |
 |---|---|---|---|
 | NVIDIA A100 | `nvidia.com/gpu` | **0** (device-plugin 0/0 — 현재 미광고) | `accelerator.nvidia=present` |
 | Rebellions ATOM(RBLN-CA22) | `rebellions.ai/ATOM` | **4** | `accelerator.rebellions=present` |

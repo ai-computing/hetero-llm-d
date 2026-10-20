@@ -35,10 +35,10 @@
 
 | 노드 | 가속기 | 현재 워크로드 | TP |
 |---|---|---|---|
-| etri-001 | A100 80GB × 2 | **`ds4-deepseek-v4-flash`** (V4 Flash, GPU0 단일) | – |
-| etri-001 | RBLN-CA22 × 4 | **`vllm-rbln-koni`** (KONI-Llama3.1-8B) | 4 |
-| etri-001 | RNGD × 2 | **`furiosa-embed`** (Qwen3-Embedding-8B, RAG용) | 2 |
-| etri-esc8000-e11 | RNGD × 4 | (cordoned, 사용자 결정) | – |
+| npu-node-1 | A100 80GB × 2 | **`ds4-deepseek-v4-flash`** (V4 Flash, GPU0 단일) | – |
+| npu-node-1 | RBLN-CA22 × 4 | **`vllm-rbln-koni`** (KONI-Llama3.1-8B) | 4 |
+| npu-node-1 | RNGD × 2 | **`furiosa-embed`** (Qwen3-Embedding-8B, RAG용) | 2 |
+| npu-node-2 | RNGD × 4 | (cordoned, 사용자 결정) | – |
 | cpu-1/2/3 | CPU only | `ollama-cpu` (모델 자유) | – |
 
 ### 기능 ↔ Worker 매트릭스

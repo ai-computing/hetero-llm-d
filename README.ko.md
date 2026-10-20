@@ -90,6 +90,8 @@ bash -n scripts/*.sh manifests/epp/make-epp.sh     # 셸 스크립트 문법 검
 | `LLMD_GATEWAY_HOST` | `manifests/epp/make-epp.sh` 헬스 테스트 (`GW_ADDR`로 덮어쓰기 가능) |
 | `LLMD_PROM_ADDR` | `scripts/capture-lmd-top.sh`, lmd-top `LMD_PROM` |
 | `LLMD_MODEL_STORE_SMB` | `manifests/model-store.yaml` (`scripts/render-manifest.sh manifests/model-store.yaml \| kubectl apply -f -`) |
+| `LLMD_NODE_NPU1`, `LLMD_NODE_NPU2`, `LLMD_HOME` | `manifests/`의 노드 고정과 홈 디렉터리 hostPath (`compile-job`, `ds4-deepseek-v4-flash`, `hetero-llama8b-mixed`, `ipmi-exporter`, `vllm-a100-llama31-8b`, `vllm-exaone`, `vllm-rbln-deployment`, `vllm-v4flash`, `furiosa-*-modelservice-values` 두 개). `scripts/render-manifest.sh`로 렌더해 적용한다(helm은 `-f <(scripts/render-manifest.sh …)`). `scripts/hetero-sweep.py`도 노드 이름을 읽는다 |
+| `LLMD_KUBE_USER` (선택) | `scripts/02-cp-init-cluster.sh`: kubeconfig를 받을 계정 (기본: sudo 실행 사용자) |
 
 <details>
 <summary><b>클러스터 부트스트랩 (root, 수동)</b></summary>

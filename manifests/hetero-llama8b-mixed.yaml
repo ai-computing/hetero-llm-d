@@ -3,7 +3,8 @@
 # Furiosa RNGD (furiosa-llm 2026.3.0, FXB tag v2026.3), both served as
 # meta-llama/Llama-3.1-8B-Instruct. The EPP maps each pod's metrics by its
 # llm-d.ai/engine-type label. Gateway path: /hetero/llama8b/* -> /v1/*.
-# Teardown: kubectl delete -f manifests/hetero-llama8b-mixed.yaml
+# Apply:  scripts/render-manifest.sh manifests/hetero-llama8b-mixed.yaml | kubectl apply -f -   (LLMD_* values: cluster.local.env)
+# Teardown: scripts/render-manifest.sh manifests/hetero-llama8b-mixed.yaml | kubectl delete -f -
 # Plus RBLN ATOM (vllm-rbln 0.11 host stack) serving a Llama-3.x-8B artifact compiled with
 # optimum-rbln 0.11.0.post1 (batch 8, max_seq_len 512 — requests must stay under 512 tokens),
 # mounted read-only from the PD-disaggregation experiment directory. The older
@@ -83,7 +84,7 @@ spec:
           name: store
           readOnly: true
       dnsPolicy: ClusterFirst
-      nodeName: etri-esc8000-e11
+      nodeName: ${LLMD_NODE_NPU2}
       restartPolicy: Always
       runtimeClassName: nvidia
       schedulerName: default-scheduler
@@ -91,7 +92,7 @@ spec:
       terminationGracePeriodSeconds: 30
       volumes:
       - hostPath:
-          path: /home/gspark/.cache/huggingface
+          path: ${LLMD_HOME}/.cache/huggingface
           type: Directory
         name: hf
       - emptyDir:
@@ -139,7 +140,7 @@ spec:
         - -c
         env:
         - name: PYTHONPATH
-          value: /home/gspark/.local/lib/python3.10/site-packages:/host-sys-local-pkgs:/host-sys-pkgs
+          value: ${LLMD_HOME}/.local/lib/python3.10/site-packages:/host-sys-local-pkgs:/host-sys-pkgs
         - name: PYTHONUNBUFFERED
           value: '1'
         - name: VLLM_RBLN_NUM_DEVICES_PER_LOCAL_RANK
@@ -193,7 +194,7 @@ spec:
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
         volumeMounts:
-        - mountPath: /home/gspark/.local/lib/python3.10/site-packages
+        - mountPath: ${LLMD_HOME}/.local/lib/python3.10/site-packages
           name: host-local-pkgs
           readOnly: true
         - mountPath: /host-sys-local-pkgs
@@ -218,14 +219,14 @@ spec:
           name: shm
       dnsPolicy: ClusterFirst
       nodeSelector:
-        kubernetes.io/hostname: etri-001
+        kubernetes.io/hostname: ${LLMD_NODE_NPU1}
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext: {}
       terminationGracePeriodSeconds: 30
       volumes:
       - hostPath:
-          path: /home/gspark/.local/lib/python3.10/site-packages
+          path: ${LLMD_HOME}/.local/lib/python3.10/site-packages
           type: Directory
         name: host-local-pkgs
       - hostPath:
@@ -249,7 +250,7 @@ spec:
           type: Directory
         name: host-rbln-bin
       - hostPath:
-          path: /home/gspark/workspace/01_pd_disag/experiments/native_pd_2026_4/native_atom_b8_20261016/r1/compiled
+          path: ${LLMD_HOME}/workspace/01_pd_disag/experiments/native_pd_2026_4/native_atom_b8_20261016/r1/compiled
           type: Directory
         name: model
       - emptyDir:
@@ -278,7 +279,7 @@ spec:
         llm-d.ai/engine-type: furiosa-llm
     spec:
       nodeSelector:
-        kubernetes.io/hostname: etri-001
+        kubernetes.io/hostname: ${LLMD_NODE_NPU1}
       volumes:
       - name: cache
         emptyDir: {}

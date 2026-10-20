@@ -11,7 +11,8 @@ APISERVER_IP="$LLMD_CP_IP"
 POD_CIDR="$LLMD_POD_CIDR"
 SVC_CIDR="$LLMD_SVC_CIDR"
 NODE_NAME="$(hostname -s | tr '[:upper:]' '[:lower:]')"
-USER_HOME="/home/gspark"
+# Account that also gets a kubeconfig: LLMD_KUBE_USER, else the user who ran sudo.
+KUBE_USER="${LLMD_KUBE_USER:-${SUDO_USER:-}}"
 CILIUM_VER="1.16.5"
 GATEWAY_API_VER="v1.2.0"   # Cilium 1.16 호환 standard channel
 
@@ -32,10 +33,14 @@ else
   log "  already initialized; skipping"
 fi
 
-log "2/6 kubeconfig for root + gspark"
+log "2/6 kubeconfig for root${KUBE_USER:+ + ${KUBE_USER}}"
 mkdir -p /root/.kube && cp -f /etc/kubernetes/admin.conf /root/.kube/config
-mkdir -p "${USER_HOME}/.kube" && cp -f /etc/kubernetes/admin.conf "${USER_HOME}/.kube/config"
-chown -R gspark:gspark "${USER_HOME}/.kube"
+if [[ -n "$KUBE_USER" && "$KUBE_USER" != root ]]; then
+  USER_HOME="$(getent passwd "$KUBE_USER" | cut -d: -f6)"
+  [[ -n "$USER_HOME" ]] || { echo "unknown user $KUBE_USER (LLMD_KUBE_USER)"; exit 1; }
+  mkdir -p "${USER_HOME}/.kube" && cp -f /etc/kubernetes/admin.conf "${USER_HOME}/.kube/config"
+  chown -R "$KUBE_USER:$(id -gn "$KUBE_USER")" "${USER_HOME}/.kube"
+fi
 
 export KUBECONFIG=/etc/kubernetes/admin.conf
 
@@ -63,7 +68,7 @@ cilium status --wait || true
 
 log "6/6 print join command for worker"
 echo
-echo "==== run this on etri-001 (worker) after stage1 there ===="
+echo "==== run this on the worker (${LLMD_NODE_NPU1:-npu-node-1}) after stage1 there ===="
 kubeadm token create --print-join-command
 echo "=========================================================="
 

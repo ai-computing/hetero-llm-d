@@ -4,7 +4,7 @@
 # 따라서 이 이미지는 build context 외부 자원 의존 없이 누구나 빌드 가능.
 #
 # 빌드 + containerd k8s.io namespace import:
-#   on etri-001:
+#   on npu-node-1:
 #     cp ~/llm-d-setup/manifests/vllm-rbln.Dockerfile /tmp/Dockerfile
 #     podman build -t localhost/vllm-rbln-base:2026.05 /tmp
 #     podman save -o /tmp/vllm-rbln-base.tar localhost/vllm-rbln-base:2026.05

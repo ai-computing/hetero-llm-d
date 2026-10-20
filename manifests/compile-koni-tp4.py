@@ -3,7 +3,7 @@ KISTI-KONI/KONI-Llama3.1-8B-Instruct-20241024 을 RBLN-CA22 × 4 (TP=4)로 컴�
 - rbln-model-zoo 공식 검증된 한국어 Llama-3.1 fine-tune (UTF-8 byte-fallback drift 회피)
 - Llama-3.1 호환 architecture, optimum-rbln LlamaForCausalLM로 처리
 
-Run on etri-001 venv:
+Run on npu-node-1 venv:
   /usr/bin/python3.10 ~/compile-koni-tp4.py 2>&1 | tee ~/compile-koni.log
 
 Output: ~/rbln-KONI-Llama3.1-8B-Instruct-tp4-bs1-s8192/

@@ -1,10 +1,11 @@
-# A100 80GB (etri-esc8000-e11) — Llama-3.1-8B-Instruct, vLLM.
+# A100 80GB (${LLMD_NODE_NPU2}) — Llama-3.1-8B-Instruct, vLLM.
 # 이종 가속기 연구의 공통 모델: 같은 모델이 ATOM(~/rbln-llama8b-pd)·RNGD(rngd_pd)에도 있다.
 # e11 은 사용자 결정으로 cordon 상태라 scheduler 대신 nodeName 으로 직접 배치한다.
 # 라벨 app=vllm-a100-llama31-8b 는 기존 InferencePool `vllm-a100-pool` 의 selector 와 같다.
 # LoRA: npu-lora 가 학습한 어댑터(/mnt/store/adapters/...)를 재시작 없이 올린다 —
 #   npu-lora serve --endpoint http://<pod>:8000 --name <run> --path /mnt/store/adapters/<model>/<run>
 #   이후 요청의 "model": "<run>" 이 그 어댑터로 응답한다.
+# Apply:  scripts/render-manifest.sh manifests/vllm-a100-llama31-8b.yaml | kubectl apply -f -   (LLMD_* values: cluster.local.env)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -20,7 +21,7 @@ spec:
     metadata:
       labels: {app: vllm-a100-llama31-8b, accelerator: a100}
     spec:
-      nodeName: etri-esc8000-e11
+      nodeName: ${LLMD_NODE_NPU2}
       runtimeClassName: nvidia
       containers:
         - name: vllm
@@ -55,7 +56,7 @@ spec:
             - {name: store, mountPath: /mnt/store, readOnly: true}
       volumes:
         - name: hf
-          hostPath: {path: /home/gspark/.cache/huggingface, type: Directory}
+          hostPath: {path: ${LLMD_HOME}/.cache/huggingface, type: Directory}
         - name: shm
           emptyDir: {medium: Memory, sizeLimit: 8Gi}
         - name: store

@@ -1,6 +1,6 @@
 """
 Compile meta-llama/Llama-3.1-8B-Instruct for RBLN-CA22 x4 (TP=4).
-Run on etri-001 inside system python or venv with vllm-rbln 0.10.2 stack.
+Run on npu-node-1 inside system python or venv with vllm-rbln 0.10.2 stack.
 
   /usr/bin/python3.10 ~/compile-llama31-8b-tp4.py 2>&1 | tee ~/compile-llama31.log
 

@@ -1,6 +1,7 @@
-# K-EXAONE-236B-A23B-NVFP4A16 on 4x Furiosa RNGD (etri-esc8000-e11).
+# K-EXAONE-236B-A23B-NVFP4A16 on 4x Furiosa RNGD (${LLMD_NODE_NPU2}).
 # MoE 236B (23B active), NVFP4 weights. ~150GB download. Public (no HF gating).
 # Requires a furiosaai/furiosa-llm image that supports K-EXAONE + NVFP4A16 on driver 2026.3.x.
+# Install: helm ... -f <(scripts/render-manifest.sh manifests/furiosa-k-exaone-modelservice-values.yaml)   (LLMD_* values: cluster.local.env)
 modelArtifacts:
   name: "furiosa-ai/K-EXAONE-236B-A23B-NVFP4A16"
   uri: "hf://furiosa-ai/K-EXAONE-236B-A23B-NVFP4A16"
@@ -31,7 +32,7 @@ decode:
     data: 1
     pipeline: 1
   nodeSelector:
-    kubernetes.io/hostname: etri-esc8000-e11
+    kubernetes.io/hostname: ${LLMD_NODE_NPU2}
   containers:
     - name: "furiosa-llm"
       image: "furiosaai/furiosa-llm:2026.3.0"   # pinned: 2026.4 drops --tensor-parallel-size (TP lives in the FXB artifact)

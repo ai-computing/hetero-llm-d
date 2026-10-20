@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Build the vllm-rbln container image on etri-001 (where Rebellions packages are reachable)
+# Build the vllm-rbln container image on npu-node-1 (where Rebellions packages are reachable)
 # and import it into containerd's k8s.io namespace so Kubernetes can use it
 # without an external registry.
 #
-# Run on etri-001:
+# Run on npu-node-1:
 #   bash /tmp/04-build-vllm-rbln.sh
 #
 # Requires sudo for `ctr -n k8s.io images import` only.

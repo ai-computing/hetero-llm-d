@@ -2,6 +2,7 @@
 # 카드 전력(RBLN CARD_POWER / furiosa_npu_hw_power / DCGM)만으로는 host idle·전환 비용이 빠지므로
 # 에너지 실험(J/요청, tok/J)은 이 값(ipmi_dcmi_power_consumption_watts)을 기준으로 한다.
 # 대상: BMC(/dev/ipmi0)가 있는 가속기 노드만. GB10 은 IPMI 없음(node_hwmon_power_* 사용).
+# Apply:  scripts/render-manifest.sh manifests/ipmi-exporter.yaml | kubectl apply -f -   (LLMD_* values: cluster.local.env)
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -33,7 +34,7 @@ spec:
               - matchExpressions:
                   - key: kubernetes.io/hostname
                     operator: In
-                    values: [etri-001, etri-esc8000-e11]
+                    values: [${LLMD_NODE_NPU1}, ${LLMD_NODE_NPU2}]
       tolerations: [{operator: Exists}]
       containers:
         - name: exporter

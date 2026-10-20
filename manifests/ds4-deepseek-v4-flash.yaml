@@ -2,6 +2,7 @@
 # DwarfStar (ds4) — antirez의 DeepSeek V4 Flash 전용 inference engine
 # A100 (sm_80) 도전: make cuda-generic + CUDA_ARCH=80
 # 모델: antirez/deepseek-v4-gguf 의 양자화 변형 (q4_K_M 기본, 약 90GB)
+# Apply:  scripts/render-manifest.sh manifests/ds4-deepseek-v4-flash.yaml | kubectl apply -f -   (LLMD_* values: cluster.local.env)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -17,7 +18,7 @@ spec:
     spec:
       runtimeClassName: nvidia
       nodeSelector:
-        kubernetes.io/hostname: etri-001
+        kubernetes.io/hostname: ${LLMD_NODE_NPU1}
       initContainers:
         # ── 1) ds4 binary 빌드 (CUDA devel image, sm_80) ──
         - name: build-ds4
@@ -115,7 +116,7 @@ spec:
         - name: shared         # binary share (init → main)
           emptyDir: { sizeLimit: 1Gi }
         - name: models         # GGUF weights (~94GB) — hostPath로 영구화 (재시작 시 재다운로드 회피)
-          hostPath: { path: /home/gspark/ds4-models, type: DirectoryOrCreate }
+          hostPath: { path: ${LLMD_HOME}/ds4-models, type: DirectoryOrCreate }
         - name: kv-cache       # ds4 disk KV cache (재시작 시 reset OK)
           emptyDir: { sizeLimit: 32Gi }
 ---

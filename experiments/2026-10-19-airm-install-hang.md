@@ -2,7 +2,7 @@
 
 - **Date**: 2026-10-19
 - **Task**: LLMD-33
-- **Host / device**: gspark-poweredge-r7525 (control-plane), kubectl/server v1.31.14, rm-core v0.1.1
+- **Host / device**: control-node (control-plane), kubectl/server v1.31.14, rm-core v0.1.1
 - **Commit**: airm/v0.1 48f1a6a + 이 작업 diff (커밋 전 측정)
 
 ## Question

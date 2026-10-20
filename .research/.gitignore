@@ -2,3 +2,5 @@
 TASKS.md
 # Task prompts written by `researchctl dispatch`
 prompts/
+# Optional real -> alias map read by report.py (site-specific, never commit)
+aliases.local

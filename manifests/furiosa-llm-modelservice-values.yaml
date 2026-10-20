@@ -1,3 +1,4 @@
+# Install: helm ... -f <(scripts/render-manifest.sh manifests/furiosa-llm-modelservice-values.yaml)   (LLMD_* values: cluster.local.env)
 modelArtifacts:
   name: "furiosa-ai/Llama-3.1-8B-Instruct"
   uri: "hf://furiosa-ai/Llama-3.1-8B-Instruct"
@@ -22,7 +23,7 @@ decode:
     data: 1
     pipeline: 1
   nodeSelector:
-    kubernetes.io/hostname: etri-esc8000-e11
+    kubernetes.io/hostname: ${LLMD_NODE_NPU2}
   containers:
     - name: "furiosa-llm"
       image: "furiosaai/furiosa-llm:2026.3.0"   # pinned: 2026.4 drops --tensor-parallel-size

@@ -10,7 +10,7 @@
     "size": "16:9",
     "quality": "built-in default",
     "prompt_source": "approved sample slide 1: ETRI whole-stack conceptual map",
-    "approved_sample_path": "/home/gspark/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
+    "approved_sample_path": "/home/<user>/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
     "input_context_preparation": "view_image all local inputs then referenced_image_paths in image_gen__imagegen",
     "handoff_rule": "Use same built-in image backend; return blocker if unavailable. No local rendering or overlays."
   },
@@ -24,7 +24,7 @@
       "out": "origin_image/slide_01.png",
       "input_images": [
         {
-          "path": "/home/gspark/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
+          "path": "/home/<user>/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
           "role": "Approved style only: blue/white Korean technical presentation. Vary layout, do not repeat full stack."
         }
       ],
@@ -45,7 +45,7 @@
       "out": "origin_image/slide_02.png",
       "input_images": [
         {
-          "path": "/home/gspark/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
+          "path": "/home/<user>/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
           "role": "Approved style only: blue/white Korean technical presentation. Vary layout, do not repeat full stack."
         }
       ],
@@ -61,7 +61,7 @@
       "result": {
         "agent_id": "/root/slide02",
         "backend_used": "built-in image tool",
-        "selected_source": "/home/gspark/.codex/generated_images/01a0800d-6f93-7080-9768-5342cb5a1025/exec-c95021be-acdd-4160-9c20-f82503cab77a.png",
+        "selected_source": "/home/<user>/.codex/generated_images/01a0800d-6f93-7080-9768-5342cb5a1025/exec-c95021be-acdd-4160-9c20-f82503cab77a.png",
         "selected_source_sha256": "02ee9991a0dc35afa05f27c7ace2e2b5725d6ead019db1aea48c80f42bbf7308",
         "final_image": "origin_image/slide_02.png",
         "final_image_sha256": "02ee9991a0dc35afa05f27c7ace2e2b5725d6ead019db1aea48c80f42bbf7308",
@@ -84,7 +84,7 @@
       "out": "origin_image/slide_03.png",
       "input_images": [
         {
-          "path": "/home/gspark/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
+          "path": "/home/<user>/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
           "role": "Approved style only: blue/white Korean technical presentation. Vary layout, do not repeat full stack."
         }
       ],
@@ -100,7 +100,7 @@
       "result": {
         "agent_id": "/root/slide03",
         "backend_used": "built-in image tool",
-        "selected_source": "/home/gspark/.codex/generated_images/01a0800d-9ac7-7673-b3bb-fe86a1b4c300/exec-486767e1-e89b-4962-b833-f349a9a9b871.png",
+        "selected_source": "/home/<user>/.codex/generated_images/01a0800d-9ac7-7673-b3bb-fe86a1b4c300/exec-486767e1-e89b-4962-b833-f349a9a9b871.png",
         "selected_source_sha256": "3396f365ecf294c136618e56f3b0cedc0ba3cb14651fb67c848a87c19bdef41f",
         "final_image": "origin_image/slide_03.png",
         "final_image_sha256": "3396f365ecf294c136618e56f3b0cedc0ba3cb14651fb67c848a87c19bdef41f",
@@ -123,7 +123,7 @@
       "out": "origin_image/slide_04.png",
       "input_images": [
         {
-          "path": "/home/gspark/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
+          "path": "/home/<user>/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
           "role": "Approved style only: blue/white Korean technical presentation. Vary layout, do not repeat full stack."
         }
       ],
@@ -139,7 +139,7 @@
       "result": {
         "agent_id": "/root/slide04",
         "backend_used": "built-in image tool",
-        "selected_source": "/home/gspark/.codex/generated_images/01a0800d-c5e9-7de1-9a80-ae928c17588e/exec-cda0f2b0-19fd-4036-8744-5e8a7e856f29.png",
+        "selected_source": "/home/<user>/.codex/generated_images/01a0800d-c5e9-7de1-9a80-ae928c17588e/exec-cda0f2b0-19fd-4036-8744-5e8a7e856f29.png",
         "selected_source_sha256": "51c9b5351115805a7dcdf39de1c76c7cece0294be787b9c50a22cb1a37924e85",
         "final_image": "origin_image/slide_04.png",
         "final_image_sha256": "51c9b5351115805a7dcdf39de1c76c7cece0294be787b9c50a22cb1a37924e85",
@@ -162,7 +162,7 @@
       "out": "origin_image/slide_05.png",
       "input_images": [
         {
-          "path": "/home/gspark/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
+          "path": "/home/<user>/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
           "role": "Approved style only: blue/white Korean technical presentation. Vary layout, do not repeat full stack."
         }
       ],
@@ -178,7 +178,7 @@
       "result": {
         "agent_id": "/root/slide02",
         "backend_used": "built-in image tool",
-        "selected_source": "/home/gspark/.codex/generated_images/01a0800d-6f93-7080-9768-5342cb5a1025/exec-09a5dacd-6d4d-443c-a662-a16ac8b43d0e.png",
+        "selected_source": "/home/<user>/.codex/generated_images/01a0800d-6f93-7080-9768-5342cb5a1025/exec-09a5dacd-6d4d-443c-a662-a16ac8b43d0e.png",
         "selected_source_sha256": "0a3e39d41f906d0f3894f0467091d7c7213a5d0eb3ce6c4dfc4cc8e41719f17d",
         "final_image": "origin_image/slide_05.png",
         "final_image_sha256": "0a3e39d41f906d0f3894f0467091d7c7213a5d0eb3ce6c4dfc4cc8e41719f17d",
@@ -201,11 +201,11 @@
       "out": "origin_image/slide_06.png",
       "input_images": [
         {
-          "path": "/home/gspark/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
+          "path": "/home/<user>/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
           "role": "Approved style only: blue/white Korean technical presentation. Vary layout, do not repeat full stack."
         },
         {
-          "path": "/home/gspark/llm-d-setup/docs/presentations/kcloud-etri-research-v7/assets/lmd-top-real.png",
+          "path": "/home/<user>/llm-d-setup/docs/presentations/kcloud-etri-research-v7/assets/lmd-top-real.png",
           "role": "STRICT INPUT ACTUAL UI. Embed original screenshot unchanged, keep all text/colors/values/pixels visually faithful. Not loose inspiration. Do not redraw fake UI."
         }
       ],
@@ -233,7 +233,7 @@
       "out": "origin_image/slide_07.png",
       "input_images": [
         {
-          "path": "/home/gspark/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
+          "path": "/home/<user>/llm-d-setup/docs/presentations/ETRI_NPU_TopDown_v9/origin_image/slide_01.png",
           "role": "Approved style only: blue/white Korean technical presentation. Vary layout, do not repeat full stack."
         }
       ],
@@ -249,7 +249,7 @@
       "result": {
         "agent_id": "/root/slide03",
         "backend_used": "built-in image tool",
-        "selected_source": "/home/gspark/.codex/generated_images/01a0800d-9ac7-7673-b3bb-fe86a1b4c300/exec-d7900659-8552-4762-94e1-92c95f625313.png",
+        "selected_source": "/home/<user>/.codex/generated_images/01a0800d-9ac7-7673-b3bb-fe86a1b4c300/exec-d7900659-8552-4762-94e1-92c95f625313.png",
         "selected_source_sha256": "dcc7b8beae867fecd3218bea8141bf8cc5484bf3fd4457a5de2ff14f0f81caaa",
         "final_image": "origin_image/slide_07.png",
         "final_image_sha256": "dcc7b8beae867fecd3218bea8141bf8cc5484bf3fd4457a5de2ff14f0f81caaa",

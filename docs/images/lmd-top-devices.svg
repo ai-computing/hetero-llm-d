@@ -9,20 +9,20 @@
     <tspan x="22" dy="20">⇥  0:Overview   1:Traffic   2:Serving   3:Infra   4:Deploy   5:Events   6:Setup    ◂ Nodes ·  Devices  · Topology ▸</tspan>
     <tspan x="22" dy="20">╭ Accelerators · ⏎ timeline  —  Σall 14dev · 0busy · util 7% · VRAM 97/735G · 398W · 1/14 ───────────────────────────────────────────────────────────╮</tspan>
     <tspan x="22" dy="20">│ KIND     ID     NODE           UTIL▼           MEM               TEMP   PWR   TREND(util)   MODEL/POD                                              │</tspan>
-    <tspan x="22" dy="20">│▎● GB10   gpu0   gx10-4744      ●●●●●●●●●  96%  ●●●●●·· 88/129GB∪ 47°C   4W               █                                                         │</tspan>
-    <tspan x="22" dy="20">│ ● GB10   gpu0   dgx-spark0     ·········   0%  ······· 9/131GB∪  47°C   4W               ▁                                                         │</tspan>
-    <tspan x="22" dy="20">│ ● RNGD   npu0   etri-001       ·········   0%  ······· 0/51GB    41°C   38W              ▁                                                         │</tspan>
-    <tspan x="22" dy="20">│ ● RNGD   npu1   etri-001       ·········   0%  ······· 0/51GB    41°C   39W              ▁                                                         │</tspan>
-    <tspan x="22" dy="20">│ ● RNGD   npu2   etri-001       ·········   0%  ······· 0/51GB    38°C   41W              ▁                                                         │</tspan>
-    <tspan x="22" dy="20">│ ● RNGD   npu3   etri-001       ·········   0%  ······· 0/51GB    41°C   40W              ▁                                                         │</tspan>
-    <tspan x="22" dy="20">│ ● RBLN   rbln0  etri-001       ·········   0%  ······· 0/17GB    41°C   19W              ▁                                                         │</tspan>
-    <tspan x="22" dy="20">│ ● RBLN   rbln1  etri-001       ·········   0%  ······· 0/17GB    38°C   19W              ▁                                                         │</tspan>
-    <tspan x="22" dy="20">│ ● RBLN   rbln2  etri-001       ·········   0%  ······· 0/17GB    39°C   19W              ▁                                                         │</tspan>
-    <tspan x="22" dy="20">│ ● RBLN   rbln3  etri-001       ·········   0%  ······· 0/17GB    40°C   18W              ▁                                                         │</tspan>
-    <tspan x="22" dy="20">│ ● RNGD   npu0   etri-esc8000-… ·········   0%  ······· 0/51GB    36°C   38W              ▁                                                         │</tspan>
-    <tspan x="22" dy="20">│ ● RNGD   npu1   etri-esc8000-… ·········   0%  ······· 0/51GB    37°C   39W              ▁                                                         │</tspan>
-    <tspan x="22" dy="20">│ ● RNGD   npu2   etri-esc8000-… ·········   0%  ······· 0/51GB    36°C   40W              ▁                                                         │</tspan>
-    <tspan x="22" dy="20">│ ● RNGD   npu3   etri-esc8000-… ·········   0%  ······· 0/51GB    36°C   39W              ▁                                                         │</tspan>
+    <tspan x="22" dy="20">│▎● GB10   gpu0   gb10-node-2    ●●●●●●●●●  96%  ●●●●●·· 88/129GB∪ 47°C   4W               █                                                         │</tspan>
+    <tspan x="22" dy="20">│ ● GB10   gpu0   gb10-node-1    ·········   0%  ······· 9/131GB∪  47°C   4W               ▁                                                         │</tspan>
+    <tspan x="22" dy="20">│ ● RNGD   npu0   npu-node-1     ·········   0%  ······· 0/51GB    41°C   38W              ▁                                                         │</tspan>
+    <tspan x="22" dy="20">│ ● RNGD   npu1   npu-node-1     ·········   0%  ······· 0/51GB    41°C   39W              ▁                                                         │</tspan>
+    <tspan x="22" dy="20">│ ● RNGD   npu2   npu-node-1     ·········   0%  ······· 0/51GB    38°C   41W              ▁                                                         │</tspan>
+    <tspan x="22" dy="20">│ ● RNGD   npu3   npu-node-1     ·········   0%  ······· 0/51GB    41°C   40W              ▁                                                         │</tspan>
+    <tspan x="22" dy="20">│ ● RBLN   rbln0  npu-node-1     ·········   0%  ······· 0/17GB    41°C   19W              ▁                                                         │</tspan>
+    <tspan x="22" dy="20">│ ● RBLN   rbln1  npu-node-1     ·········   0%  ······· 0/17GB    38°C   19W              ▁                                                         │</tspan>
+    <tspan x="22" dy="20">│ ● RBLN   rbln2  npu-node-1     ·········   0%  ······· 0/17GB    39°C   19W              ▁                                                         │</tspan>
+    <tspan x="22" dy="20">│ ● RBLN   rbln3  npu-node-1     ·········   0%  ······· 0/17GB    40°C   18W              ▁                                                         │</tspan>
+    <tspan x="22" dy="20">│ ● RNGD   npu0   npu-node-2     ·········   0%  ······· 0/51GB    36°C   38W              ▁                                                         │</tspan>
+    <tspan x="22" dy="20">│ ● RNGD   npu1   npu-node-2     ·········   0%  ······· 0/51GB    37°C   39W              ▁                                                         │</tspan>
+    <tspan x="22" dy="20">│ ● RNGD   npu2   npu-node-2     ·········   0%  ······· 0/51GB    36°C   40W              ▁                                                         │</tspan>
+    <tspan x="22" dy="20">│ ● RNGD   npu3   npu-node-2     ·········   0%  ······· 0/51GB    36°C   39W              ▁                                                         │</tspan>
     <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>
     <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>
     <tspan x="22" dy="20">│                                                                                                                                                    │</tspan>

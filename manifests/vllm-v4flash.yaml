@@ -1,4 +1,5 @@
 ---
+# Apply:  scripts/render-manifest.sh manifests/vllm-v4flash.yaml | kubectl apply -f -   (LLMD_* values: cluster.local.env)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -24,7 +25,7 @@ spec:
     spec:
       runtimeClassName: nvidia
       nodeSelector:
-        kubernetes.io/hostname: etri-001
+        kubernetes.io/hostname: ${LLMD_NODE_NPU1}
       initContainers:
       # 1) 모델 다운로드 (~44GB, hf_transfer)
       - name: download-model
@@ -88,7 +89,7 @@ spec:
         - { name: shm, mountPath: /dev/shm }
       volumes:
       - name: models
-        hostPath: { path: /home/gspark/vllm-v4flash-models, type: DirectoryOrCreate }
+        hostPath: { path: ${LLMD_HOME}/vllm-v4flash-models, type: DirectoryOrCreate }
       - name: shm
         emptyDir:
           medium: Memory
