@@ -88,7 +88,19 @@ if [[ "$what" == manifests || "$what" == all ]]; then
   echo "== deploy/airm"
   # The ScrapeConfig needs the CRD only for its own kind, not AcceleratorProfile, so order does not matter.
   kc "${kubectl_args[@]}" "$MANIFESTS/scrape-airm.yaml" </dev/null
-  kc "${kubectl_args[@]}" "$MANIFESTS/airm-placement.yaml" </dev/null
+  if [[ "$action" == delete ]]; then
+    kc "${kubectl_args[@]}" "$MANIFESTS/airm-placement.yaml" </dev/null
+  else
+    # The controller owns this data after bootstrap; never reset it on reinstall.
+    seed="$(kc get configmap airm-placement -n llm-serving --ignore-not-found -o name </dev/null)"
+    if [[ -z "$seed" ]]; then
+      seed_args=(create -f)
+      [[ "$action" != dry-run ]] || seed_args=(create --dry-run=server -f)
+      kc "${seed_args[@]}" "$MANIFESTS/airm-placement.yaml" </dev/null
+    else
+      echo "(keeping existing airm-placement)"
+    fi
+  fi
   # Grafana sidecar (kube-prometheus-stack) loads ConfigMaps labelled grafana_dashboard=1.
   kubectl create configmap grafana-dashboard-airm -n monitoring \
       --from-file=airm.json="$ROOT/monitoring/grafana-dashboards/airm.json" --dry-run=client -o yaml \
@@ -101,8 +113,13 @@ if [[ "$what" == placement ]]; then
   tmp="$(mktemp -d)"; trap 'rm -rf "$tmp"' EXIT
   kc get configmap airm-placement -n "$AIRM_NAMESPACE" -o json >"$tmp/cm.json" </dev/null
   kc get deployments -n "$AIRM_NAMESPACE" -l airm.ai-computing.io/pool -o json >"$tmp/deploy.json" </dev/null
-  # KEDA may be absent; then there is nothing to cap.
-  kc get scaledobjects.keda.sh -n "$AIRM_NAMESPACE" -o json >"$tmp/so.json" </dev/null 2>/dev/null     || echo '{"items": []}' >"$tmp/so.json"
+  # An absent KEDA API is safe; discovery/read errors must stop before any patches.
+  kc api-resources --api-group=keda.sh -o name >"$tmp/keda-resources" </dev/null
+  if grep -qx 'scaledobjects.keda.sh' "$tmp/keda-resources"; then
+    kc get scaledobjects.keda.sh -n "$AIRM_NAMESPACE" -o json >"$tmp/so.json" </dev/null
+  else
+    echo '{"items": []}' >"$tmp/so.json"
+  fi
   python3 "$ROOT/scripts/airm-placement.py" plan --decisions "$tmp/cm.json"       --deployments "$tmp/deploy.json" --scaledobjects "$tmp/so.json" >"$tmp/plan.tsv"
   dry=(); [[ "$action" == dry-run ]] && dry=(--dry-run=server)
   while IFS=$'	' read -r kind name patch; do

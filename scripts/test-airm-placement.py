@@ -114,11 +114,41 @@ class PlacementTests(unittest.TestCase):
     def test_applied_generation_and_nodename_skipped(self):
         done = copy.deepcopy(PREFILL)
         done["metadata"]["annotations"] = {"airm.ai-computing.io/placement-generation": "7"}
+        done["spec"]["template"]["spec"]["affinity"] = {"nodeAffinity": ap.node_affinity([DOC["decisions"][0]])}
         pinned = deploy("rngd-pd-decode", "decode", "llama8b-pd-pool", "rebellions.ai/ATOM", nodeName="n1")
         out, log = self.plan(deps=[done, pinned])
         self.assertEqual(out, {})
         self.assertIn("generation 7 already applied", log)
         self.assertIn("nodeName=n1", log)
+
+    def test_partial_apply_retries_scaledobject_after_deployment_succeeded(self):
+        done = copy.deepcopy(PREFILL)
+        done["metadata"]["annotations"] = {ap.GEN_ANNOTATION: "7"}
+        done["spec"]["template"]["spec"]["affinity"] = {"nodeAffinity": ap.node_affinity([DOC["decisions"][0]])}
+        out, _ = self.plan(deps=[done], sos=[scaled("scale", "rngd-pd-prefill")])
+        self.assertEqual(set(out), {("scaledobject", "scale")})
+        self.assertEqual(out[("scaledobject", "scale")]["spec"], {"maxReplicaCount": 1})
+
+    def test_same_generation_repairs_drift_and_is_quiet_when_both_objects_match(self):
+        dep, so = copy.deepcopy(PREFILL), scaled("scale", "rngd-pd-prefill", hi=4)
+        for obj in (dep, so):
+            obj["metadata"]["annotations"] = {ap.GEN_ANNOTATION: "7"}
+        out, _ = self.plan(deps=[dep], sos=[so])
+        self.assertEqual(set(out), {("deployment", "rngd-pd-prefill"), ("scaledobject", "scale")})
+        dep["spec"]["template"]["spec"]["affinity"] = {"nodeAffinity": ap.node_affinity([DOC["decisions"][0]])}
+        so["spec"]["maxReplicaCount"] = 1
+        self.assertEqual(self.plan(deps=[dep], sos=[so])[0], {})
+
+    def test_newer_deployment_generation_protects_its_placement_and_scaling(self):
+        dep = copy.deepcopy(PREFILL)
+        dep["metadata"]["annotations"] = {ap.GEN_ANNOTATION: "8"}
+        self.assertEqual(self.plan(deps=[dep], sos=[scaled("scale", "rngd-pd-prefill")])[0], {})
+
+    def test_newer_scaledobject_generation_is_not_rolled_back(self):
+        so = scaled("scale", "rngd-pd-prefill")
+        so["metadata"]["annotations"] = {ap.GEN_ANNOTATION: "8"}
+        out, _ = self.plan(deps=[PREFILL], sos=[so])
+        self.assertEqual(set(out), {("deployment", "rngd-pd-prefill")})
 
     def test_shared_helm_value_pins_nodes_only(self):
         both = ap.node_affinity([d for d in DOC["decisions"] if d["pool"] == "llama8b-pd-pool"])
