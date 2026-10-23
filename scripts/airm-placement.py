@@ -16,7 +16,7 @@ Which card index a pod gets is still the device plugin's choice; the decision pi
 Deployments opt in with the label `airm.ai-computing.io/pool=<InferencePool name>`; the role comes
 from their `llm-d.ai/role` label (absent = serve). Readers' rules from deploy/airm/README.md hold:
 an empty decisions list, or no decision for a pool, changes nothing; an empty acceleratorIds (nothing
-fits) changes nothing and is reported; a generation already applied is skipped.
+fits) changes nothing and is reported; matching objects are skipped and newer generations protected.
 
     # patches for scripts/airm-install.sh (tab-separated: kind, name, merge-patch JSON)
     airm-placement.py plan --decisions cm.json --deployments deploy.json [--scaledobjects so.json]
@@ -130,8 +130,8 @@ def plan(doc, deployments, scaledobjects=(), log=sys.stderr):
                   file=log)
             continue
         applied = (meta.get("annotations") or {}).get(GEN_ANNOTATION)
-        if applied is not None and applied.isdigit() and int(applied) >= generation:
-            print("airm-placement: %s: generation %s already applied" % (name, applied), file=log)
+        if applied is not None and applied.isdigit() and int(applied) > generation:
+            print("airm-placement: %s: newer generation %s; left as is" % (name, applied), file=log)
             continue
         pod_spec = ((dep.get("spec") or {}).get("template") or {}).get("spec") or {}
         if pod_spec.get("nodeName"):
@@ -139,14 +139,25 @@ def plan(doc, deployments, scaledobjects=(), log=sys.stderr):
                   % (name, pod_spec["nodeName"]), file=log)
             continue
         affinity = node_affinity(mine)
-        out.append(("deployment", name, {
-            "metadata": {"annotations": {GEN_ANNOTATION: str(generation)}},
-            "spec": {"template": {"spec": {"affinity": {"nodeAffinity": affinity}}}}}))
+        if applied != str(generation) or (pod_spec.get("affinity") or {}).get("nodeAffinity") != affinity:
+            out.append(("deployment", name, {
+                "metadata": {"annotations": {GEN_ANNOTATION: str(generation)}},
+                "spec": {"template": {"spec": {"affinity": {"nodeAffinity": affinity}}}}}))
+        else:
+            print("airm-placement: %s: generation %s already applied" % (name, applied), file=log)
         so = by_target.get(name)
         if so:
+            so_applied = ((so.get("metadata") or {}).get("annotations") or {}).get(GEN_ANNOTATION)
+            if so_applied is not None and so_applied.isdigit() and int(so_applied) > generation:
+                print("airm-placement: %s: newer generation %s; left as is"
+                      % (so["metadata"]["name"], so_applied), file=log)
+                continue
             vendor = split_id(ids[0])[1]
             cap = max(1, len(ids) // cards_per_pod(dep, vendor))
             spec = so.get("spec") or {}
+            if (so_applied == str(generation) and spec.get("maxReplicaCount") == cap
+                    and int(spec.get("minReplicaCount", 0)) <= cap):
+                continue
             patch = {"metadata": {"annotations": {GEN_ANNOTATION: str(generation)}},
                      "spec": {"maxReplicaCount": cap}}
             if int(spec.get("minReplicaCount", 0)) > cap:

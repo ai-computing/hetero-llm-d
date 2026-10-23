@@ -31,6 +31,8 @@ scripts/airm-install.sh delete crd         # also deletes every AcceleratorProfi
 Bumping rm-core: change `RM_CORE_REF` and `RM_CORE_CRD_SHA256` in `scripts/airm-install.sh`
 together (`curl -fsSL https://raw.githubusercontent.com/ai-computing/rm-core/<tag>/k8s/acceleratorprofile.crd.yaml | sha256sum`).
 The script refuses to apply a CRD whose checksum does not match.
+The placement ConfigMap is created only if absent; repeated installs preserve the controller's
+decisions and generation. A failure to read the existing ConfigMap aborts the install.
 
 ## Metrics scrape
 
@@ -103,12 +105,15 @@ behaves as if the ConfigMap did not exist.
 | `decisions[].acceleratorIds` | nodes = the `<node>` parts → `matchFields metadata.name In [...]` |
 | `decisions[].workload.labels["airm.ai-computing.io/accelerator"]` | `vendor.model` → `matchExpressions airm.ai-computing.io/<vendor>.<model> Exists` (the node summary label rm-controller filtered on) |
 | KEDA ScaledObject whose `scaleTargetRef` is that Deployment | `maxReplicaCount` = placed cards / cards per pod (device-plugin limit) |
-| `generation` | written to annotation `airm.ai-computing.io/placement-generation`; a Deployment already at that generation is skipped |
+| `generation` | written to annotation `airm.ai-computing.io/placement-generation`; matching Deployment affinity and ScaledObject caps are checked separately, so retrying finishes a partial apply |
 
 Nothing changes for an empty `decisions` list, a pool or role without a decision, a decision with
 empty `acceleratorIds` (its `reason` is printed), or a Deployment pinned with `nodeName`. Card indices
 are still chosen by the device plugin; the decision fixes the node and the accelerator kind.
 `apply placement` is never part of `all`, because changing a pod template restarts the pods.
+Objects with newer generation annotations are preserved; a newer Deployment also protects its
+scaling from an older document. KEDA absence is discovered before planning; discovery or object
+read failures abort before any patch, rather than silently skipping the scaling cap.
 
 ## Where the EPP reads it (scorer slot)
 
