@@ -2,11 +2,11 @@
 
 <!-- research-hub:header:begin (maintained by .research/report.py; keep the "- **Key**: value" format) -->
 - **State**: active
-- **Updated**: 2026-10-23 10:55+09:00
+- **Updated**: 2026-10-23 11:43+09:00
 - **Agent**: codex@DESKTOP-R49IQ68
 - **Task**: Fix placement installer and partial apply recovery
-- **Last result**: Preserve existing placement decisions on reinstall; retry partial Deployment/KEDA reconciliation and preserve newer generations; abort KEDA discovery/read errors. Offline WSL checks: 16 placement/EPP + 5 installer + 1 model-store tests pass; Bash syntax passes.
-- **Next**: Review patch; cluster rollout and hardware checks were not run
+- **Last result**: Live Kubernetes API validation passed: Deployment generation7 committed, KEDA operation403 retried independently, cap4 to2, matching plan empty, generation8 preserved; fixture replicas stayed0 and UID-guarded namespace deleted.
+- **Next**: Review PR12; production serving rollout and autoscaling performance remain untested
 - **Blockers**: none
 <!-- research-hub:header:end -->
 
@@ -241,6 +241,15 @@ curl -X POST http://<gateway-host>/v1/chat/completions \
 ## Log
 
 <!-- research-hub:log (report.py inserts new entries below this line, newest first) -->
+
+### 2026-10-23 11:43+09:00 — Fix placement installer and partial apply recovery
+
+- Result: Live Kubernetes API validation passed: Deployment generation7 committed, KEDA operation403 retried independently, cap4 to2, matching plan empty, generation8 preserved; fixture replicas stayed0 and UID-guarded namespace deleted.
+- Next: Review PR12; production serving rollout and autoscaling performance remain untested
+- Params: keda=2.19.0
+- Artifacts: experiments/data/placement-api-20261023.json
+- Experiments: experiments/2026-10-23-placement-api.md
+- By: codex@DESKTOP-R49IQ68 · improve/verified-ecosystem-20261023@b56e59b-dirty
 
 ### 2026-10-23 10:55+09:00 — Fix placement installer and partial apply recovery
 
